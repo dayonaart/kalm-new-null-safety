@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "626350561336",
+    "firebase_url": "https://kalm-counselor-202007.firebaseio.com",
+    "project_id": "kalm-counselor-202007",
+    "storage_bucket": "kalm-counselor-202007.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626350561336:android:8d0cc5daf4ff06996f6ecd",
+        "android_client_info": {
+          "package_name": "id.cranium.counselor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA87pIL_xHC5J3hgotqwfdAiMoVMpnkk9A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "626350561336-44sf4o7vkah7v4u5n6alk2s8ilou4t0l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "id.cranium.kalm"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626350561336:android:8c124760e39aeb606f6ecd",
+        "android_client_info": {
+          "package_name": "id.cranium.kalm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA87pIL_xHC5J3hgotqwfdAiMoVMpnkk9A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "626350561336-44sf4o7vkah7v4u5n6alk2s8ilou4t0l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "id.cranium.kalm"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

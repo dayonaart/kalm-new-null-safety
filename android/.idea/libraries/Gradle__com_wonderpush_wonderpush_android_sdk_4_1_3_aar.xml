@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.wonderpush:wonderpush-android-sdk:4.1.3@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d1b1c6a1c03344caaa2232e172113187/jetified-wonderpush-android-sdk-4.1.3/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d1b1c6a1c03344caaa2232e172113187/jetified-wonderpush-android-sdk-4.1.3/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/d1b1c6a1c03344caaa2232e172113187/jetified-wonderpush-android-sdk-4.1.3/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wonderpush/wonderpush-android-sdk/4.1.3/5cce8f028827a176e6c6060f7d67ca2b4da9d93c/wonderpush-android-sdk-4.1.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wonderpush/wonderpush-android-sdk/4.1.3/fb3b38ab9e6e9a5fdbc6a0cd4b7b307ca1e2bf6b/wonderpush-android-sdk-4.1.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,5 @@
+/build*
+/json_model*
+/jsons*
+/.dart_tool
+/android/key.properties
