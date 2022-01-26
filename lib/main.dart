@@ -1,7 +1,11 @@
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:kalm/api/api.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/main_tab.dart';
@@ -19,28 +23,64 @@ import 'package:wonderpush_flutter/wonderpush_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  _enableRotation();
+  await _runApp();
+}
+
+void _enableRotation() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+}
+
+Future<void> _runApp() async {
+  if (await checkNetwork() == ConnectivityResult.none) {
+    runApp(_deviceNotCompatible(
+        "Pastikan Anda terhubung ke Internet", "Coba Lagi", onTap: () async {
+      await _runApp();
+    }));
+    return;
+  }
+  var _fireApp = await Firebase.initializeApp(
+      options: Platform.isIOS ? iosFirebaseOption : androidFirebaseOption);
+  // print(_fireApp.name);
+  await WonderPush.subscribeToNotifications();
   if (await GetStorage.init()) {
-    await Firebase.initializeApp(
-      options: Platform.isIOS ? iosFirebaseOption : androidFirebaseOption,
-    );
     if (await WonderPush.isSubscribedToNotifications()) {
+      if (kDebugMode) {
+        WonderPush.setLogging(true);
+      }
       runApp(MultiProvider(
-        providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
+        providers: [
+          ChangeNotifierProvider<UserController>(
+              create: (_) => UserController())
+        ],
         child: KalmApp(),
       ));
     } else {
       await WonderPush.subscribeToNotifications();
+      if (kDebugMode) {
+        WonderPush.setLogging(true);
+      }
       runApp(MultiProvider(
-        providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
+        providers: [
+          ChangeNotifierProvider<UserController>(
+              create: (_) => UserController())
+        ],
         child: KalmApp(),
       ));
     }
   } else {
-    runApp(_deviceNotCompatibleStorage());
+    runApp(_deviceNotCompatible(
+        "Sorry your device not compatible with this app", "EXIT", onTap: () {
+      exit(0);
+    }));
   }
 }
 
-MaterialApp _deviceNotCompatibleStorage() {
+MaterialApp _deviceNotCompatible(String title, String buttonTitle,
+    {void Function()? onTap}) {
   return MaterialApp(
     debugShowCheckedModeBanner: false,
     home: NON_MAIN_SAFE_AREA(
@@ -50,17 +90,21 @@ MaterialApp _deviceNotCompatibleStorage() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          TEXT("Sorry your device not compatile with this app"),
+          if (buttonTitle == "Coba Lagi")
+            const Icon(Icons.wifi_off_outlined, size: 100)
+          else
+            const Icon(Icons.error_outline_outlined, size: 100),
+          SPACE(),
+          TEXT(title),
           SPACE(),
           InkWell(
-              onTap: () {
-                exit(0);
-              },
+              onTap: onTap,
               child: Container(
-                  decoration: BoxDecoration(border: Border.all(width: 0.5, color: BLUEKALM)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text("EXIT", style: TextStyle(color: BLUEKALM)),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 0.5, color: BLUEKALM)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TEXT(buttonTitle),
                   )))
         ],
       ),
@@ -100,7 +144,9 @@ class KalmApp extends StatelessWidget {
             color: Colors.white,
             fontWeight: FontWeight.w600),
         bodyText1: const TextStyle(
-            fontFamily: "fonts/AlexBrush-Regular.ttf", fontSize: 16, color: Colors.black54),
+            fontFamily: "fonts/AlexBrush-Regular.ttf",
+            fontSize: 16,
+            color: Colors.black54),
         bodyText2: const TextStyle(
             fontFamily: "fonts/AlexBrush-Regular.ttf",
             fontSize: 18,

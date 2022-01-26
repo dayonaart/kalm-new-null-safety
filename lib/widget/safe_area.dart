@@ -49,11 +49,14 @@ SafeArea NON_MAIN_SAFE_AREA({
   return SafeArea(
       top: top ?? false,
       bottom: bottom ?? false,
-      minimum: EdgeInsets.only(bottom: minimumInset ?? 0),
       child: Scaffold(
         appBar: appBar,
         body: Builder(builder: (context) {
-          return child!;
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: STATE(context).keyboardVisibility ? 0 : 38),
+            child: child!,
+          );
         }),
         resizeToAvoidBottomInset: resizeBottomInset,
       ));

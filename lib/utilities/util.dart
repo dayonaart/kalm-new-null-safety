@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/country_res_model/country_data.dart';
 import 'package:kalm/model/state_res_model/address_item_data.dart';
@@ -9,6 +7,11 @@ import 'package:kalm/model/user_quetioner_res_model/questioner_data.dart';
 
 Timer? _debouncer;
 void TEXTFIELD_DEBOUNCER(String v, void Function() callback, {int? second}) {
+  if (_debouncer?.isActive ?? false) _debouncer?.cancel();
+  _debouncer = Timer(Duration(seconds: second ?? 3), callback);
+}
+
+void TAB_CHANGE_DEBOUNCER(int v, void Function() callback, {int? second}) {
   if (_debouncer?.isActive ?? false) _debouncer?.cancel();
   _debouncer = Timer(Duration(seconds: second ?? 3), callback);
 }

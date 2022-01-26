@@ -42,6 +42,7 @@ import 'package:kalm/pages/billiing/indodana.dart';
 import 'package:kalm/pages/billiing/ovo.dart';
 import 'package:kalm/pages/billiing/shopee.dart';
 import 'package:kalm/utilities/deep_link_redirect.dart';
+import 'package:kalm/utilities/util.dart';
 import 'package:kalm/widget/dialog.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_controller.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
@@ -68,47 +69,35 @@ class UserController extends ChangeNotifier {
     tabController.jumpToTab(index);
   }
 
-  void onChangeTab(int index) async {
+  void onChangeTab(int index) {
     tabController.index = index;
     notifyListeners();
-    switch (index) {
-      case 0:
-        if (articleHomeResModel == null) {
+    TAB_CHANGE_DEBOUNCER(index, () async {
+      switch (index) {
+        case 0:
           await getHomeArticles();
-        }
-        if (quoteResModel == null) {
           await getQuote();
-        } else {
-          return;
-        }
-        break;
-      case 1:
-        if (gratitudeJournalResModel == null) {
+          break;
+        case 1:
           await getGratitudeJournal(useLoading: false);
-        }
-        break;
-      case 2:
-        print('chat');
-        // await _updateRead();
-        break;
-      case 3:
-        if (videoList == null) {
+          break;
+        case 2:
+          print('chat');
+          // await _updateRead();
+          break;
+        case 3:
           await getVideos();
-        }
-        if (articleDirectoryResModel == null) {
           await getDirectoryArticles();
-        }
-        await getDirectoryPlace();
-        break;
-      case 4:
-        print('setting');
-        break;
-      default:
-    }
+          await getDirectoryPlace();
+          break;
+        case 4:
+          print('setting');
+          break;
+        default:
+      }
+    }, second: 10);
   }
 
-  late FirebaseWordingModel firebaseWordingModel;
-  late DatabaseReference wording;
   final database = FirebaseDatabase.instance;
 
   Future<void> pushNotif(String? message) async {
@@ -116,8 +105,8 @@ class UserController extends ChangeNotifier {
         content: message ?? "new message",
         userId: counselorData?.counselor?.id,
         title: "${userData?.firstName} ${userData?.lastName}");
-    var _res = await Api().POST(WONDER_PUSH_NOTIF, _body.toJson(), useLoading: false);
-    PR(_res?.data);
+    var _res = await Api().POST(WONDER_PUSH_NOTIF, _body.toJson(),
+        useLoading: false, useClearData: false, useSnackbar: false);
     if (_res?.statusCode == 200) {
     } else {
       return;
@@ -125,6 +114,8 @@ class UserController extends ChangeNotifier {
   }
 
   late FirebaseAuth firebaseAuth;
+  late FirebaseWordingModel firebaseWordingModel;
+  late DatabaseReference wording;
   Future<void> updateWording() async {
     try {
       firebaseAuth = FirebaseAuth.instance;
@@ -133,15 +124,16 @@ class UserController extends ChangeNotifier {
       if (firebaseAuth.currentUser == null) {
         ERROR_SNACK_BAR("Perhatian", 'Error 900');
         return;
-      } else {
-        wording = database.ref("wording");
-        var _snap = await wording.get();
-        firebaseWordingModel = FirebaseWordingModel.fromJson(
-            Map<String, dynamic>.from(_snap.value as Map<Object?, Object?>));
-        notifyListeners();
       }
+      // else {
+      //   wording = database.ref("wording");
+      //   var _snap = await wording.get();
+      //   firebaseWordingModel = FirebaseWordingModel.fromJson(
+      //       Map<String, dynamic>.from(_snap.value as Map<Object?, Object?>));
+      //   notifyListeners();
+      // }
     } catch (e) {
-      ERROR_SNACK_BAR("Perhatian", "$e");
+      ERROR_SNACK_BAR("Perhatian", 'Error 900');
     }
   }
 
@@ -198,22 +190,33 @@ class UserController extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool get isChatting =>
-      counselorData?.counselor != null &&
-      userData?.userSubcription != null &&
-      userData?.userHasActiveCounselor?.isReadTnc == 1;
-  bool get isShowTnc =>
-      counselorData?.counselor != null &&
-      userData?.userSubcription != null &&
-      userData?.userHasActiveCounselor?.isReadTnc == 0;
+  bool get isHavePackages {
+    return userData?.userSubcription != null && userData?.userSubscriptionList != null;
+  }
+
+  bool get isChatting {
+    return counselorData?.counselor != null &&
+        userData?.userSubcription != null &&
+        userData?.userHasActiveCounselor?.isReadTnc == 1;
+  }
+
+  bool get isShowTnc {
+    return counselorData?.counselor != null &&
+        userData?.userSubcription != null &&
+        userData?.userHasActiveCounselor?.isReadTnc == 0;
+  }
+
   CounselorData? counselorData;
   Future<void> getCounselor({bool useLoading = false}) async {
     print('GET COUNSELOR');
     var _res =
         await Api().GET(GET_COUNSELOR(userData!.code!), useToken: true, useLoading: useLoading);
     if (_res?.statusCode == 200) {
+      await getChat();
       counselorData = CounselorData.fromJson(_res?.data);
+      await getTncData(useLoading: useLoading);
       notifyListeners();
+      await getChat();
     } else {
       return;
     }
@@ -258,24 +261,29 @@ class UserController extends ChangeNotifier {
       if (_res?.statusCode == 200) {
         await saveLocalUser(UserModel.fromJson(_res?.data).data);
         userData = UserModel.fromJson(_res?.data).data;
+        // PR(_res?.data);
         if (userData?.userHasActiveCounselor == null) {
           await getPendingKalmselorCode();
         } else {
+          // if (counselorData != null) {
+          //   counselorData = null;
+          //   pendingKalmselorCodeModel = null;
+          //   tncResModel = null;
+          // } else {}
           await getCounselor(useLoading: useLoading);
-          await getChat();
-          await getTncData(useLoading: false);
         }
         notifyListeners();
       } else {
-        userData = null;
-        notifyListeners();
+        return;
+        // userData = null;
+        // notifyListeners();
       }
     } catch (e) {}
   }
 
   SubscriptionListResModel? subscriptionListResModel;
-  Future<void> getSubSubcriptionList() async {
-    var _res = await Api().GET(GET_SUBSCRIPTION_LIST);
+  Future<void> getSubSubcriptionList({bool useLoading = true}) async {
+    var _res = await Api().GET(GET_SUBSCRIPTION_LIST, useLoading: useLoading);
     if (_res?.statusCode == 200) {
       subscriptionListResModel = SubscriptionListResModel.fromJson(_res?.data);
       notifyListeners();
@@ -625,8 +633,8 @@ class UserController extends ChangeNotifier {
     ovoResModel = null;
     tncResModel = null;
     indodanaResModel = null;
-    await _box.remove("USER");
     notifyListeners();
+    await _box.remove("USER");
     await Get.off(LoginPage());
   }
 

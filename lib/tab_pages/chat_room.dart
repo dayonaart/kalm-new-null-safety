@@ -18,6 +18,8 @@ import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
+import 'package:selectable_autolink_text/selectable_autolink_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatRoomPage extends StatelessWidget {
   final _controller = Get.put(ChatRoomPageController());
@@ -27,25 +29,24 @@ class ChatRoomPage extends StatelessWidget {
     return GetBuilder<ChatRoomPageController>(initState: (st) {
       _controller.dateFilter();
       final messagesQuery = PRO.chatRef.limitToLast(1);
-
       _messagesSubscription = messagesQuery.onChildAdded.listen(
         (DatabaseEvent event) {
-          print('Child added: ${event.snapshot.value}');
+          // print('Child added: ${event.snapshot.value}');
         },
         onError: (Object o) {
           final error = o as FirebaseException;
-          print('Error: ${error.code} ${error.message}');
+          // print('Error: ${error.code} ${error.message}');
         },
       );
     }, builder: (_) {
       return NON_MAIN_SAFE_AREA(
+        top: true,
         minimumInset: 55,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             InkWell(
-              onTap: () async =>
-                  await pushNewScreen(context, screen: ClientDetailPage()),
+              onTap: () async => await pushNewScreen(context, screen: ClientDetailPage()),
               child: Card(
                   child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -77,8 +78,8 @@ class ChatRoomPage extends StatelessWidget {
                 child: _firebaseAnimatedList(_),
               ),
             ),
-            SizedBox(
-              height: 60,
+            Expanded(
+              flex: -1,
               child: CupertinoTextField(
                   placeholder: "Tulis pesanmu disini...",
                   suffix: _.sending
@@ -87,15 +88,12 @@ class ChatRoomPage extends StatelessWidget {
                           child: CupertinoActivityIndicator(),
                         )
                       : IconButton(
-                          onPressed: _.sending
-                              ? null
-                              : () async => await _.sendMessage(),
+                          onPressed: _.sending ? null : () async => await _.sendMessage(),
                           icon: const Icon(
                             Icons.send_rounded,
                             color: ORANGEKALM,
                           )),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
                   focusNode: _.focusNode,
                   controller: _.messageController,
                   maxLines: 4,
@@ -104,8 +102,7 @@ class ChatRoomPage extends StatelessWidget {
                   minLines: 1,
                   textAlignVertical: TextAlignVertical.top,
                   style: COSTUM_TEXT_STYLE(fonstSize: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 0.5, color: BLUEKALM))),
+                  decoration: BoxDecoration(border: Border.all(width: 0.5, color: BLUEKALM))),
             ),
           ],
         ),
@@ -133,8 +130,8 @@ class ChatRoomPage extends StatelessWidget {
         });
   }
 
-  CupertinoScrollbar _chatView(int? _showDate, int i, ChatRoomPageController _,
-      bool _isUser, ItemChatModel _chat) {
+  CupertinoScrollbar _chatView(
+      int? _showDate, int i, ChatRoomPageController _, bool _isUser, ItemChatModel _chat) {
     return CupertinoScrollbar(
       controller: _.scrollController,
       child: Padding(
@@ -156,8 +153,7 @@ class ChatRoomPage extends StatelessWidget {
                   const Divider(thickness: 1),
                   Card(
                       child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: TEXT("${DATE_FORMAT(_.date![i])}"),
                   )),
                   SPACE(),
@@ -173,44 +169,30 @@ class ChatRoomPage extends StatelessWidget {
                             color: _itemBackgroudColor(_isUser),
                             border: Border.all(width: 0.5),
                             borderRadius: _itemBorderRadius(_isUser)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          child: TEXT(_chat.message,
-                              textAlign: (_itemAligment(_isUser) ==
-                                      Alignment.centerRight)
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                              style: COSTUM_TEXT_STYLE(color: Colors.white)),
-                        )),
+                        child: _textChat(_chat, _isUser)),
                     SPACE(height: 3),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (_itemAligment(_isUser) == Alignment.centerRight)
-                          if (_chat.status == "read" &&
-                              (i + 1) == _.date?.length)
+                          if (_chat.status == "read" && (i + 1) == _.date?.length)
                             Row(
                               children: [
-                                Text(_chat.status!,
-                                    style: COSTUM_TEXT_STYLE(fonstSize: 10)),
+                                Text(_chat.status!, style: COSTUM_TEXT_STYLE(fonstSize: 10)),
                                 SPACE(),
                               ],
                             )
-                          else if (_chat.status == "unread" &&
-                              (i + 1) == _.date?.length)
+                          else if (_chat.status == "unread" && (i + 1) == _.date?.length)
                             Row(
                               children: [
-                                Text(_chat.status!,
-                                    style: COSTUM_TEXT_STYLE(fonstSize: 10)),
+                                Text(_chat.status!, style: COSTUM_TEXT_STYLE(fonstSize: 10)),
                                 SPACE(),
                               ],
                             )
                           else if (_chat.status == "pending")
                             Row(
                               children: [
-                                const Icon(Icons.watch_later_outlined,
-                                    size: 15),
+                                const Icon(Icons.watch_later_outlined, size: 15),
                                 SPACE(),
                               ],
                             )
@@ -219,12 +201,9 @@ class ChatRoomPage extends StatelessWidget {
                         // if (_itemAligment(_isUser) == Alignment.centerLeft)
                         //   TEXT('${_chat.status} ${_chat.code}'),
                         TEXT(
-                            DATE_FORMAT(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    _chat.created!),
+                            DATE_FORMAT(DateTime.fromMillisecondsSinceEpoch(_chat.created!),
                                 pattern: "Hms"),
-                            style: COSTUM_TEXT_STYLE(
-                                fonstSize: 10, color: Colors.grey)),
+                            style: COSTUM_TEXT_STYLE(fonstSize: 10, color: Colors.grey)),
                       ],
                     ),
                   ],
@@ -235,10 +214,25 @@ class ChatRoomPage extends StatelessWidget {
     );
   }
 
+  Padding _textChat(ItemChatModel _chat, bool _isUser) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: SelectableAutoLinkText(
+          _chat.message!,
+          style: COSTUM_TEXT_STYLE(color: Colors.white),
+          linkStyle: COSTUM_TEXT_STYLE(
+              color: Colors.blue[100],
+              decoration: TextDecoration.underline,
+              fontStyle: FontStyle.italic),
+          onTap: (url) => launch(url, forceSafariVC: false),
+          // onLongPress: (url) => Share.share(url),
+        ));
+  }
+
   ItemChatModel? _chatModel(DataSnapshot snap) {
     try {
-      var _chat = ItemChatModel.fromJson(
-          Map<String, dynamic>.from(snap.value as Map<Object?, Object?>));
+      var _chat =
+          ItemChatModel.fromJson(Map<String, dynamic>.from(snap.value as Map<Object?, Object?>));
       return _chat;
     } catch (e) {
       return null;
@@ -248,25 +242,13 @@ class ChatRoomPage extends StatelessWidget {
   int? _filterDate(ChatRoomPageController _, ItemChatModel? _chat) {
     try {
       var _showDate = _.date?.indexWhere((e) {
-        return DATE_FORMAT(e) ==
-            DATE_FORMAT(DateTime.fromMillisecondsSinceEpoch(_chat!.created!));
+        return DATE_FORMAT(e) == DATE_FORMAT(DateTime.fromMillisecondsSinceEpoch(_chat!.created!));
       });
       return _showDate;
     } catch (e) {
       print("FILTER DATE $e");
       return null;
     }
-  }
-
-  int _sortList(DataSnapshot a, DataSnapshot b) {
-    var _a = ItemChatModel.fromJson(
-            Map<String, dynamic>.from(a.value as Map<Object?, Object?>))
-        .created;
-    var _b = ItemChatModel.fromJson(
-            Map<String, dynamic>.from(b.value as Map<Object?, Object?>))
-        .created;
-    return DateTime.fromMillisecondsSinceEpoch(_b!)
-        .compareTo(DateTime.fromMillisecondsSinceEpoch(_a!));
   }
 
   CrossAxisAlignment _itemCrossAligment(bool? user) {
@@ -334,13 +316,10 @@ class ChatRoomPageController extends GetxController {
     _snap.onValue.listen((e) {
       try {
         var _data =
-            Map<String, dynamic>.from(e.snapshot.value as Map<Object?, Object?>)
-                .values
-                .toList();
+            Map<String, dynamic>.from(e.snapshot.value as Map<Object?, Object?>).values.toList();
         date = List.generate(_data.length, (i) {
           var _date = DateTime.fromMillisecondsSinceEpoch(
-              ItemChatModel.fromJson(Map<String, dynamic>.from(
-                      _data[i] as Map<Object?, Object?>))
+              ItemChatModel.fromJson(Map<String, dynamic>.from(_data[i] as Map<Object?, Object?>))
                   .created!);
           return _date;
         });
@@ -358,10 +337,8 @@ class ChatRoomPageController extends GetxController {
   void _scrollToBottom() {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       if (scrollController.hasClients) {
-        await scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.bounceIn);
+        await scrollController.animateTo(scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 100), curve: Curves.bounceIn);
       } else {
         print("didnt have client");
       }
@@ -376,6 +353,7 @@ class ChatRoomPageController extends GetxController {
       return;
     }
     try {
+      await PRO.pushNotif(messageController.text);
       var _snap = PRO.database.ref("chats/${PRO.counselorData?.matchupId}");
       await _snap.push().set(ItemChatModel(
               code: PRO.userData?.code,
@@ -391,7 +369,6 @@ class ChatRoomPageController extends GetxController {
       sending = false;
       update();
     }
-    await PRO.pushNotif(messageController.text);
     messageController.clear();
     sending = false;
     update();

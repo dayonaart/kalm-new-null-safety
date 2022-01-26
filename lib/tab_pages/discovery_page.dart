@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
@@ -7,10 +6,9 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/directory_res_model/item.dart';
 import 'package:kalm/pages/detail_article.dart';
-import 'package:kalm/utilities/youtube_iframe.dart';
+import 'package:kalm/widget/widget_carousel.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
-import 'package:kalm/widget/loading_content.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
@@ -22,50 +20,46 @@ class DiscoveryPage extends StatelessWidget {
   final _controller = Get.put(DiscoveryController());
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<DiscoveryController>(builder: (_) {
+    return GetBuilder<DiscoveryController>(initState: (s) async {
+      await PRO.getVideos();
+      await PRO.getDirectoryArticles();
+      await PRO.getDirectoryPlace();
+    }, builder: (_) {
       return SAFE_AREA(
           canBack: false,
           child: Builder(builder: (context) {
-            if (STATE(context).articleDirectoryResModel == null) {
-              return LOADING;
-            } else {
-              return Scrollbar(
-                child: ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              children: [
-                                BUTTON("Discovery",
-                                    isExpanded: true,
-                                    onPressed: () => _.onChangeTab(0),
-                                    backgroundColor: _.selectedTab == 0
-                                        ? ORANGEKALM
-                                        : Colors.grey),
-                                SPACE(),
-                                BUTTON("Directory",
-                                    isExpanded: true,
-                                    onPressed: () => _.onChangeTab(1),
-                                    backgroundColor: _.selectedTab == 1
-                                        ? ORANGEKALM
-                                        : Colors.grey),
-                              ],
-                            ),
+            return Scrollbar(
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              BUTTON("Discovery",
+                                  isExpanded: true,
+                                  onPressed: () => _.onChangeTab(0),
+                                  backgroundColor: _.selectedTab == 0 ? ORANGEKALM : Colors.grey),
+                              SPACE(),
+                              BUTTON("Directory",
+                                  isExpanded: true,
+                                  onPressed: () => _.onChangeTab(1),
+                                  backgroundColor: _.selectedTab == 1 ? ORANGEKALM : Colors.grey),
+                            ],
                           ),
-                          SPACE(height: 20),
-                          if (_.selectedTab == 0) _discovery(_, context),
-                          if (_.selectedTab == 1) _directory(context)
-                        ],
-                      ),
+                        ),
+                        SPACE(height: 20),
+                        if (_.selectedTab == 0) _discovery(_, context),
+                        if (_.selectedTab == 1) _directory(context)
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }
+                  ),
+                ],
+              ),
+            );
           }));
     });
   }
@@ -79,7 +73,7 @@ class DiscoveryPage extends StatelessWidget {
           child: TEXT("Video", style: Get.textTheme.headline2),
         ),
         SPACE(),
-        _videos(_, context),
+        VIDEO_CAROUSEL(context, _),
         SPACE(height: 20),
         Column(
           children: [
@@ -91,10 +85,7 @@ class DiscoveryPage extends StatelessWidget {
                   TEXT("Artikel", style: Get.textTheme.headline2),
                   IconButton(
                       onPressed: () => _.onChangeArticleView(),
-                      icon: Icon(
-                          (_.isArticleGrid
-                              ? Icons.map_rounded
-                              : Icons.grid_on_outlined),
+                      icon: Icon((_.isArticleGrid ? Icons.map_rounded : Icons.grid_on_outlined),
                           color: ORANGEKALM))
                 ],
               ),
@@ -102,97 +93,10 @@ class DiscoveryPage extends StatelessWidget {
             SPACE(),
           ],
         ),
-        if (!_.isArticleGrid) _articleCarousel(context),
+        if (!_.isArticleGrid) ARTICLE_CAROUSEL(context, STATE(context).articleDirectoryResModel),
         if (_.isArticleGrid) _articleGridView(context),
       ],
     );
-  }
-
-  CarouselSlider _videos(DiscoveryController _, BuildContext context) {
-    return CarouselSlider(
-        items: List.generate(STATE(context).videoList?.length ?? 0, (i) {
-          return SizedBox(
-            height: 300,
-            child: InkWell(
-              onTap: () => Get.to(_youtubePlayerView(_, i)),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: IMAGE_CACHE(
-                    YOUTUBE_THUMBNAIL(videoId: STATE(context).videoList![i]),
-                    widgetInsideImage: const CircleAvatar(
-                      radius: 30,
-                      backgroundColor: BLUEKALM,
-                      child: Icon(Icons.play_arrow_rounded,
-                          color: ORANGEKALM, size: 30),
-                    )),
-              ),
-            ),
-          );
-        }),
-        options: CarouselOptions(
-            pauseAutoPlayOnTouch: true,
-            autoPlay: true,
-            viewportFraction: 0.98,
-            enlargeCenterPage: true));
-  }
-
-  SafeArea _youtubePlayerView(DiscoveryController _, int i) {
-    return SAFE_AREA(
-      child: WebView(
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (con) {
-          if (_.webController.isCompleted) {
-            con.loadUrl(
-                'data:text/html;base64,${YOUTUBE_PLAYER(PRO.videoList![i])}');
-          } else {
-            _.webController.complete(con);
-            con.loadUrl(
-                'data:text/html;base64,${YOUTUBE_PLAYER(PRO.videoList![i])}');
-          }
-        },
-      ),
-    );
-  }
-
-  CarouselSlider _articleCarousel(BuildContext context) {
-    return CarouselSlider(
-        items: STATE(context).articleDirectoryResModel?.data?.map((e) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IMAGE_CACHE(IMAGE_URL + ARTICLE + (e.file ?? ""),
-                    onTapImage: () {
-                  pushNewScreen(context,
-                      screen: DetailArticlePage(articleData: e));
-                },
-                    widgetInsideImage: Positioned(
-                        bottom: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(width: 0.5)),
-                            margin: const EdgeInsets.all(0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                  width: Get.width / 1.12,
-                                  child: TEXT(e.name,
-                                      textAlign: TextAlign.center)),
-                            ),
-                          ),
-                        ))),
-              );
-            }).toList() ??
-            [],
-        options: CarouselOptions(
-          autoPlay: true,
-          autoPlayCurve: Curves.easeIn,
-          enableInfiniteScroll: false,
-          viewportFraction: 0.98,
-          enlargeCenterPage: true,
-        ));
   }
 
   Padding _articleGridView(BuildContext context) {
@@ -204,8 +108,7 @@ class DiscoveryPage extends StatelessWidget {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
         children: STATE(context).articleDirectoryResModel!.data!.map((e) {
-          return IMAGE_CACHE(IMAGE_URL + ARTICLE + (e.file ?? ""),
-              onTapImage: () {
+          return IMAGE_CACHE(IMAGE_URL + ARTICLE + (e.file ?? ""), onTapImage: () {
             pushNewScreen(context, screen: DetailArticlePage(articleData: e));
           },
               widgetInsideImage: Positioned(
@@ -224,8 +127,7 @@ class DiscoveryPage extends StatelessWidget {
                             height: 40,
                             width: Get.width / 3,
                             child: TEXT(e.name,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 10))),
+                                textAlign: TextAlign.center, style: const TextStyle(fontSize: 10))),
                       ),
                     ),
                   )));
@@ -253,8 +155,7 @@ class DiscoveryPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SPACE(),
-                      TEXT(e.dataItem![i].title,
-                          style: Get.textTheme.headline1),
+                      TEXT(e.dataItem![i].title, style: Get.textTheme.headline1),
                       Column(
                         children: e.dataItem![i].item!.map((f) {
                           return Column(
@@ -264,30 +165,25 @@ class DiscoveryPage extends StatelessWidget {
                               Container(
                                 width: Get.width,
                                 decoration: BoxDecoration(
-                                    border:
-                                        Border.all(width: 0.5, color: BLUEKALM),
+                                    border: Border.all(width: 0.5, color: BLUEKALM),
                                     borderRadius: BorderRadius.circular(10)),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SPACE(),
-                                      TEXT(f.name,
-                                          style: Get.textTheme.bodyText2),
+                                      TEXT(f.name, style: Get.textTheme.bodyText2),
                                       SPACE(),
                                       if (f.address != "")
                                         Column(
                                           children: [
                                             Row(
                                               children: [
-                                                const Icon(Icons
-                                                    .location_city_outlined),
+                                                const Icon(Icons.location_city_outlined),
                                                 SPACE(width: 5),
                                                 SizedBox(
-                                                    width: Get.width / 1.3,
-                                                    child: TEXT(f.address)),
+                                                    width: Get.width / 1.3, child: TEXT(f.address)),
                                               ],
                                             ),
                                             SPACE(),
@@ -336,8 +232,7 @@ class DiscoveryPage extends StatelessWidget {
   InkWell _launchEmail(Item f) {
     String? encodeQueryParameters(Map<String, String> params) {
       return params.entries
-          .map((e) =>
-              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
           .join('&');
     }
 
@@ -346,8 +241,7 @@ class DiscoveryPage extends StatelessWidget {
           final Uri emailLaunchUri = Uri(
             scheme: 'mailto',
             path: f.email,
-            query: encodeQueryParameters(
-                <String, String>{'subject': 'Hello Kalm'}),
+            query: encodeQueryParameters(<String, String>{'subject': 'Hello Kalm'}),
           );
 
           await launch(emailLaunchUri.toString());
@@ -421,8 +315,7 @@ class DiscoveryController extends GetxController {
     update();
   }
 
-  final Completer<WebViewController> webController =
-      Completer<WebViewController>();
+  final Completer<WebViewController> webController = Completer<WebViewController>();
   int selectedTab = 0;
   void onChangeTab(int index) {
     selectedTab = index;

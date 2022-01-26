@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:device_information/device_information.dart';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_identifier/flutter_device_identifier.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
 import 'package:kalm/color/colors.dart';
@@ -54,11 +55,13 @@ class LoginPage extends StatelessWidget {
                   SPACE(),
                   TEXT_FIELD(_.passwodField,
                       obscureText: _.passwordObsecure,
-                      onSubmitted: (val) async => await _.onSubmittedPassword(val),
+                      onSubmitted: (val) async =>
+                          await _.onSubmittedPassword(val),
                       focusNode: _.passwordFocus,
                       onChanged: (val) => _.onChangePassword(val),
-                      prefixIcon:
-                          Icon(_.passwordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
+                      prefixIcon: Icon(_.passwordObsecure
+                          ? Icons.lock_outline
+                          : Icons.lock_open_outlined),
                       hint: "Password",
                       suffixIcon: IconButton(
                           onPressed: () => _.onChangeObsecure(),
@@ -71,7 +74,9 @@ class LoginPage extends StatelessWidget {
                   BUTTON("Masuk",
                       verticalPad: 15,
                       circularRadius: 30,
-                      onPressed: _.validationForm ? () async => await _.submit() : null),
+                      onPressed: _.validationForm
+                          ? () async => await _.submit()
+                          : null),
                   SPACE(),
                   BUTTON("Daftar",
                       verticalPad: 15,
@@ -120,14 +125,17 @@ class LoginPage extends StatelessWidget {
                               placeholder: "Email",
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(width: 0.5, color: BLUEKALM)),
+                                  border:
+                                      Border.all(width: 0.5, color: BLUEKALM)),
                               controller: _emailController,
                             ),
                           ),
-                          if (!_validateEmail && _emailController.text.length > 1)
+                          if (!_validateEmail &&
+                              _emailController.text.length > 1)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: ERROR_VALIDATION_FIELD("Email tidak valid"),
+                              child:
+                                  ERROR_VALIDATION_FIELD("Email tidak valid"),
                             )
                         ],
                       ),
@@ -154,7 +162,8 @@ class LoginPage extends StatelessWidget {
           }), barrierColor: BLUEKALM.withOpacity(0.6));
         },
         child: TEXT("Lupa Kata Sandi?",
-            style: COSTUM_TEXT_STYLE(color: ORANGEKALM, fontWeight: FontWeight.w600)));
+            style: COSTUM_TEXT_STYLE(
+                color: ORANGEKALM, fontWeight: FontWeight.w600)));
   }
 }
 
@@ -209,10 +218,38 @@ class LoginController extends GetxController {
 
   Future<int?> _deviceNum() async {
     try {
-      var _dImei = await DeviceInformation.deviceIMEINumber;
-      return double.parse(_dImei.replaceAll(RegExp(r"\D"), '').replaceAll("-", "")).floor();
-    } on FormatException catch (e) {
-      return 000000;
+      if (await FlutterDeviceIdentifier.checkPermission()) {
+        try {
+          var _serialNumber = await FlutterDeviceIdentifier.imeiCode;
+          return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), ''))
+              .floor();
+        } catch (e) {
+          var rng = Random();
+          var l = List.generate(8, (_) => rng.nextInt(100));
+          return int.parse(l.join(',').replaceAll(',', ''));
+        }
+      } else {
+        if (await FlutterDeviceIdentifier.requestPermission()) {
+          try {
+            var _serialNumber = await FlutterDeviceIdentifier.imeiCode;
+            return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), ''))
+                .floor();
+          } catch (e) {
+            var rng = Random();
+            var l = List.generate(8, (_) => rng.nextInt(100));
+            return int.parse(l.join(',').replaceAll(',', ''));
+          }
+        } else {
+          ERROR_SNACK_BAR("Perhatian", 'Izinkan aplikasi untuk melanjutkan');
+          await Future.delayed(const Duration(seconds: 2));
+          FlutterDeviceIdentifier.openSettings();
+          return null;
+        }
+      }
+    } catch (e) {
+      var rng = Random();
+      var l = List.generate(8, (_) => rng.nextInt(100));
+      return int.parse(l.join(',').replaceAll(',', ''));
     }
   }
 
@@ -220,12 +257,7 @@ class LoginController extends GetxController {
     if (Platform.localHostname == "Dayonas-MacBook-Pro.local") {
       return "test-installation";
     } else {
-      try {
-        return await WonderPush.getInstallationId();
-      } catch (e) {
-        ERROR_SNACK_BAR("Perhatian", "$e");
-        return null;
-      }
+      return await WonderPush.getInstallationId();
     }
   }
 
@@ -234,19 +266,25 @@ class LoginController extends GetxController {
       ERROR_SNACK_BAR('Perhatian',
           "Anda tidak mengizinkan fitur Notifikasi di ponsel Anda\n Silahkan restart aplikasi KALM untuk mengaktifkan notifikasi kembali");
       return;
+    } else if (await _deviceNum() == null) {
+      return;
     }
-    passwordFocus.unfocus();
+
     var _firebaseToken = await PRO.firebaseAuth.currentUser?.getIdToken();
     var _payload = LoginPayload(
         email: emailField.text,
         password: passwodField.text,
-        deviceNumber: 000000,
+        deviceNumber: await _deviceNum(),
         installationId: await _installationId(),
         deviceType: Platform.isAndroid ? 0 : 1,
         firebaseToken: _firebaseToken,
         role: "10");
     var _res = await Api().POST(AUTH, _payload.toJson());
     if (_res?.statusCode == 200) {
+      emailField.clear();
+      passwodField.clear();
+      emailFocus.unfocus();
+      passwordFocus.unfocus();
       var _user = UserModel.fromJson(_res?.data).data;
       await PRO.saveLocalUser(_user);
       if (_user?.userHasActiveCounselor != null) {
@@ -260,7 +298,8 @@ class LoginController extends GetxController {
   }
 
   Future<void> forgotPassword(String email) async {
-    var _res = await Api().POST(FORGOT_PASSWORD, {"email": email, "role": "10"});
+    var _res =
+        await Api().POST(FORGOT_PASSWORD, {"email": email, "role": "10"});
     if (_res?.statusCode == 200) {
       SUCCESS_SNACK_BAR("Perhatian", _res?.data['message']);
       return;

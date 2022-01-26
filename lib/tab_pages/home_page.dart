@@ -1,12 +1,9 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
 import 'package:kalm/controller/user_controller.dart';
-import 'package:kalm/pages/detail_article.dart';
-import 'package:kalm/test.dart';
-import 'package:kalm/widget/image_cache.dart';
-import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
+import 'package:kalm/widget/widget_carousel.dart';
+import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
@@ -30,25 +27,42 @@ class HomePage extends StatelessWidget {
             Column(
               children: [
                 SPACE(),
-                TEXT(
-                    "Selamat Datang! ${PRO.userData?.firstName} ${PRO.userData?.lastName}",
-                    style: Get.textTheme.headline1),
-                SPACE(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: IMAGE_CACHE(
-                      IMAGE_URL +
-                          INSPIRATIONAL_QUOTE +
-                          (STATE(context).quoteResModel?.data?.image ?? ""),
-                      widgetInsideImage: Positioned(
-                          top: 10,
-                          child: SizedBox(
-                              width: Get.width / 1.1,
-                              child: TEXT(STATE(context)
-                                  .quoteResModel
-                                  ?.data
-                                  ?.description)))),
+                SizedBox(
+                  width: Get.width / 1.5,
+                  child: TEXT(
+                      "Selamat Datang! ${PRO.userData?.firstName} ${PRO.userData?.lastName ?? ""}",
+                      textAlign: TextAlign.center,
+                      style: Get.textTheme.headline1),
                 ),
+                SPACE(height: 20),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Builder(builder: (context) {
+                      if (STATE(context).quoteResModel == null) {
+                        return AspectRatio(
+                            aspectRatio: 16 / 9, child: SHIMMER());
+                      } else {
+                        return BOX_BORDER(
+                            AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TEXT(STATE(context)
+                                    .quoteResModel
+                                    ?.data
+                                    ?.description),
+                              ),
+                            ),
+                            decorationImage: DecorationImage(
+                                image: NetworkImage(IMAGE_URL +
+                                    INSPIRATIONAL_QUOTE +
+                                    (STATE(context)
+                                        .quoteResModel!
+                                        .data!
+                                        .image!)),
+                                fit: BoxFit.fill));
+                      }
+                    })),
                 SPACE(),
                 InkWell(
                     onTap: () {
@@ -58,52 +72,13 @@ class HomePage extends StatelessWidget {
                 SPACE(),
                 TEXT("Newest", style: Get.textTheme.headline1),
                 SPACE(),
-                _carousel(context),
+                ARTICLE_CAROUSEL(context, STATE(context).articleHomeResModel),
               ],
             ),
           ],
         ),
       );
     });
-  }
-
-  CarouselSlider _carousel(BuildContext context) {
-    return CarouselSlider(
-        items: STATE(context).articleHomeResModel?.data?.map((e) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: IMAGE_CACHE(IMAGE_URL + ARTICLE + (e.file ?? ""),
-                    onTapImage: () => pushNewScreen(context,
-                        screen: DetailArticlePage(articleData: e)),
-                    widgetInsideImage: Positioned(
-                        bottom: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(width: 0.5)),
-                            margin: const EdgeInsets.all(0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                  width: Get.width / 1.12,
-                                  child: TEXT(e.name,
-                                      textAlign: TextAlign.center)),
-                            ),
-                          ),
-                        ))),
-              );
-            }).toList() ??
-            [],
-        options: CarouselOptions(
-          autoPlay: true,
-          autoPlayCurve: Curves.easeIn,
-          enableInfiniteScroll: false,
-          viewportFraction: 0.99,
-          enlargeCenterPage: true,
-        ));
   }
 }
 

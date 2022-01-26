@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.wonderpush:wonderpush-android-sdk-fcm:1.0.5@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6ea983a9e4a5b36af2c4202ed1a7a6b9/jetified-wonderpush-android-sdk-fcm-1.0.5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6ea983a9e4a5b36af2c4202ed1a7a6b9/jetified-wonderpush-android-sdk-fcm-1.0.5/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6ea983a9e4a5b36af2c4202ed1a7a6b9/jetified-wonderpush-android-sdk-fcm-1.0.5/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wonderpush/wonderpush-android-sdk-fcm/1.0.5/bc2206437a107a5d542f198e790e31cad7d82ce4/wonderpush-android-sdk-fcm-1.0.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.wonderpush/wonderpush-android-sdk-fcm/1.0.5/e1bbcef4bad2fa28cf60bdae5d87c8ef2233cc2b/wonderpush-android-sdk-fcm-1.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

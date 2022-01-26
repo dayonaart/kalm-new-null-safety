@@ -8,8 +8,10 @@ import 'package:kalm/model/promo_res_model/promo_res_model.dart';
 import 'package:kalm/model/subscription_list_res_model/subscription_data.dart';
 import 'package:kalm/model/subscription_payload.dart';
 import 'package:kalm/pages/billiing/payment_detail.dart';
+import 'package:kalm/pages/voucher.dart';
 import 'package:kalm/utilities/date_format.dart';
 import 'package:kalm/utilities/parse_to_currency.dart';
+import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/dialog.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
@@ -25,6 +27,7 @@ class PackagesPage extends StatelessWidget {
     return GetBuilder<PackagesController>(initState: (st) async {
       await PRO.getPendingPayment(useSnackbar: false);
     }, builder: (_) {
+      // print("total ${Get.width} : remaining ${_.containerPackageWidth(context)}");
       return SAFE_AREA(
           child: ListView(
         children: [
@@ -32,7 +35,14 @@ class PackagesPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               children: [
-                SPACE(height: 20),
+                if (_.optionIndex == 0)
+                  Column(
+                    children: [
+                      SPACE(height: 10),
+                      _voucherButton(context),
+                    ],
+                  ),
+                SPACE(height: 10),
                 TEXT('JENIS PAKET', style: COSTUM_TEXT_STYLE(fonstSize: 25)),
                 SPACE(height: 20),
                 _option(_),
@@ -72,11 +82,51 @@ class PackagesPage extends StatelessWidget {
     });
   }
 
+  InkWell _voucherButton(BuildContext context) {
+    return InkWell(
+      onTap: () async => await pushNewScreen(context, screen: VoucherPage()),
+      child: SizedBox(
+        width: Get.width / 1.5,
+        child: Stack(
+          alignment: Alignment.centerLeft,
+          children: [
+            BOX_BORDER(
+                Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: TEXT("Voucher",
+                          style: COSTUM_TEXT_STYLE(
+                              color: Colors.white, fontWeight: FontWeight.bold, fonstSize: 20)),
+                    )),
+                height: 50,
+                circularRadius: 50,
+                fillColor: const Color(0xFFE6B363)),
+            BOX_BORDER(Image.asset("assets/icon/voucher.png", scale: 4),
+                circularRadius: 50, height: 70, width: 70, fillColor: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+
   Column _content(PackagesController _) {
     return Column(
       children: [
         TEXT("Informasi Tagihan Saya", style: COSTUM_TEXT_STYLE(fonstSize: 20)),
         SPACE(),
+        Builder(builder: (context) {
+          if (_.remainingActivePackageDay(context) != null) {
+            return Column(
+              children: [
+                _remainingDays(_, context),
+                SPACE(),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        }),
         Container(
           decoration: BoxDecoration(
               border: Border.all(width: 0.5, color: BLUEKALM),
@@ -90,6 +140,7 @@ class PackagesPage extends StatelessWidget {
                     if (STATE(context).pendingPaymentResModel?.pendingData != null)
                       _pendingPackages(context, _),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SPACE(),
                         _activePackages(context, _),
@@ -103,6 +154,42 @@ class PackagesPage extends StatelessWidget {
             }),
           ),
         )
+      ],
+    );
+  }
+
+  Column _remainingDays(PackagesController _, BuildContext context) {
+    return Column(
+      children: [
+        SPACE(),
+        BOX_BORDER(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TEXT("${(_.remainingActivePackageDay(context)!.toInt())} Hari Tersisa"),
+                SPACE(),
+                BOX_BORDER(
+                    Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BOX_BORDER(Container(),
+                              width: _.remainingActivePackageDay(context),
+                              fillColor: BLUEKALM,
+                              circularRadius: 10,
+                              height: 25),
+                        ],
+                      ),
+                    ),
+                    height: 30),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -463,9 +550,37 @@ class PackagesController extends GetxController {
       List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
     return false;
   });
+
+  int? activePackageDay(BuildContext context) {
+    try {
+      DateTime _start =
+          DateTime.parse(STATE(context).userData!.userSubscriptionList!.first!.startAt!);
+      DateTime _end = DateTime.parse(STATE(context).userData!.userSubscriptionList!.last!.endAt!);
+      return _end.difference(_start).inDays;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  double? remainingActivePackageDay(BuildContext context) {
+    try {
+      DateTime _end = DateTime.parse(STATE(context).userData!.userSubscriptionList!.last!.endAt!);
+      return _end.difference(DateTime.now()).inDays.toDouble();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  double? containerPackageWidth(BuildContext context) {
+    return activePackageDay(context)!.toDouble() / Get.width * Get.width;
+  }
+
   Future<void> onChangeOption(int i) async {
     optionIndex = i;
     update();
+    if (i == 1) {
+      await PRO.getSubSubcriptionList(useLoading: false);
+    }
   }
 
   void onChangeCheckBox(int i, SubscriptionData sub) {

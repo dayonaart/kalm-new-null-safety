@@ -98,31 +98,35 @@ class ClientDetailPage extends StatelessWidget {
       case 0:
         try {
           return TEXT(
-              "${VALIDATE_DOB_MATURE(PRO.counselorData!.counselor!.dob!)!.toStringAsFixed(0)} Tahun");
+              "${VALIDATE_DOB_MATURE(PRO.counselorData?.counselor?.dob)!.toStringAsFixed(0)} Tahun");
         } catch (e) {
           return TEXT("Not found");
         }
       case 1:
-        return TEXT(PRO.counselorData!.counselor!.gender == 1
+        return TEXT(PRO.counselorData?.counselor?.gender == 1
             ? "Laki-Laki"
             : "Perempuan");
       case 2:
-        return TEXT(_country(i));
+        return TEXT(_country(PRO.counselorData?.counselor?.countryId));
       default:
         return TEXT("Unknow");
     }
   }
 
-  String _country(int i) {
-    switch (i) {
-      case 1:
-        return "Indonesia";
-      case 2:
-        return "Singapore";
-      case 3:
-        return "Lainnya";
-      default:
-        return "Unknow";
+  String _country(int? i) {
+    try {
+      switch (i) {
+        case 1:
+          return "Indonesia";
+        case 2:
+          return "Singapore";
+        case 3:
+          return "Lainnya";
+        default:
+          return "Unknow";
+      }
+    } catch (e) {
+      return "Unknow";
     }
   }
 

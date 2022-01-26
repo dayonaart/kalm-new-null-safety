@@ -94,10 +94,13 @@ class CostumExpansionTile extends StatefulWidget {
   ///  [animatedWidgetFollowingHeader] and [animatedWidgetPrecedingHeader] transition tween
   final Animatable<double>? animatedWidgetTween;
 
-  static final Animatable<double> _easeInTween = CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween = Tween<double>(begin: 0.0, end: 0.5);
+  static final Animatable<double> _easeInTween =
+      CurveTween(curve: Curves.easeIn);
+  static final Animatable<double> _halfTween =
+      Tween<double>(begin: 0.0, end: 0.5);
 
-  static final Animatable<double> _easeOutTween = CurveTween(curve: Curves.easeOut);
+  static final Animatable<double> _easeOutTween =
+      CurveTween(curve: Curves.easeOut);
   @override
   _CostumExpansionTileState createState() => _CostumExpansionTileState();
 }
@@ -121,18 +124,20 @@ class _CostumExpansionTileState extends State<CostumExpansionTile>
     super.initState();
     _controller = AnimationController(duration: widget.kExpand, vsync: this);
     _heightFactor = _controller.drive(CostumExpansionTile._easeInTween);
-    _iconTurns = _controller.drive(
-        (widget.animatedWidgetTurnTween ?? CostumExpansionTile._halfTween)
-            .chain(widget.animatedWidgetTween ?? CostumExpansionTile._easeInTween));
+    _iconTurns = _controller.drive((widget.animatedWidgetTurnTween ??
+            CostumExpansionTile._halfTween)
+        .chain(widget.animatedWidgetTween ?? CostumExpansionTile._easeInTween));
 
-    _borderColor = _controller.drive(
-        _borderColorTween.chain(widget.borderAnimationTween ?? CostumExpansionTile._easeOutTween));
+    _borderColor = _controller.drive(_borderColorTween.chain(
+        widget.borderAnimationTween ?? CostumExpansionTile._easeOutTween));
     _borderColorTween.end = widget.borderColorEnd;
 
-    _headerColor = _controller.drive(
-        _headerColorTween.chain(widget.headerAnimationTween ?? CostumExpansionTile._easeInTween));
-    _headerColorTween.end = widget.headerBackgroundColorEnd ?? widget.headerBackgroundColorStart;
-    _isExpanded = PageStorage.of(context)?.readState(context) ?? widget.initiallyExpanded;
+    _headerColor = _controller.drive(_headerColorTween.chain(
+        widget.headerAnimationTween ?? CostumExpansionTile._easeInTween));
+    _headerColorTween.end =
+        widget.headerBackgroundColorEnd ?? widget.headerBackgroundColorStart;
+    _isExpanded =
+        PageStorage.of(context)?.readState(context) ?? widget.initiallyExpanded;
     if (_isExpanded) _controller.value = 1.0;
   }
 
@@ -157,17 +162,22 @@ class _CostumExpansionTileState extends State<CostumExpansionTile>
       }
       PageStorage.of(context)?.writeState(context, _isExpanded);
     });
-    if (widget.onExpansionChanged != null) widget.onExpansionChanged!(_isExpanded);
+    if (widget.onExpansionChanged != null)
+      widget.onExpansionChanged!(_isExpanded);
   }
 
   Widget _buildChildren(BuildContext context, Widget? child) {
     final Color borderSideColor = _borderColor.value ?? widget.borderColorStart;
-    final Color headerColor = _headerColor?.value ?? widget.headerBackgroundColorStart;
+    final Color headerColor =
+        _headerColor?.value ?? widget.headerBackgroundColorStart;
     return Container(
       decoration: BoxDecoration(
           border: Border(
-        top: BorderSide(color: widget.topBorderOn ? borderSideColor : Colors.transparent),
-        bottom: BorderSide(color: widget.bottomBorderOn ? borderSideColor : Colors.transparent),
+        top: BorderSide(
+            color: widget.topBorderOn ? borderSideColor : Colors.transparent),
+        bottom: BorderSide(
+            color:
+                widget.bottomBorderOn ? borderSideColor : Colors.transparent),
       )),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -182,12 +192,14 @@ class _CostumExpansionTileState extends State<CostumExpansionTile>
                     children: <Widget>[
                       RotationTransition(
                         turns: _iconTurns,
-                        child: widget.animatedWidgetPrecedingHeader ?? Container(),
+                        child:
+                            widget.animatedWidgetPrecedingHeader ?? Container(),
                       ),
                       _getHeader(),
                       RotationTransition(
                         turns: _iconTurns,
-                        child: widget.animatedWidgetFollowingHeader ?? Container(),
+                        child:
+                            widget.animatedWidgetFollowingHeader ?? Container(),
                       )
                     ],
                   ))),

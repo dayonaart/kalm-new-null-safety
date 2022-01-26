@@ -108,7 +108,9 @@ class UserData {
       lastName = json['last_name'] as String?;
       email = json['email'] as String?;
       dob = json['dob'] == null ? null : DateTime.parse(json['dob']);
-      gender = json['gender'].runtimeType == int ? json['gender'] : int.parse(json['gender']);
+      gender = json['gender'].runtimeType == int
+          ? json['gender']
+          : int.parse(json['gender']);
       address = json['address'] as String?;
       cityId = json['city_id'] as int?;
       stateId = json['state_id'] as int?;
@@ -160,7 +162,8 @@ class UserData {
       userSubscriptionList = json['user_subscription_list'] == null
           ? null
           : List.generate(json['user_subscription_list'].length, (i) {
-              return UserSubscriptionList.fromJson(json['user_subscription_list'][i]);
+              return UserSubscriptionList.fromJson(
+                  json['user_subscription_list'][i]);
             });
       userHasActiveCounselor = json['user_has_active_counselor'] != null
           ? UserHasActiveCounselor.fromJson(json['user_has_active_counselor'])
@@ -215,7 +218,8 @@ class UserData {
         'activation_code': activationCode,
         'matchup_json': matchupJson?.map((e) => e?.toJson()).toList(),
         'user_subscription': userSubcription?.toJson(),
-        'user_subscription_list': userSubscriptionList?.map((e) => e?.toJson()).toList(),
+        'user_subscription_list':
+            userSubscriptionList?.map((e) => e?.toJson()).toList(),
         'user_has_active_counselor': userHasActiveCounselor?.toJson(),
         'user_counselor_optional_files': userCounselorFile?.toJson()
       };

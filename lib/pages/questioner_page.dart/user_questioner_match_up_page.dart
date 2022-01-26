@@ -114,7 +114,7 @@ class UserQustionerMatchupPage extends StatelessWidget {
                         if (isEdit!)
                           Column(
                             children: [
-                              _kalmselorCode(_),
+                              if (PRO.userData?.status == 1) _kalmselorCode(_),
                               SPACE(height: 20),
                               BUTTON("Selanjutnya",
                                   onPressed: _.userMatchupPayload().contains(null)
@@ -381,15 +381,15 @@ class UserQustionerMatchupController extends GetxController {
     }
   }
 
-  Future<void> _assignKalmselorCode() async {
+  Future<bool> _assignKalmselorCode() async {
     var _assignCode = await Api()
         .POST(ASSIGN_UNIQCODE, {"unique_code": kalmselorCodeController.text}, useToken: true);
-    print(_assignCode?.toJson());
-    // if (_checkCode?.statusCode == 200) {
-    //   return;
-    // } else {
-    //   return;
-    // }
+    // print(_assignCode?.toJson());
+    if (_assignCode?.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<void> submit(BuildContext context) async {
@@ -401,8 +401,11 @@ class UserQustionerMatchupController extends GetxController {
         await SHOW_DIALOG("${_res.message}\n${_res.data?.firstName} ${_res.data?.lastName ?? ""}",
             customButton: BUTTON("Selanjutnya", onPressed: () async {
               Get.back();
-              await _assignKalmselorCode();
-              await _finalSubmit(context);
+              if (await _assignKalmselorCode()) {
+                await _finalSubmit(context);
+              } else {
+                return;
+              }
             }));
       }
       return;
@@ -427,12 +430,8 @@ class UserQustionerMatchupController extends GetxController {
         .POST(MATCHUP, {"user_code": PRO.userData?.code, "data": _payload}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
-      if (PRO.userData?.status == 1) {
-        Navigator.pop(context);
-      } else {
-        pushRemoveUntilScreen(context,
-            screen: NON_MAIN_SAFE_AREA(child: ChatPage()), withNavBar: true);
-      }
+      await pushRemoveUntilScreen(context,
+          screen: NON_MAIN_SAFE_AREA(child: ChatPage()), withNavBar: true);
     } else {
       return;
     }

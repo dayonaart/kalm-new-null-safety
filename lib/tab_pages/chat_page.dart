@@ -6,6 +6,7 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/pages/questioner_page.dart/user_questioner_match_up_page.dart';
 import 'package:kalm/pages/setting_page/contact_us.dart';
+import 'package:kalm/pages/setting_page/packages.dart';
 import 'package:kalm/tab_pages/chat_room.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
@@ -22,20 +23,22 @@ class ChatPage extends StatelessWidget {
     return GetBuilder<ChatController>(builder: (_) {
       return NON_MAIN_SAFE_AREA(
           top: true,
-          minimumInset: 20,
           child: Builder(builder: (context) {
             return Builder(builder: (context) {
-              if (STATE(context).isChatting) {
-                return ChatRoomPage();
-              } else if (STATE(context).isPendingKalmselorCode) {
-                return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
-                    child: _pendingKalmselorCode(context));
-              } else if (STATE(context).isShowTnc) {
-                return _showTnc(context, _);
+              if (STATE(context).isHavePackages) {
+                if (STATE(context).isChatting) {
+                  return ChatRoomPage();
+                } else if (STATE(context).isPendingKalmselorCode) {
+                  return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: _pendingKalmselorCode(context));
+                } else if (STATE(context).isShowTnc) {
+                  return _showTnc(context, _);
+                } else {
+                  return _matchingSystem(context);
+                }
               } else {
-                return _matchingSystem(context);
+                return _buyPackages(context);
               }
             });
           }));
@@ -53,8 +56,7 @@ class ChatPage extends StatelessWidget {
                   backgroundColor: BLUEKALM,
                   radius: 70,
                   child: IMAGE_CACHE(
-                      IMAGE_URL +
-                          "users/${STATE(context).counselorData?.counselor?.photo}",
+                      IMAGE_URL + "users/${STATE(context).counselorData?.counselor?.photo}",
                       width: 130,
                       height: 130,
                       circularRadius: 70)),
@@ -72,8 +74,8 @@ class ChatPage extends StatelessWidget {
                         onPressed: STATE(context).tncResModel == null
                             ? null
                             : () async => await _.accTnc(),
-                        suffixIcon: Image.asset('assets/icon/accept.png',
-                            scale: 5, color: Colors.white)),
+                        suffixIcon:
+                            Image.asset('assets/icon/accept.png', scale: 5, color: Colors.white)),
                     SPACE(),
                     BUTTON("Tolak",
                         backgroundColor: BLUEKALM,
@@ -82,8 +84,8 @@ class ChatPage extends StatelessWidget {
                         onPressed: STATE(context).tncResModel == null
                             ? null
                             : () async => await _.rejectTnc(),
-                        suffixIcon: Image.asset('assets/icon/decline.png',
-                            scale: 5, color: Colors.white)),
+                        suffixIcon:
+                            Image.asset('assets/icon/decline.png', scale: 5, color: Colors.white)),
                   ],
                 ),
               ),
@@ -96,9 +98,8 @@ class ChatPage extends StatelessWidget {
 
   Container _tncDesc(ChatController _, BuildContext context) {
     return Container(
-        decoration: BoxDecoration(
-            border: Border.all(width: 0.5),
-            borderRadius: BorderRadius.circular(10)),
+        decoration:
+            BoxDecoration(border: Border.all(width: 0.5), borderRadius: BorderRadius.circular(10)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -108,8 +109,7 @@ class ChatPage extends StatelessWidget {
                   children: [
                     TEXT(
                         "${STATE(context).counselorData?.counselor?.firstName} ${STATE(context).counselorData?.counselor?.lastName}",
-                        style: COSTUM_TEXT_STYLE(
-                            fonstSize: 20, fontWeight: FontWeight.bold)),
+                        style: COSTUM_TEXT_STYLE(fonstSize: 20, fontWeight: FontWeight.bold)),
                     SPACE(),
                     TEXT(STATE(context)
                         .tncResModel
@@ -131,16 +131,93 @@ class ChatPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CupertinoActivityIndicator(radius: 40, animating: false),
+          const CupertinoActivityIndicator(radius: 40),
           SPACE(),
           TEXT('Mohon Menunggu'),
           SPACE(),
           TEXT("Anda akan dihubungkan dengan Kalmselor"),
-          TEXT(
-              " ${STATE(context).pendingKalmselorCodeModel?.data?.counselorFullname}",
-              style: COSTUM_TEXT_STYLE(
-                  fonstSize: 18, fontWeight: FontWeight.w500)),
+          TEXT(" ${STATE(context).pendingKalmselorCodeModel?.data?.counselorFullname}",
+              style: COSTUM_TEXT_STYLE(fonstSize: 18, fontWeight: FontWeight.w500)),
           SPACE(height: 20),
+          SizedBox(
+              width: Get.width / 1.5,
+              child: BUTTON("Hubungi Admin", onPressed: () async {
+                if (PRO.contactUsResModel == null) {
+                  await PRO.getContactUs();
+                }
+                pushNewScreen(context, screen: ContactUsPage());
+              }, circularRadius: 30, verticalPad: 15)),
+        ],
+      ),
+    );
+  }
+
+  SizedBox _matchingSystem(BuildContext context) {
+    return SizedBox(
+      width: Get.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CupertinoActivityIndicator(radius: 40),
+          SPACE(),
+          TEXT('Mohon Menunggu'),
+          SPACE(),
+          TEXT("Kalmselor yang cocok akan segera melayani\nAnda selambat-lambatnya dalam 1x24 jam"),
+          SPACE(height: 20),
+          SizedBox(
+              width: Get.width / 1.5,
+              child: BUTTON("Ubah Preferensi", onPressed: () async {
+                var _gridAnswer = PRO.userData?.matchupJson?.map((e) {
+                  return e?.answer?.map((f) {
+                    if (f.runtimeType == int) {
+                      return f as int;
+                    } else {
+                      return int.parse(f);
+                    }
+                  }).toList();
+                }).toList();
+                await pushNewScreen(context,
+                    screen: UserQustionerMatchupPage(
+                      gridAnswer: _gridAnswer![1]!,
+                      languageAnswer: _gridAnswer[0]!,
+                    ));
+              }, circularRadius: 30, verticalPad: 15)),
+          SPACE(),
+          SizedBox(
+              width: Get.width / 1.5,
+              child: BUTTON("Hubungi Admin", onPressed: () async {
+                if (PRO.contactUsResModel == null) {
+                  await PRO.getContactUs();
+                }
+                pushNewScreen(context, screen: ContactUsPage());
+              }, circularRadius: 30, verticalPad: 15)),
+        ],
+      ),
+    );
+  }
+
+  SizedBox _buyPackages(BuildContext context) {
+    return SizedBox(
+      width: Get.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TEXT(
+              'Maaf paket berlangganan sudah habis.\nSilahkan membeli paket berlangganan\nuntuk menggunakan fitur chat',
+              textAlign: TextAlign.center,
+              style: COSTUM_TEXT_STYLE(fonstSize: 18)),
+          SPACE(height: 30),
+          SizedBox(
+              width: Get.width / 1.5,
+              child: BUTTON("Beli Paket", onPressed: () async {
+                if (PRO.subscriptionListResModel != null) {
+                  await pushNewScreen(context, screen: PackagesPage());
+                } else {
+                  await PRO.getSubSubcriptionList();
+                  await pushNewScreen(context, screen: PackagesPage());
+                }
+              }, circularRadius: 30, verticalPad: 15)),
+          SPACE(),
           SizedBox(
               width: Get.width / 1.5,
               child: BUTTON("Hubungi Admin", onPressed: () async {
@@ -155,56 +232,9 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-SizedBox _matchingSystem(BuildContext context) {
-  return SizedBox(
-    width: Get.width,
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const CupertinoActivityIndicator(radius: 40),
-        SPACE(),
-        TEXT('Mohon Menunggu'),
-        SPACE(),
-        TEXT(
-            "Kalmselor yang cocok akan segera melayani\nAnda selambat-lambatnya dalam 1x24 jam"),
-        SPACE(height: 20),
-        SizedBox(
-            width: Get.width / 1.5,
-            child: BUTTON("Ubah Preferensi", onPressed: () async {
-              var _gridAnswer = PRO.userData?.matchupJson?.map((e) {
-                return e?.answer?.map((f) {
-                  if (f.runtimeType == int) {
-                    return f as int;
-                  } else {
-                    return int.parse(f);
-                  }
-                }).toList();
-              }).toList();
-              await pushNewScreen(context,
-                  screen: UserQustionerMatchupPage(
-                    gridAnswer: _gridAnswer![1]!,
-                    languageAnswer: _gridAnswer[0]!,
-                  ));
-            }, circularRadius: 30, verticalPad: 15)),
-        SPACE(),
-        SizedBox(
-            width: Get.width / 1.5,
-            child: BUTTON("Hubungi Admin", onPressed: () async {
-              if (PRO.contactUsResModel == null) {
-                await PRO.getContactUs();
-              }
-              pushNewScreen(context, screen: ContactUsPage());
-            }, circularRadius: 30, verticalPad: 15)),
-      ],
-    ),
-  );
-}
-
-class ChatController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+class ChatController extends GetxController with GetSingleTickerProviderStateMixin {
   Future<void> accTnc() async {
-    var _res = await Api()
-        .POST(ACC_TNC(PRO.counselorData!.counselor!.code!), {}, useToken: true);
+    var _res = await Api().POST(ACC_TNC(PRO.counselorData!.counselor!.code!), {}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.updateSession(useLoading: true);
     } else {
@@ -213,8 +243,7 @@ class ChatController extends GetxController
   }
 
   Future<void> rejectTnc() async {
-    var _res = await Api()
-        .POST(REJECT_TNC, {"reason": "Reject TNC by User"}, useToken: true);
+    var _res = await Api().POST(REJECT_TNC, {"reason": "Reject TNC by User"}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.updateSession(useLoading: true);
     } else {

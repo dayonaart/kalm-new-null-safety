@@ -25,12 +25,17 @@ TextStyle URL_STYLE() {
   );
 }
 
-TextStyle COSTUM_TEXT_STYLE(
-    {Color? color,
-    FontWeight? fontWeight,
-    double? fonstSize,
-    FontStyle? fontStyle}) {
+TextStyle COSTUM_TEXT_STYLE({
+  Color? color,
+  FontWeight? fontWeight,
+  double? fonstSize,
+  FontStyle? fontStyle,
+  Color? backColor,
+  TextDecoration? decoration,
+}) {
   return TextStyle(
+    decoration: decoration,
+    backgroundColor: backColor,
     fontSize: fonstSize ?? 16,
     fontStyle: fontStyle,
     fontWeight: fontWeight ?? FontWeight.normal,

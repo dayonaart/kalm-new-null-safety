@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kalm/api/api.dart';
 import 'package:kalm/controller/user_controller.dart';
-import 'package:kalm/pages/auth/login.dart';
 import 'package:kalm/pages/gratitude_journal_history.dart';
 import 'package:kalm/pages/setting_page/about_us.dart';
 import 'package:kalm/pages/setting_page/account.dart';
@@ -10,11 +10,13 @@ import 'package:kalm/pages/setting_page/contact_us.dart';
 import 'package:kalm/pages/setting_page/faq.dart';
 import 'package:kalm/pages/setting_page/how_to_use.dart';
 import 'package:kalm/pages/setting_page/packages.dart';
+import 'package:kalm/pages/setting_page/pin_code.dart';
 import 'package:kalm/pages/setting_page/privacy_policy.dart';
 import 'package:kalm/pages/setting_page/profile.dart';
 import 'package:kalm/pages/setting_page/term_and_condition.dart';
 import 'package:kalm/utilities/deep_link_redirect.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/dialog.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
@@ -67,6 +69,7 @@ class SettingPage extends StatelessWidget {
                       width: Get.width / 1.3,
                       child: BUTTON("Keluar", circularRadius: 30, verticalPad: 15,
                           onPressed: () async {
+                        var _res = await Api().POST(LOGOUT, {}, useToken: true);
                         PRO.updateInitialIndexTab(0);
                         await PRO.clearAllData();
                       }),
@@ -116,6 +119,14 @@ class SettingController extends GetxController {
         await pushNewScreen(context, screen: AccountPage());
         break;
       case "Profil":
+        if (PRO.userData?.status != 1) {
+          await SHOW_DIALOG("Pastikan Anda telah melengkapi data Kuisioner di menu chat",
+              onAcc: () {
+            Get.back();
+            PRO.updateInitialIndexTab(2);
+          });
+          return;
+        }
         await pushNewScreen(context, screen: ProfilePage());
         break;
       case "Informasi Pembayaran":
@@ -149,6 +160,9 @@ class SettingController extends GetxController {
         } else {
           await pushNewScreen(context, screen: GratitudeJournalHistoryPage());
         }
+        break;
+      case "Pin Code":
+        await pushNewScreen(context, screen: PincodePage());
         break;
       case "Kebijakan Privasi":
         if (PRO.privacyPolicyResModel == null) {

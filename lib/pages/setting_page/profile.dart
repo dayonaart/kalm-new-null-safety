@@ -37,7 +37,7 @@ class ProfilePage extends StatelessWidget {
                     )),
                 SPACE(),
                 TEXT(
-                    "${_.user(context)?.firstName} ${_.user(context)?.lastName}",
+                    "${_.user(context)?.firstName} ${_.user(context)?.lastName ?? ""}",
                     style: Get.textTheme.headline2),
                 SPACE(height: 20),
                 Row(
@@ -88,22 +88,26 @@ class ProfilePage extends StatelessWidget {
       case 1:
         return TEXT(PRO.userData?.gender == 1 ? "Laki-Laki" : "Perempuan");
       case 2:
-        return TEXT(_country(i));
+        return TEXT(_country(PRO.userData!.countryId));
       default:
         return TEXT("Unknow");
     }
   }
 
-  String _country(int i) {
-    switch (i) {
-      case 1:
-        return "Indonesia";
-      case 2:
-        return "Singapore";
-      case 3:
-        return "Lainnya";
-      default:
-        return "Unknow";
+  String _country(int? i) {
+    try {
+      switch (i) {
+        case 1:
+          return "Indonesia";
+        case 2:
+          return "Singapore";
+        case 3:
+          return "Lainnya";
+        default:
+          return "Unknow";
+      }
+    } catch (e) {
+      return "Unknow";
     }
   }
 

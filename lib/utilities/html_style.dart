@@ -3,7 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:kalm/widget/snack_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-HTML_VIEW(
+Html HTML_VIEW(
   String? data, {
   double? fontSize,
   double? wordSpace,
@@ -21,7 +21,10 @@ HTML_VIEW(
     },
     data: data,
     style: HTML_STYLE(
-        fontSize: fontSize, wordSpace: wordSpace, fontWeight: fontWeight, textColor: textColor),
+        fontSize: fontSize,
+        wordSpace: wordSpace,
+        fontWeight: fontWeight,
+        textColor: textColor),
   );
 }
 

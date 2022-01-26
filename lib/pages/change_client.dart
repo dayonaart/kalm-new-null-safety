@@ -5,7 +5,9 @@ import 'package:kalm/api/api.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/user_model/user_model.dart';
+import 'package:kalm/tab_pages/chat_page.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
@@ -154,8 +156,8 @@ class ChangeClientController extends GetxController {
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data,
           awaitingSecond: 2);
-      Navigator.pop(context);
-      Navigator.pop(context);
+      await pushRemoveUntilScreen(context,
+          screen: NON_MAIN_SAFE_AREA(child: ChatPage()), withNavBar: true);
     } else {
       return;
     }

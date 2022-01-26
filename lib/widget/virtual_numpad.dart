@@ -44,8 +44,8 @@ class VirtualNumpadScreen extends State<VirtualNumpad> {
     return Container(
         decoration: BoxDecoration(
             color: widget.bgColor,
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(0), topRight: Radius.circular(0))),
+            borderRadius:
+                const BorderRadius.only(topLeft: Radius.circular(0), topRight: Radius.circular(0))),
         child: GridView(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -84,7 +84,9 @@ class VirtualNumpadScreen extends State<VirtualNumpad> {
         },
         child: Container(
           alignment: Alignment.center,
-          child: TEXT(text, style: Get.textTheme.headline2),
+          child: TEXT(text,
+              style: COSTUM_TEXT_STYLE(
+                  color: widget.textColor, fonstSize: 35, fontWeight: FontWeight.w700)),
         ),
       ),
     );
@@ -110,8 +112,7 @@ class VirtualNumpadScreen extends State<VirtualNumpad> {
           if (isBackSpace) {
             // BackSpace
             if (previousText.isNotEmpty) {
-              var removedText =
-                  previousText.substring(0, previousText.length - 1);
+              var removedText = previousText.substring(0, previousText.length - 1);
               previousText = removedText;
               widget.seletedNum!(removedText);
             } else {
