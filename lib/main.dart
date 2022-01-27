@@ -113,8 +113,8 @@ class KalmApp extends StatelessWidget {
     return GetMaterialApp(
       onReady: () async {
         await PRO.updateWording();
-        PRO.getOrs();
         PRO.readLocalUser();
+        await PRO.getOrs();
         await PRO.updateSession(useLoading: false);
         await Future.microtask(() async {
           await STARTING();
@@ -176,7 +176,7 @@ Future<void> STARTING({bool isLock = true}) async {
     return;
   } else {
     if (PRO.localOrs == null) {
-      await Get.offAll(SAFE_AREA(canBack: false, child: OrsPage()));
+      await Get.offAll(SAFE_AREA(canBack: false, child: OrsPage(), bottomPadding: 0));
     } else {
       if (PRO.userData != null) {
         if (PRO.userData?.status == 1 || PRO.userData?.status == 2 || PRO.userData?.status == 3) {

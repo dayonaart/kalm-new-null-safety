@@ -7,6 +7,7 @@ SafeArea SAFE_AREA({
   Widget? child,
   bool canBack = true,
   bool useAppBar = true,
+  double? bottomPadding,
 }) {
   return SafeArea(
     top: false,
@@ -33,7 +34,8 @@ SafeArea SAFE_AREA({
               ),
         body: Builder(builder: (context) {
           return Padding(
-            padding: EdgeInsets.only(bottom: STATE(context).keyboardVisibility ? 0 : 75),
+            padding: EdgeInsets.only(
+                bottom: STATE(context).keyboardVisibility ? 0 : bottomPadding ?? 75),
             child: child,
           );
         })),

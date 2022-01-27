@@ -125,14 +125,13 @@ class UserController extends ChangeNotifier {
   late DatabaseReference orsRef;
 
   List<OrsResModel>? orsResModel;
-  void getOrs() {
+  Future<void> getOrs() async {
     orsRef = database.ref("ors_main/");
-    orsRef.onValue.listen((e) {
-      var _model = List<dynamic>.from(e.snapshot.value as dynamic);
-      orsResModel = List.generate(
-          _model.length, (i) => OrsResModel.fromJson(_model[i] as Map<Object?, Object?>));
-      notifyListeners();
-    });
+    var _snap = await orsRef.once();
+    var _model = List<dynamic>.from(_snap.snapshot.value as dynamic);
+    orsResModel = List.generate(
+        _model.length, (i) => OrsResModel.fromJson(_model[i] as Map<Object?, Object?>));
+    notifyListeners();
   }
 
   List<dynamic>? get localOrs => _box.read(USER_ORS);

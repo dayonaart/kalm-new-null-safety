@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_identifier/flutter_device_identifier.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
 import 'package:kalm/color/colors.dart';
@@ -11,9 +13,11 @@ import 'package:kalm/pages/auth/register_tnc.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
+import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
 import 'package:kalm/widget/textfield.dart';
+import 'package:wonderpush_flutter/wonderpush_flutter.dart';
 
 class RegisterPage extends StatelessWidget {
   final _controller = Get.put(RegisterController());
@@ -31,13 +35,11 @@ class RegisterPage extends StatelessWidget {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     children: [
                       if (MediaQuery.of(context).viewInsets.bottom == 0.0)
-                        Image.asset('assets/icon/register_icon.png',
-                            scale: 2.5),
+                        Image.asset('assets/icon/register_icon.png', scale: 2.5),
                       SPACE(height: 20),
                       TEXT_FIELD(_.firstNameField,
                           focusNode: _.firstNameFocus,
@@ -71,9 +73,8 @@ class RegisterPage extends StatelessWidget {
                           onSubmitted: (val) => _.onSubmittedPassword(val),
                           focusNode: _.passwordFocus,
                           onChanged: (val) => _.onChangePassword(val),
-                          prefixIcon: Icon(_.passwordObsecure
-                              ? Icons.lock_outline
-                              : Icons.lock_open_outlined),
+                          prefixIcon: Icon(
+                              _.passwordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
                           hint: "Password",
                           suffixIcon: IconButton(
                               onPressed: () => _.onChangePasswordObsecure(),
@@ -88,9 +89,8 @@ class RegisterPage extends StatelessWidget {
                           onSubmitted: (val) => _.onSubmittedRePassword(val),
                           focusNode: _.rePasswordFocus,
                           onChanged: (val) => _.onChangeRePassword(val),
-                          prefixIcon: Icon(_.rePasswordObsecure
-                              ? Icons.lock_outline
-                              : Icons.lock_open_outlined),
+                          prefixIcon: Icon(
+                              _.rePasswordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
                           hint: "Konfirmasi Password",
                           suffixIcon: IconButton(
                               onPressed: () => _.onChangeRePasswordObsecure(),
@@ -103,9 +103,7 @@ class RegisterPage extends StatelessWidget {
                       BUTTON("Daftar",
                           verticalPad: 15,
                           circularRadius: 30,
-                          onPressed: _.validationForm
-                              ? () async => await _.submit()
-                              : null),
+                          onPressed: _.validationForm ? () async => await _.submit() : null),
                       SPACE(height: 20),
                       SizedBox(
                         width: Get.width,
@@ -117,8 +115,7 @@ class RegisterPage extends StatelessWidget {
                                 onTap: () => Get.offAll(LoginPage()),
                                 child: TEXT("Login",
                                     style: COSTUM_TEXT_STYLE(
-                                        color: ORANGEKALM,
-                                        fontWeight: FontWeight.w600))),
+                                        color: ORANGEKALM, fontWeight: FontWeight.w600))),
                           ],
                         ),
                       )
@@ -133,11 +130,7 @@ class RegisterPage extends StatelessWidget {
 }
 
 class RegisterController extends GetxController {
-  Widget? validateFirstName,
-      validateLastName,
-      validateEmail,
-      validatePassword,
-      validateRePassword;
+  Widget? validateFirstName, validateLastName, validateEmail, validatePassword, validateRePassword;
   FocusNode firstNameFocus = FocusNode();
   FocusNode lastNameFocus = FocusNode();
   FocusNode emailFocus = FocusNode();
@@ -260,7 +253,57 @@ class RegisterController extends GetxController {
     // FocusScope.of(Get.context!).requestFocus(rePasswordFocus);
   }
 
+  Future<String?> _installationId() async {
+    if (Platform.localHostname == "Dayonas-MacBook-Pro.local") {
+      return "test-installation";
+    } else {
+      return await WonderPush.getInstallationId();
+    }
+  }
+
+  Future<int?> _deviceNum() async {
+    try {
+      if (await FlutterDeviceIdentifier.checkPermission()) {
+        try {
+          var _serialNumber = await FlutterDeviceIdentifier.imeiCode;
+          return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), '')).floor();
+        } catch (e) {
+          var rng = Random();
+          var l = List.generate(8, (_) => rng.nextInt(100));
+          return int.parse(l.join(',').replaceAll(',', ''));
+        }
+      } else {
+        if (await FlutterDeviceIdentifier.requestPermission()) {
+          try {
+            var _serialNumber = await FlutterDeviceIdentifier.imeiCode;
+            return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), '')).floor();
+          } catch (e) {
+            var rng = Random();
+            var l = List.generate(8, (_) => rng.nextInt(100));
+            return int.parse(l.join(',').replaceAll(',', ''));
+          }
+        } else {
+          ERROR_SNACK_BAR("Perhatian", 'Izinkan aplikasi untuk melanjutkan');
+          await Future.delayed(const Duration(seconds: 2));
+          FlutterDeviceIdentifier.openSettings();
+          return null;
+        }
+      }
+    } catch (e) {
+      var rng = Random();
+      var l = List.generate(8, (_) => rng.nextInt(100));
+      return int.parse(l.join(',').replaceAll(',', ''));
+    }
+  }
+
   Future<void> submit() async {
+    if (await _installationId() == null) {
+      ERROR_SNACK_BAR('Perhatian',
+          "Anda tidak mengizinkan fitur Notifikasi di ponsel Anda\n Silahkan restart aplikasi KALM untuk mengaktifkan notifikasi kembali");
+      return;
+    } else if (await _deviceNum() == null) {
+      return;
+    }
     var _res = await Api().GET(TERM_AND_CONDITION_CATEGORY);
     if (_res?.statusCode == 200) {
       var _payload = RegisterPayload(
@@ -269,18 +312,17 @@ class RegisterController extends GetxController {
           email: emailField.text,
           password: passwodField.text,
           confirmPassword: rePasswordField.text,
-          deviceType: Platform.isAndroid ? 1 : 0,
-          installationId: "",
+          deviceType: Platform.isAndroid ? 0 : 1,
+          deviceNumber: await _deviceNum(),
+          installationId: await _installationId(),
           tempUserCode: "",
           gender: 1,
-          deviceNumber: 112,
           language: "id",
           uniqueCodeRequest: "",
           role: "10");
       PRO.updateRegisterPayload(_payload);
       Loading.hide();
-      Get.to(RegisterTncPage(
-          registerTncResModel: RegisterTncResModel.fromJson(_res?.data)));
+      Get.to(RegisterTncPage(registerTncResModel: RegisterTncResModel.fromJson(_res?.data)));
     } else {
       Loading.hide();
       return;
