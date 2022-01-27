@@ -6,7 +6,8 @@ class AssignVoucherData {
 
   AssignVoucherData({this.original, this.exception});
 
-  factory AssignVoucherData.fromJson(Map<String, dynamic> json) => AssignVoucherData(
+  factory AssignVoucherData.fromJson(Map<String, dynamic> json) =>
+      AssignVoucherData(
         original: json['original'] == null
             ? null
             : Original.fromJson(json['original'] as Map<String, dynamic>),

@@ -6,6 +6,7 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/directory_res_model/item.dart';
 import 'package:kalm/pages/detail_article.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/widget_carousel.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
@@ -24,6 +25,7 @@ class DiscoveryPage extends StatelessWidget {
       await PRO.getVideos();
       await PRO.getDirectoryArticles();
       await PRO.getDirectoryPlace();
+      Loading.hide();
     }, builder: (_) {
       return SAFE_AREA(
           canBack: false,

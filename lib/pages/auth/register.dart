@@ -9,6 +9,7 @@ import 'package:kalm/model/register_tnc_res_model/register_tnc_res_model.dart';
 import 'package:kalm/pages/auth/login.dart';
 import 'package:kalm/pages/auth/register_tnc.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
@@ -20,120 +21,112 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<RegisterController>(builder: (_) {
       return NON_MAIN_SAFE_AREA(
+          bottomPadding: 0,
           child: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/wave/login_wave.png'),
-                alignment: Alignment.bottomCenter)),
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                children: [
-                  if (MediaQuery.of(context).viewInsets.bottom == 0.0)
-                    Image.asset('assets/icon/register_icon.png', scale: 2.5),
-                  SPACE(height: 20),
-                  TEXT_FIELD(_.firstNameField,
-                      focusNode: _.firstNameFocus,
-                      onSubmitted: (val) => _.onSubmittedFirstName(val),
-                      onChanged: (val) => _.onChangeFirstName(val),
-                      prefixIcon: const Icon(Icons.person),
-                      hint: 'Nama Depan ( Nama Panggilan )'),
-                  SPACE(),
-                  if (_.validateFirstName != null) _.validateFirstName!,
-                  SPACE(),
-                  TEXT_FIELD(_.lastNameField,
-                      focusNode: _.lastNameFocus,
-                      onSubmitted: (val) => _.onSubmittedLastName(val),
-                      onChanged: (val) => _.onChangeLastName(val),
-                      prefixIcon: const Icon(Icons.person),
-                      hint: 'Nama Belakang ( Opsional )'),
-                  SPACE(),
-                  if (_.validateLastName != null) _.validateLastName!,
-                  SPACE(),
-                  TEXT_FIELD(_.emailField,
-                      focusNode: _.emailFocus,
-                      onSubmitted: (val) => _.onSubmittedEmail(val),
-                      onChanged: (val) => _.onChangeEmail(val),
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      hint: 'Email'),
-                  SPACE(),
-                  if (_.validateEmail != null) _.validateEmail!,
-                  SPACE(),
-                  TEXT_FIELD(_.passwodField,
-                      obscureText: _.passwordObsecure,
-                      onSubmitted: (val) => _.onSubmittedPassword(val),
-                      focusNode: _.passwordFocus,
-                      onChanged: (val) => _.onChangePassword(val),
-                      prefixIcon: Icon(_.passwordObsecure
-                          ? Icons.lock_outline
-                          : Icons.lock_open_outlined),
-                      hint: "Password",
-                      suffixIcon: IconButton(
-                          onPressed: () => _.onChangePasswordObsecure(),
-                          icon: Icon(_.passwordObsecure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility))),
-                  SPACE(),
-                  if (_.validatePassword != null) _.validatePassword!,
-                  SPACE(),
-                  TEXT_FIELD(_.rePasswordField,
-                      obscureText: _.rePasswordObsecure,
-                      onSubmitted: (val) => _.onSubmittedRePassword(val),
-                      focusNode: _.rePasswordFocus,
-                      onChanged: (val) => _.onChangeRePassword(val),
-                      prefixIcon: Icon(_.rePasswordObsecure
-                          ? Icons.lock_outline
-                          : Icons.lock_open_outlined),
-                      hint: "Konfirmasi Password",
-                      suffixIcon: IconButton(
-                          onPressed: () => _.onChangeRePasswordObsecure(),
-                          icon: Icon(_.rePasswordObsecure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility))),
-                  SPACE(),
-                  if (_.validateRePassword != null) _.validateRePassword!,
-                  SPACE(height: 30),
-                  BUTTON("Daftar",
-                      verticalPad: 15,
-                      circularRadius: 30,
-                      onPressed: _.validationForm
-                          ? () async => await _.submit()
-                          : null),
-                  SPACE(height: 20),
-                  SizedBox(
-                    width: Get.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TEXT("Sudah punya akun?"),
-                        InkWell(
-                            onTap: () => Get.offAll(LoginPage()),
-                            child: TEXT("Login",
-                                style: COSTUM_TEXT_STYLE(
-                                    color: ORANGEKALM,
-                                    fontWeight: FontWeight.w600))),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ));
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/wave/login_wave.png'),
+                    alignment: Alignment.bottomCenter)),
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    children: [
+                      if (MediaQuery.of(context).viewInsets.bottom == 0.0)
+                        Image.asset('assets/icon/register_icon.png', scale: 2.5),
+                      SPACE(height: 20),
+                      TEXT_FIELD(_.firstNameField,
+                          focusNode: _.firstNameFocus,
+                          onSubmitted: (val) => _.onSubmittedFirstName(val),
+                          onChanged: (val) => _.onChangeFirstName(val),
+                          prefixIcon: const Icon(Icons.person),
+                          hint: 'Nama Depan ( Nama Panggilan )'),
+                      SPACE(),
+                      if (_.validateFirstName != null) _.validateFirstName!,
+                      SPACE(),
+                      TEXT_FIELD(_.lastNameField,
+                          focusNode: _.lastNameFocus,
+                          onSubmitted: (val) => _.onSubmittedLastName(val),
+                          onChanged: (val) => _.onChangeLastName(val),
+                          prefixIcon: const Icon(Icons.person),
+                          hint: 'Nama Belakang ( Opsional )'),
+                      SPACE(),
+                      if (_.validateLastName != null) _.validateLastName!,
+                      SPACE(),
+                      TEXT_FIELD(_.emailField,
+                          focusNode: _.emailFocus,
+                          onSubmitted: (val) => _.onSubmittedEmail(val),
+                          onChanged: (val) => _.onChangeEmail(val),
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          hint: 'Email'),
+                      SPACE(),
+                      if (_.validateEmail != null) _.validateEmail!,
+                      SPACE(),
+                      TEXT_FIELD(_.passwodField,
+                          obscureText: _.passwordObsecure,
+                          onSubmitted: (val) => _.onSubmittedPassword(val),
+                          focusNode: _.passwordFocus,
+                          onChanged: (val) => _.onChangePassword(val),
+                          prefixIcon: Icon(
+                              _.passwordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
+                          hint: "Password",
+                          suffixIcon: IconButton(
+                              onPressed: () => _.onChangePasswordObsecure(),
+                              icon: Icon(_.passwordObsecure
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility))),
+                      SPACE(),
+                      if (_.validatePassword != null) _.validatePassword!,
+                      SPACE(),
+                      TEXT_FIELD(_.rePasswordField,
+                          obscureText: _.rePasswordObsecure,
+                          onSubmitted: (val) => _.onSubmittedRePassword(val),
+                          focusNode: _.rePasswordFocus,
+                          onChanged: (val) => _.onChangeRePassword(val),
+                          prefixIcon: Icon(
+                              _.rePasswordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
+                          hint: "Konfirmasi Password",
+                          suffixIcon: IconButton(
+                              onPressed: () => _.onChangeRePasswordObsecure(),
+                              icon: Icon(_.rePasswordObsecure
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility))),
+                      SPACE(),
+                      if (_.validateRePassword != null) _.validateRePassword!,
+                      SPACE(height: 30),
+                      BUTTON("Daftar",
+                          verticalPad: 15,
+                          circularRadius: 30,
+                          onPressed: _.validationForm ? () async => await _.submit() : null),
+                      SPACE(height: 20),
+                      SizedBox(
+                        width: Get.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TEXT("Sudah punya akun?"),
+                            InkWell(
+                                onTap: () => Get.offAll(LoginPage()),
+                                child: TEXT("Login",
+                                    style: COSTUM_TEXT_STYLE(
+                                        color: ORANGEKALM, fontWeight: FontWeight.w600))),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ));
     });
   }
 }
 
 class RegisterController extends GetxController {
-  Widget? validateFirstName,
-      validateLastName,
-      validateEmail,
-      validatePassword,
-      validateRePassword;
+  Widget? validateFirstName, validateLastName, validateEmail, validatePassword, validateRePassword;
   FocusNode firstNameFocus = FocusNode();
   FocusNode lastNameFocus = FocusNode();
   FocusNode emailFocus = FocusNode();
@@ -274,9 +267,10 @@ class RegisterController extends GetxController {
           uniqueCodeRequest: "",
           role: "10");
       PRO.updateRegisterPayload(_payload);
-      Get.to(RegisterTncPage(
-          registerTncResModel: RegisterTncResModel.fromJson(_res?.data)));
+      Loading.hide();
+      Get.to(RegisterTncPage(registerTncResModel: RegisterTncResModel.fromJson(_res?.data)));
     } else {
+      Loading.hide();
       return;
     }
   }

@@ -9,9 +9,12 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/main_tab.dart';
 import 'package:kalm/model/login_payload.dart';
+import 'package:kalm/model/user_model/user_data.dart';
 import 'package:kalm/model/user_model/user_model.dart';
 import 'package:kalm/pages/auth/onboarding.dart';
+import 'package:kalm/pages/auth/verify_code.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
@@ -25,71 +28,68 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<LoginController>(builder: (_) {
       return NON_MAIN_SAFE_AREA(
+          bottomPadding: 0,
           child: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/wave/login_wave.png'),
-                alignment: Alignment.bottomCenter)),
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                children: [
-                  if (MediaQuery.of(context).viewInsets.bottom == 0.0)
-                    Column(
-                      children: [
-                        Image.asset('assets/icon/kalm.png', scale: 2.5),
-                        SPACE(),
-                        Image.asset('assets/icon/login_icon.png', scale: 2.5),
-                      ],
-                    ),
-                  TEXT_FIELD(_.emailField,
-                      focusNode: _.emailFocus,
-                      onSubmitted: (val) => _.onSubmittedEmail(val),
-                      onChanged: (val) => _.onChangeEmail(val),
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      hint: 'Email'),
-                  SPACE(),
-                  if (_.validateEmail != null) _.validateEmail!,
-                  SPACE(),
-                  TEXT_FIELD(_.passwodField,
-                      obscureText: _.passwordObsecure,
-                      onSubmitted: (val) async =>
-                          await _.onSubmittedPassword(val),
-                      focusNode: _.passwordFocus,
-                      onChanged: (val) => _.onChangePassword(val),
-                      prefixIcon: Icon(_.passwordObsecure
-                          ? Icons.lock_outline
-                          : Icons.lock_open_outlined),
-                      hint: "Password",
-                      suffixIcon: IconButton(
-                          onPressed: () => _.onChangeObsecure(),
-                          icon: Icon(_.passwordObsecure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility))),
-                  SPACE(),
-                  if (_.validatePassword != null) _.validatePassword!,
-                  SPACE(height: 20),
-                  BUTTON("Masuk",
-                      verticalPad: 15,
-                      circularRadius: 30,
-                      onPressed: _.validationForm
-                          ? () async => await _.submit()
-                          : null),
-                  SPACE(),
-                  BUTTON("Daftar",
-                      verticalPad: 15,
-                      circularRadius: 30,
-                      onPressed: () => Get.to(OnBoardingPage())),
-                  SPACE(height: 20),
-                  _forgetPassword(_),
-                ],
-              ),
-            )
-          ],
-        ),
-      ));
+            decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/wave/login_wave.png'),
+                    alignment: Alignment.bottomCenter)),
+            child: ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    children: [
+                      if (MediaQuery.of(context).viewInsets.bottom == 0.0)
+                        Column(
+                          children: [
+                            Image.asset('assets/icon/kalm.png', scale: 2.5),
+                            SPACE(),
+                            Image.asset('assets/icon/login_icon.png', scale: 2.5),
+                          ],
+                        ),
+                      TEXT_FIELD(_.emailField,
+                          focusNode: _.emailFocus,
+                          onSubmitted: (val) => _.onSubmittedEmail(val),
+                          onChanged: (val) => _.onChangeEmail(val),
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          hint: 'Email'),
+                      SPACE(),
+                      if (_.validateEmail != null) _.validateEmail!,
+                      SPACE(),
+                      TEXT_FIELD(_.passwodField,
+                          obscureText: _.passwordObsecure,
+                          onSubmitted: (val) async => await _.onSubmittedPassword(val),
+                          focusNode: _.passwordFocus,
+                          onChanged: (val) => _.onChangePassword(val),
+                          prefixIcon: Icon(
+                              _.passwordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
+                          hint: "Password",
+                          suffixIcon: IconButton(
+                              onPressed: () => _.onChangeObsecure(),
+                              icon: Icon(_.passwordObsecure
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility))),
+                      SPACE(),
+                      if (_.validatePassword != null) _.validatePassword!,
+                      SPACE(height: 20),
+                      BUTTON("Masuk",
+                          verticalPad: 15,
+                          circularRadius: 30,
+                          onPressed: _.validationForm ? () async => await _.submit() : null),
+                      SPACE(),
+                      BUTTON("Daftar",
+                          verticalPad: 15,
+                          circularRadius: 30,
+                          onPressed: () => Get.to(OnBoardingPage())),
+                      SPACE(height: 20),
+                      _forgetPassword(_),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ));
     });
   }
 
@@ -125,17 +125,14 @@ class LoginPage extends StatelessWidget {
                               placeholder: "Email",
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  border:
-                                      Border.all(width: 0.5, color: BLUEKALM)),
+                                  border: Border.all(width: 0.5, color: BLUEKALM)),
                               controller: _emailController,
                             ),
                           ),
-                          if (!_validateEmail &&
-                              _emailController.text.length > 1)
+                          if (!_validateEmail && _emailController.text.length > 1)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
-                              child:
-                                  ERROR_VALIDATION_FIELD("Email tidak valid"),
+                              child: ERROR_VALIDATION_FIELD("Email tidak valid"),
                             )
                         ],
                       ),
@@ -162,8 +159,7 @@ class LoginPage extends StatelessWidget {
           }), barrierColor: BLUEKALM.withOpacity(0.6));
         },
         child: TEXT("Lupa Kata Sandi?",
-            style: COSTUM_TEXT_STYLE(
-                color: ORANGEKALM, fontWeight: FontWeight.w600)));
+            style: COSTUM_TEXT_STYLE(color: ORANGEKALM, fontWeight: FontWeight.w600)));
   }
 }
 
@@ -221,8 +217,7 @@ class LoginController extends GetxController {
       if (await FlutterDeviceIdentifier.checkPermission()) {
         try {
           var _serialNumber = await FlutterDeviceIdentifier.imeiCode;
-          return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), ''))
-              .floor();
+          return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), '')).floor();
         } catch (e) {
           var rng = Random();
           var l = List.generate(8, (_) => rng.nextInt(100));
@@ -232,8 +227,7 @@ class LoginController extends GetxController {
         if (await FlutterDeviceIdentifier.requestPermission()) {
           try {
             var _serialNumber = await FlutterDeviceIdentifier.imeiCode;
-            return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), ''))
-                .floor();
+            return double.parse(_serialNumber.replaceAll(RegExp(r"\D"), '')).floor();
           } catch (e) {
             var rng = Random();
             var l = List.generate(8, (_) => rng.nextInt(100));
@@ -269,7 +263,6 @@ class LoginController extends GetxController {
     } else if (await _deviceNum() == null) {
       return;
     }
-
     var _firebaseToken = await PRO.firebaseAuth.currentUser?.getIdToken();
     var _payload = LoginPayload(
         email: emailField.text,
@@ -285,26 +278,50 @@ class LoginController extends GetxController {
       passwodField.clear();
       emailFocus.unfocus();
       passwordFocus.unfocus();
+      update();
       var _user = UserModel.fromJson(_res?.data).data;
-      await PRO.saveLocalUser(_user);
-      if (_user?.userHasActiveCounselor != null) {
-        await PRO.getCounselor(useLoading: true);
-      }
-      // await PRO.updateSession(userCode: _user?.code, token: _user?.token, useLoading: true);
-      await Get.offAll(KalmMainTab());
+      await _redirectPage(_user);
     } else {
+      Loading.hide();
       return;
     }
   }
 
   Future<void> forgotPassword(String email) async {
-    var _res =
-        await Api().POST(FORGOT_PASSWORD, {"email": email, "role": "10"});
+    var _res = await Api().POST(FORGOT_PASSWORD, {"email": email, "role": "10"});
     if (_res?.statusCode == 200) {
+      Loading.hide();
       SUCCESS_SNACK_BAR("Perhatian", _res?.data['message']);
       return;
     } else {
+      Loading.hide();
       return;
+    }
+  }
+
+  Future<void> _redirectPage(UserData? _user) async {
+    switch (_user?.status == 1 || _user?.status == 2 || _user?.status == 3) {
+      case true:
+        await PRO.saveLocalUser(_user);
+        if (_user?.userHasActiveCounselor != null) {
+          await PRO.getCounselor(useLoading: true);
+        }
+        Loading.hide();
+        await Get.offAll(KalmMainTab());
+        break;
+      case false:
+        await PRO.saveLocalUser(_user);
+        if (_user?.status == 5) {
+          Loading.hide();
+          await Get.offAll(VerifyCodePage());
+        } else {
+          Loading.hide();
+          return;
+        }
+        break;
+      default:
+        Loading.hide();
+        break;
     }
   }
 }

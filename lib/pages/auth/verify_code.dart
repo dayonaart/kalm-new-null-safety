@@ -8,6 +8,7 @@ import 'package:kalm/model/user_model/user_model.dart';
 import 'package:kalm/pages/auth/login.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/dialog.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
@@ -22,10 +23,11 @@ class VerifyCodePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<VerifyCodeController>(initState: (st) async {
       if (resendCode) {
-        await _controller.resendCode(PRO.registerPayload!.email!);
+        await _controller.resendCode(PRO.userData!.email!);
       }
     }, builder: (_) {
       return NON_MAIN_SAFE_AREA(
+          bottomPadding: 0,
           appBar: PreferredSize(
               child: Align(
                 alignment: Alignment.bottomCenter,
@@ -33,10 +35,9 @@ class VerifyCodePage extends StatelessWidget {
                   children: [
                     IconButton(
                         onPressed: () {
-                          SHOW_DIALOG(
-                              "Apakah Anda yakin ingin keluar dari verifikasi kode?",
+                          SHOW_DIALOG("Apakah Anda yakin ingin keluar dari verifikasi kode?",
                               onAcc: () async {
-                            await PRO.clearAllData();
+                            // await PRO.clearAllData();
                             await Get.offAll(LoginPage());
                           });
                         },
@@ -61,20 +62,15 @@ class VerifyCodePage extends StatelessWidget {
               child: ListView(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                     child: Column(
                       children: [
                         TEXT("KODE VERIFiKASI", style: Get.textTheme.headline2),
                         SPACE(),
                         TEXT("Kami telah mengirimkan kode verifikasi ke"),
-                        TEXT(
-                            resendCode
-                                ? PRO.registerPayload?.email
-                                : PRO.userData?.email,
-                            style: COSTUM_TEXT_STYLE(
-                                color: ORANGEKALM,
-                                fontWeight: FontWeight.w600)),
+                        TEXT(resendCode ? PRO.userData?.email : PRO.registerPayload?.email,
+                            style:
+                                COSTUM_TEXT_STYLE(color: ORANGEKALM, fontWeight: FontWeight.w600)),
                         SPACE(),
                         TEXT("Masukan kode untuk melanjutkan"),
                         SPACE(),
@@ -83,9 +79,7 @@ class VerifyCodePage extends StatelessWidget {
                         SizedBox(
                             width: Get.width / 1.8,
                             child: BUTTON("Submit",
-                                onPressed: _.validationCode
-                                    ? () async => await _.submit()
-                                    : null,
+                                onPressed: _.validationCode ? () async => await _.submit() : null,
                                 verticalPad: 10,
                                 circularRadius: 30)),
                         SPACE(height: 20),
@@ -110,14 +104,11 @@ class VerifyCodePage extends StatelessWidget {
           height: Get.height / 10,
           width: Get.width / 5,
           decoration: BoxDecoration(
-              border: Border.all(width: 1, color: BLUEKALM),
-              shape: BoxShape.rectangle),
+              border: Border.all(width: 1, color: BLUEKALM), shape: BoxShape.rectangle),
           child: Center(
               child: TEXT(_controller.codeList()[i],
                   style: COSTUM_TEXT_STYLE(
-                      fonstSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: ORANGEKALM))),
+                      fonstSize: 40, fontWeight: FontWeight.bold, color: ORANGEKALM))),
         );
       }),
     );
@@ -132,22 +123,19 @@ class VerifyCodePage extends StatelessWidget {
               children: [
                 if (int.tryParse(snap.data!) != 0)
                   Container(
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: BLUEKALM),
+                    decoration: const BoxDecoration(shape: BoxShape.circle, color: BLUEKALM),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: TEXT(snap.data ?? "",
-                          style: COSTUM_TEXT_STYLE(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
+                          style:
+                              COSTUM_TEXT_STYLE(fontWeight: FontWeight.bold, color: Colors.white)),
                     ),
                   ),
                 SPACE(),
                 if (int.tryParse(snap.data!) == 0)
                   InkWell(
-                    onTap: () async => await _.resendCode(PRO.userData!.email!),
-                    child: TEXT("Kirim Ulang Kode"),
-                  ),
+                      onTap: () async => await _.resendCode(PRO.userData!.email!),
+                      child: TEXT("Kirim Ulang Kode")),
               ],
             );
           } else {
@@ -190,13 +178,11 @@ class VerifyCodeController extends GetxController {
   }
 
   Future<void> resendCode(String email) async {
-    var _res = await Api()
-        .POST(RESEND_CODE, {"email": email, "role": "10"}, useLoading: false);
+    var _res = await Api().POST(RESEND_CODE, {"email": email, "role": "10"});
     if (_res?.statusCode == 200) {
-      PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
+      await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
       restartCoundownResend();
-      SUCCESS_SNACK_BAR(_res?.message,
-          "Kode verifikasi berhasil dikirimkan ke email $email}");
+      SUCCESS_SNACK_BAR(_res?.message, "Kode verifikasi berhasil dikirimkan ke email $email}");
     } else {
       return;
     }
@@ -209,15 +195,17 @@ class VerifyCodeController extends GetxController {
       "role": "10"
     };
     var _res = await Api().POST(ACTIVATION_CODE, _payload);
-    PR(_res?.data);
     var _user = UserModel.fromJson(_res?.data);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(_user.data);
+      Loading.hide();
       await Get.offAll(KalmMainTab());
     } else if (_user.message == "Your account already confirmed") {
       await PRO.updateSession();
+      Loading.hide();
       await Get.offAll(KalmMainTab());
     } else {
+      Loading.hide();
       return;
     }
   }

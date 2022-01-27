@@ -7,6 +7,7 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/user_model/user_model.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/social_share.dart';
 import 'package:kalm/widget/space.dart';
@@ -50,8 +51,7 @@ class ContactUsPage extends StatelessWidget {
                 ),
                 SPACE(height: 20),
                 BUTTON("Kirim",
-                    onPressed:
-                        _.validationField ? () async => await _.submit() : null,
+                    onPressed: _.validationField ? () async => await _.submit() : null,
                     verticalPad: 12,
                     circularRadius: 30),
                 SPACE(height: 20),
@@ -80,13 +80,12 @@ class ContactUsController extends GetxController {
   }
 
   Future<void> submit() async {
-    var _res = await Api().POST(
-        SETTING_CONTACT, {"message": fieldController.text},
-        useToken: true);
+    var _res = await Api().POST(SETTING_CONTACT, {"message": fieldController.text}, useToken: true);
     if (_res?.statusCode == 200) {
       fieldController.clear();
       fieldFocus.unfocus();
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
+      Loading.hide();
     } else {
       return;
     }

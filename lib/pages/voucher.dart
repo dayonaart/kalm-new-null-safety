@@ -11,6 +11,7 @@ import 'package:kalm/utilities/text_input_formatter.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/dialog.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
@@ -141,9 +142,11 @@ class VoucherController extends GetxController {
     if (_res?.statusCode == 200) {
       assignVoucherData = AssignVoucherResModel.fromJson(_res?.data).assignVoucherData;
       update();
+      Loading.hide();
     } else {
       assignVoucherData = null;
       update();
+      Loading.hide();
       return;
     }
   }

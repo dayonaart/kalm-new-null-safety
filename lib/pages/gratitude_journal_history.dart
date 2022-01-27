@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
+import 'package:kalm/model/gratitude_journal_history_res_model/gratitude_journal_history.dart';
 import 'package:kalm/model/gratitude_res_model/gratitude_data.dart';
 import 'package:kalm/utilities/date_format.dart';
 import 'package:kalm/widget/box_border.dart';
@@ -67,14 +68,14 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: Column(
                                   children: [
-                                    TEXT(data.question, style: Get.textTheme.bodyText2),
+                                    TEXT(data.gratitudeQuestion, style: Get.textTheme.bodyText2),
                                     SPACE(),
                                     BOX_BORDER(
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(
-                                          children: List.generate(data.response?.length ?? 0, (i) {
-                                            return _textField(i, data.response?[i]);
+                                          children: List.generate(data.answer?.length ?? 0, (i) {
+                                            return _textField(i, data.answer?[i]);
                                           }),
                                         ),
                                       ),
@@ -157,34 +158,35 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
 
 class GratitudeJournalHistoryController extends GetxController {
   TextEditingController searchController = TextEditingController();
-  List<GratitudeData>? get data => PRO.gratitudeJournalHistoryResModel?.gratitudeData;
-  Map<String, Map<String, Map<String, List<GratitudeData>>>> get queryData {
+  List<GratitudeJournalHistoryData>? get data =>
+      PRO.gratitudeJournalHistoryResModel?.gratitudeJournalHistoryResModel;
+  Map<String, Map<String, Map<String, List<GratitudeJournalHistoryData>>>> get queryData {
     searchData?.sort((a, b) {
       return DateTime.parse(a.createdAt!).compareTo(DateTime.parse(b.createdAt!));
     });
-    return collection.groupBy<GratitudeData, String>(searchData ?? data!, (y) {
+    return collection.groupBy<GratitudeJournalHistoryData, String>(searchData ?? data!, (y) {
       return DateTime.parse(y.createdAt!).year.toString();
     }).map((y, month) {
       return MapEntry(
           y,
-          collection.groupBy<GratitudeData, String>(month, (e) {
+          collection.groupBy<GratitudeJournalHistoryData, String>(month, (e) {
             return DATE_FORMAT(DateTime.parse(e.createdAt!), pattern: "MMMM")!;
           }).map((d, day) {
             return MapEntry(
                 d,
-                collection.groupBy<GratitudeData, String>(day, (e) {
+                collection.groupBy<GratitudeJournalHistoryData, String>(day, (e) {
                   return DateTime.parse(e.createdAt!).day.toString();
                 }));
           }));
     });
   }
 
-  List<GratitudeData>? searchData;
+  List<GratitudeJournalHistoryData>? searchData;
   void searchOnChange(val) {
     try {
       if (val.isNotEmpty) {
         searchData = data?.where((e) {
-          return e.response!.join(";").toLowerCase().contains(val);
+          return e.answer!.join(";").toLowerCase().contains(val);
         }).toList();
       } else {
         searchData = data;

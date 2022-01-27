@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,15 +5,12 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/indodana_res_model/payment.dart';
 import 'package:kalm/utilities/date_format.dart';
-import 'package:kalm/utilities/deep_link_redirect.dart';
 import 'package:kalm/utilities/parse_to_currency.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/safe_area.dart';
-import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class IndodanaPage extends StatelessWidget {
   final _controller = Get.put(IndodanaController());

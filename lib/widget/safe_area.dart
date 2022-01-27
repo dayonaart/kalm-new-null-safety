@@ -3,34 +3,37 @@ import 'package:get/get.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 
-SafeArea SAFE_AREA({Widget? child, bool canBack = true}) {
+SafeArea SAFE_AREA({
+  Widget? child,
+  bool canBack = true,
+  bool useAppBar = true,
+}) {
   return SafeArea(
     top: false,
     bottom: false,
     child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          leading: canBack
-              ? IconButton(
-                  onPressed: () async => await Navigator.maybePop(Get.context!),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: BLUEKALM,
-                  ))
-              : null,
-          backgroundColor: Colors.white,
-          title: Image.asset("assets/icon/kalm.png", scale: 4),
-          shadowColor: Colors.transparent,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Image.asset("assets/icon/bell.png", scale: 3)),
-          ],
-        ),
+        appBar: !useAppBar
+            ? null
+            : AppBar(
+                centerTitle: true,
+                leading: canBack
+                    ? IconButton(
+                        onPressed: () async => await Navigator.maybePop(Get.context!),
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: BLUEKALM,
+                        ))
+                    : null,
+                backgroundColor: Colors.white,
+                title: Image.asset("assets/icon/kalm.png", scale: 4),
+                shadowColor: Colors.transparent,
+                actions: [
+                  IconButton(onPressed: () {}, icon: Image.asset("assets/icon/bell.png", scale: 3)),
+                ],
+              ),
         body: Builder(builder: (context) {
           return Padding(
-            padding: EdgeInsets.only(
-                bottom: STATE(context).keyboardVisibility ? 0 : 75),
+            padding: EdgeInsets.only(bottom: STATE(context).keyboardVisibility ? 0 : 75),
             child: child,
           );
         })),
@@ -44,7 +47,7 @@ SafeArea NON_MAIN_SAFE_AREA({
   PreferredSizeWidget? appBar,
   bool? top,
   bool? bottom,
-  double? minimumInset,
+  double? bottomPadding,
 }) {
   return SafeArea(
       top: top ?? false,
@@ -54,7 +57,7 @@ SafeArea NON_MAIN_SAFE_AREA({
         body: Builder(builder: (context) {
           return Padding(
             padding: EdgeInsets.only(
-                bottom: STATE(context).keyboardVisibility ? 0 : 38),
+                bottom: STATE(context).keyboardVisibility ? 0 : (bottomPadding ?? 38)),
             child: child!,
           );
         }),

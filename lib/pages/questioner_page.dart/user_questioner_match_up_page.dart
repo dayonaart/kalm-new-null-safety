@@ -12,6 +12,7 @@ import 'package:kalm/tab_pages/chat_page.dart';
 import 'package:kalm/utilities/text_input_formatter.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/dialog.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/loading_content.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
@@ -37,6 +38,7 @@ class UserQustionerMatchupPage extends StatelessWidget {
       if (gridAnswer != null) {
         _controller.updateExistingPayload(gridAnswer, languageAnswer);
       }
+      Loading.hide();
     }, builder: (_) {
       return SAFE_AREA(
           canBack: gridAnswer != null,
@@ -404,6 +406,7 @@ class UserQustionerMatchupController extends GetxController {
               if (await _assignKalmselorCode()) {
                 await _finalSubmit(context);
               } else {
+                Loading.hide();
                 return;
               }
             }));
@@ -430,9 +433,10 @@ class UserQustionerMatchupController extends GetxController {
         .POST(MATCHUP, {"user_code": PRO.userData?.code, "data": _payload}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
-      await pushRemoveUntilScreen(context,
-          screen: NON_MAIN_SAFE_AREA(child: ChatPage()), withNavBar: true);
+      Loading.hide();
+      Navigator.pop(context);
     } else {
+      Loading.hide();
       return;
     }
   }

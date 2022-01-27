@@ -44,6 +44,7 @@ import 'package:kalm/pages/billiing/shopee.dart';
 import 'package:kalm/utilities/deep_link_redirect.dart';
 import 'package:kalm/utilities/util.dart';
 import 'package:kalm/widget/dialog.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_controller.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/snack_bar.dart';
@@ -57,8 +58,12 @@ UserController PRO = Provider.of(Get.context!, listen: false);
 UserController STATE(BuildContext context, {bool isListen = true}) =>
     Provider.of<UserController>(context, listen: isListen);
 GetStorage _box = GetStorage();
+String? get PIN_LOCK => _box.read(PIN_CODE_STORAGE);
 const String _email = "admin@kalm.com";
 const String _password = "a79d76e843a8248e207504c983a3a2ef";
+const String USER_STORAGE = "USER";
+const String PIN_CODE_STORAGE = "PIN_CODE_STORAGE";
+const String USER_ORS = "USER_ORS";
 
 class UserController extends ChangeNotifier {
   int initialIndex = 0;
@@ -261,18 +266,14 @@ class UserController extends ChangeNotifier {
       if (_res?.statusCode == 200) {
         await saveLocalUser(UserModel.fromJson(_res?.data).data);
         userData = UserModel.fromJson(_res?.data).data;
+        notifyListeners();
         // PR(_res?.data);
         if (userData?.userHasActiveCounselor == null) {
           await getPendingKalmselorCode();
         } else {
-          // if (counselorData != null) {
-          //   counselorData = null;
-          //   pendingKalmselorCodeModel = null;
-          //   tncResModel = null;
-          // } else {}
           await getCounselor(useLoading: useLoading);
+          pendingKalmselorCodeModel = null;
         }
-        notifyListeners();
       } else {
         return;
         // userData = null;
@@ -334,6 +335,7 @@ class UserController extends ChangeNotifier {
           useToken: true, customBaseUrl: "$PAYMENT_GATEWAY$MIDTRANS_BANK_TF");
       if (_res?.statusCode == 200) {
         await getPendingPayment(useLoading: true);
+        Loading.hide();
         await pushNewScreen(context, screen: BankTransferPage());
       } else {
         return;
@@ -349,6 +351,7 @@ class UserController extends ChangeNotifier {
           var _indo = _bankPayload.toJson();
           _indo.remove("bank");
           await _indodanaGet(_indo);
+          Loading.hide();
           pushNewScreen(context, screen: IndodanaPage());
           break;
         case "ovo":
@@ -463,6 +466,7 @@ class UserController extends ChangeNotifier {
             await launch(_data.redirectUrl!);
           } else {
             await getPendingPayment(useLoading: true);
+            Loading.hide();
             ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
             Navigator.pop(context);
             Navigator.pop(context);
@@ -471,6 +475,7 @@ class UserController extends ChangeNotifier {
           if (await launchUniversalLinkIos(_data.redirectUrl!)) {
           } else {
             await getPendingPayment(useLoading: true);
+            Loading.hide();
             ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
             Navigator.pop(context);
             Navigator.pop(context);
@@ -478,6 +483,7 @@ class UserController extends ChangeNotifier {
         }
       } catch (e) {
         await getPendingPayment(useLoading: true);
+        Loading.hide();
         ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
         Navigator.pop(context);
         Navigator.pop(context);
@@ -486,6 +492,7 @@ class UserController extends ChangeNotifier {
       await indodanaCreate(installmentId!);
       await getPendingPayment(useLoading: true);
       await indodanaDeeplink(context);
+      Loading.hide();
     }
   }
 
@@ -553,6 +560,7 @@ class UserController extends ChangeNotifier {
           await launch(_url);
         } else {
           await PRO.getPendingPayment(useLoading: true);
+          Loading.hide();
           ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
           Navigator.pop(context);
           Navigator.pop(context);
@@ -561,6 +569,7 @@ class UserController extends ChangeNotifier {
         if (await launchUniversalLinkIos(_url!)) {
         } else {
           await PRO.getPendingPayment(useLoading: true);
+          Loading.hide();
           ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
           Navigator.pop(context);
           Navigator.pop(context);
@@ -568,6 +577,7 @@ class UserController extends ChangeNotifier {
       }
     } catch (e) {
       await PRO.getPendingPayment(useLoading: true);
+      Loading.hide();
       ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
       Navigator.pop(context);
       Navigator.pop(context);
@@ -603,25 +613,30 @@ class UserController extends ChangeNotifier {
   }
 
   UserData? userData;
-  void readLocalUser() {
+  void readLocalUser({bool isPrint = false}) {
     try {
-      var _user = _box.read("USER");
+      var _user = _box.read(USER_STORAGE);
       userData = UserData.fromJson(_user);
-      notifyListeners();
+      isPrint ? PR(userData?.toJson()) : null;
+      !isPrint ? notifyListeners() : null;
     } catch (e) {
-      print("Welcome");
+      // print("Welcome");
     }
   }
 
-// ektya99+56@gmail.com
-  Future<void> saveLocalUser(UserData? data, {int awaitingSecond = 0}) async {
+  Future<void> saveLocalUser(UserData? data) async {
     // Write to local storage
-    await _box.write("USER", data?.toJson());
+    await _box.write(USER_STORAGE, data?.toJson());
     // Update state
     userData = data;
-    // useLoading ? Loading.hide() : null;
     notifyListeners();
-    // await Future.delayed(Duration(seconds: awaitingSecond));
+  }
+
+  Future<void> savePinCode(String pin) async {
+    // Write to local storage
+    await _box.write(PIN_CODE_STORAGE, pin);
+    // Update state
+    notifyListeners();
   }
 
   Future<void> clearAllData() async {
@@ -634,7 +649,8 @@ class UserController extends ChangeNotifier {
     tncResModel = null;
     indodanaResModel = null;
     notifyListeners();
-    await _box.remove("USER");
+    await _box.remove(USER_STORAGE);
+    await _box.remove(PIN_CODE_STORAGE);
     await Get.off(LoginPage());
   }
 
@@ -887,15 +903,15 @@ class UserController extends ChangeNotifier {
   late List<List<TextEditingController>> gratitudeHistoryEditingController;
   GratitudeResModel? gratitudeJournalHistoryResModel;
   Future<void> getGratitudeJournalHistory({bool useLoading = true}) async {
-    var _res = await Api().GET(GRATITUDE_JOURNAL, useToken: true, useLoading: useLoading);
+    var _res = await Api().GET(GRATITUDE_WALL, useToken: true, useLoading: useLoading);
     if (_res?.statusCode == 200) {
       gratitudeJournalHistoryResModel = GratitudeResModel.fromJson(_res?.data);
-      gratitudeHistoryEditingController =
-          List.generate(gratitudeJournalHistoryResModel?.gratitudeData?.length ?? 0, (i) {
-        var _data = gratitudeJournalHistoryResModel!.gratitudeData![i];
-        if (_data.response != null) {
+      gratitudeHistoryEditingController = List.generate(
+          gratitudeJournalHistoryResModel?.gratitudeJournalHistoryResModel?.length ?? 0, (i) {
+        var _data = gratitudeJournalHistoryResModel!.gratitudeJournalHistoryResModel![i];
+        if (_data.answer != null) {
           return List.generate(
-              _data.response?.length ?? 0, (j) => TextEditingController(text: _data.response![j]));
+              _data.answer?.length ?? 0, (j) => TextEditingController(text: _data.answer![j]));
         } else {
           return List.generate(3, (j) => TextEditingController());
         }

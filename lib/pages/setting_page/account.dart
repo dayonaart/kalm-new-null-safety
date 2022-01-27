@@ -7,6 +7,7 @@ import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/change_password_payload.dart';
 import 'package:kalm/model/user_model/user_model.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
@@ -45,8 +46,7 @@ class AccountPage extends StatelessWidget {
                                 onPressedSecure: _.onPressSecure()[i],
                                 isRead: i == 0),
                             SPACE(),
-                            TEXT("UBAH PASSWORD",
-                                style: Get.textTheme.headline1),
+                            TEXT("UBAH PASSWORD", style: Get.textTheme.headline1),
                           ],
                         );
                       } else {
@@ -60,8 +60,7 @@ class AccountPage extends StatelessWidget {
                                 onPressedSecure: _.onPressSecure()[i],
                                 isRead: i == 0,
                                 placeholder: _.placeholder[i]),
-                            if (!_.validationField[i] &&
-                                _.textController[i].text.isNotEmpty)
+                            if (!_.validationField[i] && _.textController[i].text.isNotEmpty)
                               ERROR_VALIDATION_FIELD(_.errorMessageField[i])
                           ],
                         );
@@ -71,9 +70,8 @@ class AccountPage extends StatelessWidget {
                 ),
                 SPACE(),
                 BUTTON("Kirim",
-                    onPressed: !_.validationField.contains(false)
-                        ? () async => await _.submit()
-                        : null,
+                    onPressed:
+                        !_.validationField.contains(false) ? () async => await _.submit() : null,
                     verticalPad: 15,
                     circularRadius: 30)
               ],
@@ -119,8 +117,7 @@ class AccountPage extends StatelessWidget {
               ? null
               : IconButton(
                   onPressed: onPressedSecure,
-                  icon: Icon(
-                      obscureText ? Icons.visibility_off : Icons.visibility)),
+                  icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility)),
           decoration: BoxDecoration(
               border: Border.all(width: 0.5, color: BLUEKALM),
               borderRadius: BorderRadius.circular(5)),
@@ -231,13 +228,14 @@ class AccountController extends GetxController {
       confirmPassword: textController[3].text);
 
   Future<void> submit() async {
-    var _res = await Api()
-        .POST(CHANGE_PASSWORD, changePasswordPayload.toJson(), useToken: true);
+    var _res = await Api().POST(CHANGE_PASSWORD, changePasswordPayload.toJson(), useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
+      Loading.hide();
       SUCCESS_SNACK_BAR("Perhatian", _res?.message);
       Get.back();
     } else {
+      Loading.hide();
       return;
     }
   }

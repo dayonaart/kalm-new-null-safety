@@ -36,8 +36,7 @@ class ProfilePage extends StatelessWidget {
                       circularRadius: 100,
                     )),
                 SPACE(),
-                TEXT(
-                    "${_.user(context)?.firstName} ${_.user(context)?.lastName ?? ""}",
+                TEXT("${_.user(context)?.firstName} ${_.user(context)?.lastName ?? ""}",
                     style: Get.textTheme.headline2),
                 SPACE(height: 20),
                 Row(
@@ -142,7 +141,39 @@ class ProfileController extends GetxController {
             await pushNewScreen(context, screen: EditProfilePage());
             break;
           case 1:
-            print("2");
+            // var _res = await Api().GET(GET_TO_KNOW, useToken: true);
+            // if (_res?.statusCode == 200) {
+            //   var _list = _res?.data['data'] as List<dynamic>;
+            //   // _list.sort((a, b) {
+            //   //   return DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at']));
+            //   // });
+            //   _list.sort((a, b) {
+            //     return (b['questionnaire_id'] as int).compareTo(a['questionnaire_id']);
+            //   });
+            //   var _model = _list.take(11).map((e) {
+            //     print(e);
+            //     print(e['questionnaire_id']);
+            //     try {
+            //       return UserQuestionerPayload.fromJson(e);
+            //     } catch (e) {
+            //       return UserQuestionerPayload();
+            //     }
+            //   }).toList();
+            // List<UserQuestionerPayload> _gen =
+            //     List.generate((_res?.data['data'] as List<dynamic>).length, (i) {
+            //   try {
+            //     return UserQuestionerPayload(
+            //         answer: _res?.data['data'][i]['answer'].runtimeType == int
+            //             ? _res?.data['data'][i]['answer']
+            //             : int.parse(_res?.data['data'][i]['answer']));
+            //   } catch (e) {
+            //     return UserQuestionerPayload(question: e.toString());
+            //   }
+            // });
+            // print(_model.map((e) => e.toJson()).toList());
+            // } else {}
+
+            // await pushNewScreen(context, screen: UserQustionerPage());
             break;
           case 2:
             var _gridAnswer = PRO.userData?.matchupJson?.map((e) {
@@ -165,5 +196,37 @@ class ProfileController extends GetxController {
         }
       };
     });
+  }
+
+  int? _existingPayloadAnswer(int i) {
+    var _u = PRO.userData;
+    switch (i) {
+      case 1:
+        return 0;
+      case 2:
+        return 0;
+      case 3:
+        return _u?.gender;
+      case 4:
+        return _u?.gender;
+      case 5:
+        return 0;
+      case 6:
+        return 0;
+      case 7:
+        return 0;
+      case 8:
+        return 0;
+      case 9:
+        return 0;
+      case 10:
+        return 0;
+      case 11:
+        return 0;
+      case 12:
+        return 0;
+      default:
+        return 0;
+    }
   }
 }

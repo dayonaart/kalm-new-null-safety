@@ -4,7 +4,6 @@ import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/payment_list_res_model/payment_data.dart';
 import 'package:kalm/pages/billiing/bank_transfer.dart';
 import 'package:kalm/pages/billiing/gopay.dart';
-import 'package:kalm/pages/billiing/indodana.dart';
 import 'package:kalm/pages/billiing/shopee.dart';
 import 'package:kalm/utilities/bank_properties.dart';
 import 'package:kalm/widget/box_border.dart';
@@ -12,7 +11,6 @@ import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
-import 'dart:math' as math;
 
 class PaymentListPage extends StatelessWidget {
   final _controller = Get.put(PaymentListController());
@@ -45,8 +43,7 @@ class PaymentListPage extends StatelessWidget {
                                     height: 70,
                                     width: 70),
                                 SPACE(width: 20),
-                                TEXT(_.desc(
-                                    _.data(context)![i].name!.toLowerCase())),
+                                TEXT(_.desc(_.data(context)![i].name!.toLowerCase())),
                               ],
                             ),
                           ),
@@ -67,16 +64,11 @@ class PaymentListPage extends StatelessWidget {
 class PaymentListController extends GetxController {
   List<PaymentData>? data(BuildContext context, {bool isListen = true}) {
     if (bankName(context, isListen: isListen) != null) {
-      return STATE(context, isListen: isListen)
-          .paymentListResModel!
-          .paymentData!
-          .where((e) {
+      return STATE(context, isListen: isListen).paymentListResModel!.paymentData!.where((e) {
         return e.name?.toUpperCase() == bankName(context, isListen: isListen);
       }).toList();
     } else {
-      return STATE(context, isListen: isListen)
-          .paymentListResModel!
-          .paymentData!;
+      return STATE(context, isListen: isListen).paymentListResModel!.paymentData!;
     }
   }
 

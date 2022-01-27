@@ -7,6 +7,7 @@ import 'package:kalm/utilities/date_format.dart';
 import 'package:kalm/utilities/parse_to_currency.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
@@ -31,8 +32,7 @@ class PaymentDetailPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TEXT('Terima kasih telah melakukan transaksi dengan KALM',
-                          textAlign: TextAlign.center,
-                          style: Get.textTheme.headline2),
+                          textAlign: TextAlign.center, style: Get.textTheme.headline2),
                     ],
                   ),
                 );
@@ -72,11 +72,13 @@ class PaymentDetailPage extends StatelessWidget {
             children: [
               BUTTON('Bayar', onPressed: () async {
                 await PRO.getPaymentList();
+                Loading.hide();
                 await pushNewScreen(context, screen: PaymentListPage());
               }, verticalPad: 12, circularRadius: 30),
               SPACE(height: 5),
               BUTTON('Batalkan', onPressed: () async {
                 await PRO.cancelPayment();
+                Loading.hide();
                 Navigator.pop(context);
               }, verticalPad: 12, circularRadius: 30),
             ],
@@ -96,8 +98,7 @@ class PaymentDetailPage extends StatelessWidget {
           SPACE(),
           const Divider(thickness: 1),
           SPACE(),
-          _item("assets/icon/dollar.png",
-              "Rp. ${CURRENCY(_.data(context).package?.price)}"),
+          _item("assets/icon/dollar.png", "Rp. ${CURRENCY(_.data(context).package?.price)}"),
           SPACE(),
           const Divider(thickness: 1),
           SPACE(),
@@ -121,6 +122,5 @@ class PaymentDetailPage extends StatelessWidget {
 }
 
 class PaymentDetailController extends GetxController {
-  PendingData data(BuildContext context) =>
-      STATE(context).pendingPaymentResModel!.pendingData!;
+  PendingData data(BuildContext context) => STATE(context).pendingPaymentResModel!.pendingData!;
 }

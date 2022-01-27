@@ -14,6 +14,7 @@ import 'package:kalm/utilities/parse_to_currency.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/dialog.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/snack_bar.dart';
@@ -26,6 +27,7 @@ class PackagesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<PackagesController>(initState: (st) async {
       await PRO.getPendingPayment(useSnackbar: false);
+      Loading.hide();
     }, builder: (_) {
       // print("total ${Get.width} : remaining ${_.containerPackageWidth(context)}");
       return SAFE_AREA(
@@ -636,6 +638,7 @@ class PackagesController extends GetxController {
         update();
         promoController.map((e) => e.clear()).toList();
         await PRO.getPendingPayment(useLoading: true);
+        Loading.hide();
         await pushNewScreen(context, screen: PaymentDetailPage());
       } else {
         return;
@@ -668,6 +671,7 @@ class PackagesController extends GetxController {
       if (_res?.statusCode == 200) {
         loadingPromo[i] = false;
         promoResModel = PromoResModel.fromJson(_res?.data);
+        Loading.hide();
         if (promoResModel?.promoData == null) {
           ERROR_SNACK_BAR("Perhatian", promoResModel?.message);
         }

@@ -17,6 +17,7 @@ import 'package:kalm/utilities/util.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
@@ -37,6 +38,7 @@ class EditProfilePage extends StatelessWidget {
         await PRO.getStates(PRO.userData?.countryId ?? 1);
         await PRO.getCity(PRO.userData?.stateId ?? 1);
         _controller.updateTextFieldController(useUpdate: true);
+        Loading.hide();
       }
     }, builder: (_) {
       // print(PRO.userData?.maritalStatus);
@@ -529,6 +531,7 @@ class EditProfileController extends GetxController {
     // PR(_res?.data);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
+      Loading.hide();
       isPickingProgress = false;
     } else {
       isPickingProgress = false;
@@ -947,15 +950,19 @@ class EditProfileController extends GetxController {
   }
 
   bool get dobValidation {
-    if (selectedDob == null) {
+    try {
+      if (selectedDob == null) {
+        return false;
+      } else if (VALIDATE_DOB_MATURE(selectedDob)! <= 12.999) {
+        return false;
+      } else if (VALIDATE_DOB_MATURE(selectedDob)! >= 12.999 &&
+          VALIDATE_DOB_MATURE(selectedDob)! < 14) {
+        return dob13!;
+      } else {
+        return true;
+      }
+    } catch (e) {
       return false;
-    } else if (VALIDATE_DOB_MATURE(selectedDob)! <= 12.999) {
-      return false;
-    } else if (VALIDATE_DOB_MATURE(selectedDob)! >= 12.999 &&
-        VALIDATE_DOB_MATURE(selectedDob)! < 14) {
-      return dob13!;
-    } else {
-      return true;
     }
   }
 
@@ -964,6 +971,7 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> submit(BuildContext context) async {
+    print(payload);
     if (!addressValiation) {
       ERROR_SNACK_BAR("Perhatian", "Alamat wajib diisi semua");
       return;
@@ -974,12 +982,12 @@ class EditProfileController extends GetxController {
       ERROR_SNACK_BAR("Perhatian", "Pastikan Nama Depan Atau Nomer HP sudah diisi");
       return;
     }
-    print(payload);
     var _res = await Api().POST(USER_UPDATE, payload, useToken: true);
     if (_res?.statusCode == 200) {
       var _data = UserModel.fromJson(_res?.data);
       await PRO.saveLocalUser(_data.data);
       SUCCESS_SNACK_BAR("Perhatian", _data.message);
+      Loading.hide();
       Navigator.pop(context);
     } else {
       return;

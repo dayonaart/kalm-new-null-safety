@@ -11,6 +11,7 @@ import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/main_tab.dart';
 import 'package:kalm/pages/auth/login.dart';
 import 'package:kalm/pages/auth/verify_code.dart';
+import 'package:kalm/pages/setting_page/pin_code.dart';
 import 'package:kalm/sdk/firebase.dart';
 import 'package:kalm/splash_screen.dart';
 import 'package:kalm/widget/safe_area.dart';
@@ -36,8 +37,8 @@ void _enableRotation() {
 
 Future<void> _runApp() async {
   if (await checkNetwork() == ConnectivityResult.none) {
-    runApp(_deviceNotCompatible(
-        "Pastikan Anda terhubung ke Internet", "Coba Lagi", onTap: () async {
+    runApp(
+        _deviceNotCompatible("Pastikan Anda terhubung ke Internet", "Coba Lagi", onTap: () async {
       await _runApp();
     }));
     return;
@@ -52,10 +53,7 @@ Future<void> _runApp() async {
         WonderPush.setLogging(true);
       }
       runApp(MultiProvider(
-        providers: [
-          ChangeNotifierProvider<UserController>(
-              create: (_) => UserController())
-        ],
+        providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
         child: KalmApp(),
       ));
     } else {
@@ -64,23 +62,19 @@ Future<void> _runApp() async {
         WonderPush.setLogging(true);
       }
       runApp(MultiProvider(
-        providers: [
-          ChangeNotifierProvider<UserController>(
-              create: (_) => UserController())
-        ],
+        providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
         child: KalmApp(),
       ));
     }
   } else {
-    runApp(_deviceNotCompatible(
-        "Sorry your device not compatible with this app", "EXIT", onTap: () {
+    runApp(
+        _deviceNotCompatible("Sorry your device not compatible with this app", "EXIT", onTap: () {
       exit(0);
     }));
   }
 }
 
-MaterialApp _deviceNotCompatible(String title, String buttonTitle,
-    {void Function()? onTap}) {
+MaterialApp _deviceNotCompatible(String title, String buttonTitle, {void Function()? onTap}) {
   return MaterialApp(
     debugShowCheckedModeBanner: false,
     home: NON_MAIN_SAFE_AREA(
@@ -100,8 +94,7 @@ MaterialApp _deviceNotCompatible(String title, String buttonTitle,
           InkWell(
               onTap: onTap,
               child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 0.5, color: BLUEKALM)),
+                  decoration: BoxDecoration(border: Border.all(width: 0.5, color: BLUEKALM)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TEXT(buttonTitle),
@@ -122,7 +115,7 @@ class KalmApp extends StatelessWidget {
         PRO.readLocalUser();
         await PRO.updateSession(useLoading: false);
         await Future.microtask(() async {
-          _starting();
+          await STARTING();
         });
       },
       onInit: () async {
@@ -144,9 +137,7 @@ class KalmApp extends StatelessWidget {
             color: Colors.white,
             fontWeight: FontWeight.w600),
         bodyText1: const TextStyle(
-            fontFamily: "fonts/AlexBrush-Regular.ttf",
-            fontSize: 16,
-            color: Colors.black54),
+            fontFamily: "fonts/AlexBrush-Regular.ttf", fontSize: 16, color: Colors.black54),
         bodyText2: const TextStyle(
             fontFamily: "fonts/AlexBrush-Regular.ttf",
             fontSize: 18,
@@ -164,23 +155,30 @@ class KalmApp extends StatelessWidget {
             color: BLUEKALM),
       )),
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: Stack(
+        children: [
+          SplashScreen(),
+          if (PIN_LOCK != null) PincodePage(isLock: true, createCode: PIN_LOCK)
+        ],
+      ),
     );
   }
+}
 
-  void _starting() {
+Future<void> STARTING({bool isLock = true}) async {
+  if (PIN_LOCK != null && isLock) {
+    return;
+  } else {
     if (PRO.userData != null) {
-      if (PRO.userData?.status == 1) {
-        Get.offAll(KalmMainTab());
+      if (PRO.userData?.status == 1 || PRO.userData?.status == 2 || PRO.userData?.status == 3) {
+        await Get.offAll(KalmMainTab());
       } else if (PRO.userData?.status == 5) {
-        Get.offAll(VerifyCodePage());
-      } else if (PRO.userData?.status == 2) {
-        Get.offAll(KalmMainTab());
+        await Get.offAll(VerifyCodePage(resendCode: true));
       } else {
-        Get.offAll(LoginPage());
+        await Get.offAll(LoginPage());
       }
     } else {
-      Get.offAll(LoginPage());
+      await Get.offAll(LoginPage());
     }
   }
 }

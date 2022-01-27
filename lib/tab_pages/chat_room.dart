@@ -41,7 +41,6 @@ class ChatRoomPage extends StatelessWidget {
     }, builder: (_) {
       return NON_MAIN_SAFE_AREA(
         top: true,
-        minimumInset: 55,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

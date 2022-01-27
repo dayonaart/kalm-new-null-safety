@@ -58,17 +58,14 @@ class Api {
   }) async {
     // check user networt
     var _net = await checkNetwork();
-
     try {
       useLoading ? Loading.show() : null;
       var _execute = Dio(_baseDioOption(customBaseUrl: customBaseUrl)).post(url,
           data: body,
           // calculate receiving data progresss
-          onReceiveProgress: (int sent, int total) =>
-              PRO.onReceiveProgresss(sent, total),
+          onReceiveProgress: (int sent, int total) => PRO.onReceiveProgresss(sent, total),
           // calculate send data progresss
-          onSendProgress: (int sent, int total) =>
-              PRO.onSendProgresss(sent, total),
+          onSendProgress: (int sent, int total) => PRO.onSendProgresss(sent, total),
           // Header
           options: Options(
               headers: (useToken
@@ -81,13 +78,9 @@ class Api {
                     })));
       // Execute
       var _res = await _execute;
-      Loading.hide();
       return WrapResponse(
-          message: _res.statusMessage,
-          statusCode: _res.statusCode,
-          data: _res.data);
+          message: _res.statusMessage, statusCode: _res.statusCode, data: _res.data);
     } on DioError catch (e) {
-      Loading.hide();
       if (e.type == DioErrorType.response) {
         if (e.response?.statusCode == 401) {
           useSnackbar
@@ -96,8 +89,7 @@ class Api {
               : null;
           useClearData ? PRO.clearAllData() : null;
           return null;
-        } else if (e.response!.statusCode! >= 400 &&
-            e.response!.statusCode! != 401) {
+        } else if (e.response!.statusCode! >= 400 && e.response!.statusCode! != 401) {
           useSnackbar
               ? ERROR_SNACK_BAR("${e.response?.statusCode}",
                   _unknowError(e.response?.data) ?? e.response?.statusMessage)
@@ -108,8 +100,7 @@ class Api {
               data: e.response?.data);
         } else {
           useSnackbar
-              ? ERROR_SNACK_BAR(
-                  '${e.response?.statusCode}', e.response?.statusMessage)
+              ? ERROR_SNACK_BAR('${e.response?.statusCode}', e.response?.statusMessage)
               : null;
           return WrapResponse(
               message: e.response?.statusMessage ?? e.message,
@@ -117,12 +108,8 @@ class Api {
               data: e.response?.data);
         }
       } else if (e.type == DioErrorType.connectTimeout) {
-        useSnackbar
-            ? ERROR_SNACK_BAR("Perhatian", "Koneksi tidak stabil")
-            : null;
-        return WrapResponse(
-            message: "connection timeout",
-            statusCode: e.response?.statusCode ?? 0);
+        useSnackbar ? ERROR_SNACK_BAR("Perhatian", "Koneksi tidak stabil") : null;
+        return WrapResponse(message: "connection timeout", statusCode: e.response?.statusCode ?? 0);
       } else if (_net == ConnectivityResult.none) {
         ERROR_SNACK_BAR("Perhatian", "Pastikan Anda terhubung ke Internet");
         return WrapResponse(message: "connection timeout", statusCode: 000);
@@ -160,9 +147,7 @@ class Api {
       var _res = await _execute;
       Loading.hide();
       return WrapResponse(
-          message: _res.statusMessage,
-          statusCode: _res.statusCode,
-          data: _res.data);
+          message: _res.statusMessage, statusCode: _res.statusCode, data: _res.data);
     } on DioError catch (e) {
       // print(e.requestOptions.data);
       Loading.hide();
@@ -170,13 +155,11 @@ class Api {
       if (e.type == DioErrorType.response) {
         if (e.response!.statusCode! == 401) {
           useSnackbar
-              ? ERROR_SNACK_BAR(
-                  "${e.response?.statusCode}", e.response?.statusMessage)
+              ? ERROR_SNACK_BAR("${e.response?.statusCode}", e.response?.statusMessage)
               : null;
           PRO.clearAllData();
           return null;
-        } else if (e.response!.statusCode! >= 400 &&
-            e.response!.statusCode! != 401) {
+        } else if (e.response!.statusCode! >= 400 && e.response!.statusCode! != 401) {
           useSnackbar
               ? ERROR_SNACK_BAR("${e.response?.statusCode}",
                   _unknowError(e.response?.data) ?? e.response?.statusMessage)
@@ -196,12 +179,8 @@ class Api {
               data: e.response?.data);
         }
       } else if (e.type == DioErrorType.connectTimeout) {
-        useSnackbar
-            ? ERROR_SNACK_BAR("Perhatian", "Koneksi tidak stabil")
-            : null;
-        return WrapResponse(
-            message: "connection timeout",
-            statusCode: e.response?.statusCode ?? 0);
+        useSnackbar ? ERROR_SNACK_BAR("Perhatian", "Koneksi tidak stabil") : null;
+        return WrapResponse(message: "connection timeout", statusCode: e.response?.statusCode ?? 0);
       } else if (_net == ConnectivityResult.none) {
         ERROR_SNACK_BAR("Perhatian", "Pastikan Anda terhubung ke Internet");
         return WrapResponse(message: "connection timeout", statusCode: 000);
@@ -223,8 +202,7 @@ class Api {
     try {
       useLoading ? Loading.show() : null;
       var _execute = Dio(_baseDioOption(customBaseUrl: customBaseUrl)).get(url,
-          onReceiveProgress: (int sent, int total) =>
-              PRO.onReceiveProgresss(sent, total),
+          onReceiveProgress: (int sent, int total) => PRO.onReceiveProgresss(sent, total),
           options: Options(
               headers: useToken
                   ? {
@@ -234,24 +212,20 @@ class Api {
                   : {
                       "Content-Type": 'application/json',
                     }));
+
       var _res = await _execute;
-      Loading.hide();
+      // Loading.hide();
       return WrapResponse(
-          message: _res.statusMessage,
-          statusCode: _res.statusCode,
-          data: _res.data);
+          message: _res.statusMessage, statusCode: _res.statusCode, data: _res.data);
     } on DioError catch (e) {
-      Loading.hide();
       if (e.type == DioErrorType.response) {
         if (e.response!.statusCode! == 401) {
           useSnackbar
-              ? ERROR_SNACK_BAR(
-                  "${e.response?.statusCode}", e.response?.statusMessage)
+              ? ERROR_SNACK_BAR("${e.response?.statusCode}", e.response?.statusMessage)
               : null;
           await PRO.clearAllData();
           return null;
-        } else if (e.response!.statusCode! >= 400 &&
-            e.response!.statusCode! != 401) {
+        } else if (e.response!.statusCode! >= 400 && e.response!.statusCode! != 401) {
           useSnackbar
               ? ERROR_SNACK_BAR("${e.response?.statusCode}",
                   _unknowError(e.response?.data) ?? e.response?.statusMessage)
@@ -271,12 +245,8 @@ class Api {
               data: e.response?.data);
         }
       } else if (e.type == DioErrorType.connectTimeout) {
-        useSnackbar
-            ? ERROR_SNACK_BAR("Perhatian", "Koneksi tidak stabil")
-            : null;
-        return WrapResponse(
-            message: "connection timeout",
-            statusCode: e.response?.statusCode ?? 0);
+        useSnackbar ? ERROR_SNACK_BAR("Perhatian", "Koneksi tidak stabil") : null;
+        return WrapResponse(message: "connection timeout", statusCode: e.response?.statusCode ?? 0);
       } else if (_net == ConnectivityResult.none) {
         ERROR_SNACK_BAR("Perhatian", "Pastikan Anda terhubung ke Internet");
         return WrapResponse(message: "connection timeout", statusCode: 000);
@@ -336,8 +306,7 @@ const String LOGOUT = "auth/logout";
 
 /// get-countries
 const String GET_COUNTRIES = 'get-countries';
-String TNC_DATA(String counCOde) =>
-    "counselor/term-conditions/for-user/$counCOde";
+String TNC_DATA(String counCOde) => "counselor/term-conditions/for-user/$counCOde";
 
 /// get-states/${id}
 String GET_STATES({@required int? id}) => 'get-states/${id.toString()}';
@@ -346,8 +315,7 @@ const String EMAIL_SUBSCRIPTION =
     'counselor/setting/notification-setting/email-client-send-message';
 const String NOTIF_SUBSCRIPTION =
     'counselor/setting/notification-setting/notification-client-send-message';
-String REQUEST_CHANGE_COUNSELOR =
-    'user/change-counselor-request/${PRO.userData?.code}';
+String REQUEST_CHANGE_COUNSELOR = 'user/change-counselor-request/${PRO.userData?.code}';
 String PAGE_DIR(int page) => 'page/$page?lang=id';
 
 /// get-cities/${id}
@@ -365,8 +333,7 @@ String USER_UPDATE = 'user/update/${PRO.userData?.code}';
 String UPDATE_PROFILE_IMAGE = 'user/update-photo/${PRO.userData?.code}';
 String GET_SUBSCRIPTION_LIST = "get-subscriptions?lang=id";
 String GRATITUDE_JOURNAL = "user/gratitude-journal/${PRO.userData?.code}";
-String GRATITUDE_WALL(String code) =>
-    'user/gratitude-walls/${PRO.userData?.code}';
+String GRATITUDE_WALL = 'user/gratitude-walls/${PRO.userData?.code}';
 
 String ACC_TNC(String counselorCode) => 'matchup/user/accept/$counselorCode';
 String REJECT_TNC = 'user/change-counselor-request/${PRO.userData?.code}';

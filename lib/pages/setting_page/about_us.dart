@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/about_res_model/about_data.dart';

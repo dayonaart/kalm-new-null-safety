@@ -9,6 +9,7 @@ import 'package:kalm/model/user_model/user_model.dart';
 import 'package:kalm/pages/auth/register.dart';
 import 'package:kalm/pages/auth/verify_code.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
@@ -34,62 +35,59 @@ class RegisterTncPage extends StatelessWidget {
       });
     }, builder: (_) {
       return NON_MAIN_SAFE_AREA(
+          bottomPadding: 0,
           child: Column(
-        children: [
-          SPACE(height: 50),
-          Expanded(
-            child: Scrollbar(
-              controller: _.scrollController,
-              child: ListView(
-                controller: _.scrollController,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Html(
-                      data: registerTncResModel?.tncData?.description,
-                      style: {
-                        "p": Style(
-                            fontSize: const FontSize(16),
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal)
-                      },
-                    ),
+            children: [
+              SPACE(height: 50),
+              Expanded(
+                child: Scrollbar(
+                  controller: _.scrollController,
+                  child: ListView(
+                    controller: _.scrollController,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Html(
+                          data: registerTncResModel?.tncData?.description,
+                          style: {
+                            "p": Style(
+                                fontSize: const FontSize(16),
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal)
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: 0.5, color: BLUEKALM),
-                borderRadius: const BorderRadiusDirectional.only(
-                    topEnd: Radius.circular(10),
-                    topStart: Radius.circular(10))),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                children: [
-                  TEXT(
-                      "Dengan membaca syarat dan ketentuan,Anda dengan ini setuju, memahami dan menerima Syarat Dan Ketentuan tersebut",
-                      style: COSTUM_TEXT_STYLE(
-                          fonstSize: 12, fontStyle: FontStyle.italic),
-                      textAlign: TextAlign.center),
-                  SPACE(height: 15),
-                  SizedBox(
-                      width: Get.width / 1.4,
-                      child: BUTTON("Selanjutnya",
-                          onPressed: _.haveReadTnc
-                              ? () async => await _.submit()
-                              : null,
-                          verticalPad: 15,
-                          circularRadius: 30)),
-                  SPACE(),
-                ],
-              ),
-            ),
-          )
-        ],
-      ));
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(width: 0.5, color: BLUEKALM),
+                    borderRadius: const BorderRadiusDirectional.only(
+                        topEnd: Radius.circular(10), topStart: Radius.circular(10))),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    children: [
+                      TEXT(
+                          "Dengan membaca syarat dan ketentuan,Anda dengan ini setuju, memahami dan menerima Syarat Dan Ketentuan tersebut",
+                          style: COSTUM_TEXT_STYLE(fonstSize: 12, fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center),
+                      SPACE(height: 15),
+                      SizedBox(
+                          width: Get.width / 1.4,
+                          child: BUTTON("Selanjutnya",
+                              onPressed: _.haveReadTnc ? () async => await _.submit() : null,
+                              verticalPad: 15,
+                              circularRadius: 30)),
+                      SPACE(),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ));
     });
   }
 }
@@ -108,10 +106,13 @@ class RegisterTncController extends GetxController {
     if (_res?.statusCode == 200 || _res?.statusCode == 201) {
       var _userModel = UserModel.fromJson(_res?.data);
       await PRO.saveLocalUser(_userModel.data);
+      Loading.hide();
       Get.to(VerifyCodePage());
     } else if (_res?.statusCode == 400) {
+      Loading.hide();
       Get.offAll(RegisterPage());
     } else {
+      Loading.hide();
       Get.offAll(RegisterPage());
     }
   }

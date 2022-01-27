@@ -6,11 +6,10 @@ import 'package:get/get.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/ovo_res_model/ovo_res_model.dart';
-import 'package:kalm/model/payment_data_res_model/payment_data_res_model.dart';
-import 'package:kalm/utilities/date_format.dart';
 import 'package:kalm/utilities/parse_to_currency.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
@@ -35,8 +34,7 @@ class OvoPage extends StatelessWidget {
               child: ListView(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 child: Column(
                   children: [
                     Image.asset("assets/icon/ovo.png", scale: 8),
@@ -92,9 +90,7 @@ class OvoPage extends StatelessWidget {
             child: Column(
               children: [
                 BUTTON('Selanjutnya',
-                    onPressed: _.validationField
-                        ? () async => await _.submit(context)
-                        : null),
+                    onPressed: _.validationField ? () async => await _.submit(context) : null),
                 BUTTON('Kembali', onPressed: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -127,8 +123,7 @@ class OvoPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!_.loadingCheck &&
-                  _.response(context)?.data?.status != "FAILED")
+              if (!_.loadingCheck && _.response(context)?.data?.status != "FAILED")
                 TEXT("Menunggu pembayaran"),
               TEXT(_.response(context)?.data?.status),
             ],
@@ -139,8 +134,7 @@ class OvoPage extends StatelessWidget {
               await PRO.ovoGet();
               _.setLoading(false);
               if ((_.response(context, listen: false) != null) &&
-                  _.response(context, listen: false)?.data?.status ==
-                      "FAILED") {
+                  _.response(context, listen: false)?.data?.status == "FAILED") {
                 await Future.delayed(const Duration(seconds: 1));
                 await PRO.cancelPayment();
                 Navigator.pop(context);
@@ -175,16 +169,14 @@ class OvoPage extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TEXT(
-                          "Rp. ${CURRENCY(_.response(context)!.data!.amount!)}",
+                      TEXT("Rp. ${CURRENCY(_.response(context)!.data!.amount!)}",
                           style: Get.textTheme.headline1),
                       SPACE(),
                     ],
                   );
                 } catch (e) {
                   return TEXT('Pembayaran Gagal atau waktu habis',
-                      style: COSTUM_TEXT_STYLE(
-                          fontWeight: FontWeight.bold, color: ORANGEKALM));
+                      style: COSTUM_TEXT_STYLE(fontWeight: FontWeight.bold, color: ORANGEKALM));
                 }
               }),
             ],
@@ -223,6 +215,7 @@ class OvoController extends GetxController {
   Future<void> submit(BuildContext context) async {
     focusNode.unfocus();
     await PRO.ovoCreate(phoneController.text, context);
+    Loading.hide();
     if (response(context, listen: false) != null) {
     } else {
       return;

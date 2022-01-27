@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -7,16 +6,13 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/payment_data_res_model/payment_data_res_model.dart';
 import 'package:kalm/utilities/date_format.dart';
-import 'package:kalm/utilities/deep_link_redirect.dart';
 import 'package:kalm/utilities/parse_to_currency.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/safe_area.dart';
-import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ShopeePage extends StatelessWidget {
@@ -78,11 +74,7 @@ class ShopeePage extends StatelessWidget {
           javascriptMode: JavascriptMode.unrestricted,
         ),
         if (_.loading != 100)
-          Center(
-              child: SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: Loading().LOADING_ICON(context)))
+          Center(child: SizedBox(height: 100, width: 100, child: Loading().LOADING_ICON(context)))
       ],
     );
   }
@@ -131,8 +123,7 @@ class ShopeePage extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TEXT(
-                          "Rp. ${CURRENCY(double.parse(_.response(context)!.grossAmount!))}",
+                      TEXT("Rp. ${CURRENCY(double.parse(_.response(context)!.grossAmount!))}",
                           style: Get.textTheme.headline1),
                       SPACE(),
                       if (!_.loadingCheck) TEXT("Menunggu pembayaran")
@@ -140,8 +131,7 @@ class ShopeePage extends StatelessWidget {
                   );
                 } catch (e) {
                   return TEXT('Pembayaran Gagal atau waktu habis',
-                      style: COSTUM_TEXT_STYLE(
-                          fontWeight: FontWeight.bold, color: ORANGEKALM));
+                      style: COSTUM_TEXT_STYLE(fontWeight: FontWeight.bold, color: ORANGEKALM));
                 }
               }),
             ],
@@ -156,10 +146,7 @@ class ShopeePage extends StatelessWidget {
 class ShopeeController extends GetxController {
   StreamSubscription<DateTime?>? streamSubscription;
   PaymentDataResModel? response(BuildContext context, {bool listen = true}) {
-    return STATE(context, isListen: listen)
-        .pendingPaymentResModel
-        ?.pendingData
-        ?.otherResponse;
+    return STATE(context, isListen: listen).pendingPaymentResModel?.pendingData?.otherResponse;
   }
 
   int? loading = 0;

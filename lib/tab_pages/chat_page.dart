@@ -10,6 +10,7 @@ import 'package:kalm/pages/setting_page/packages.dart';
 import 'package:kalm/tab_pages/chat_room.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
@@ -144,6 +145,7 @@ class ChatPage extends StatelessWidget {
               child: BUTTON("Hubungi Admin", onPressed: () async {
                 if (PRO.contactUsResModel == null) {
                   await PRO.getContactUs();
+                  Loading.hide();
                 }
                 pushNewScreen(context, screen: ContactUsPage());
               }, circularRadius: 30, verticalPad: 15)),
@@ -188,6 +190,7 @@ class ChatPage extends StatelessWidget {
               child: BUTTON("Hubungi Admin", onPressed: () async {
                 if (PRO.contactUsResModel == null) {
                   await PRO.getContactUs();
+                  Loading.hide();
                 }
                 pushNewScreen(context, screen: ContactUsPage());
               }, circularRadius: 30, verticalPad: 15)),
@@ -214,6 +217,7 @@ class ChatPage extends StatelessWidget {
                   await pushNewScreen(context, screen: PackagesPage());
                 } else {
                   await PRO.getSubSubcriptionList();
+                  Loading.hide();
                   await pushNewScreen(context, screen: PackagesPage());
                 }
               }, circularRadius: 30, verticalPad: 15)),
@@ -223,6 +227,7 @@ class ChatPage extends StatelessWidget {
               child: BUTTON("Hubungi Admin", onPressed: () async {
                 if (PRO.contactUsResModel == null) {
                   await PRO.getContactUs();
+                  Loading.hide();
                 }
                 pushNewScreen(context, screen: ContactUsPage());
               }, circularRadius: 30, verticalPad: 15)),
@@ -237,7 +242,9 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     var _res = await Api().POST(ACC_TNC(PRO.counselorData!.counselor!.code!), {}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.updateSession(useLoading: true);
+      Loading.hide();
     } else {
+      Loading.hide();
       return;
     }
   }
@@ -246,7 +253,9 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
     var _res = await Api().POST(REJECT_TNC, {"reason": "Reject TNC by User"}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.updateSession(useLoading: true);
+      Loading.hide();
     } else {
+      Loading.hide();
       return;
     }
   }

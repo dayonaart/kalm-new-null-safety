@@ -31,12 +31,10 @@ Future SHOW_DIALOG(
             SizedBox(
               width: Get.width / 1.5,
               child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   margin: const EdgeInsets.all(0),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [

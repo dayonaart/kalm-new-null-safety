@@ -17,6 +17,7 @@ import 'package:kalm/pages/setting_page/term_and_condition.dart';
 import 'package:kalm/utilities/deep_link_redirect.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/dialog.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
 import 'package:kalm/widget/space.dart';
@@ -71,6 +72,7 @@ class SettingPage extends StatelessWidget {
                           onPressed: () async {
                         var _res = await Api().POST(LOGOUT, {}, useToken: true);
                         PRO.updateInitialIndexTab(0);
+                        Loading.hide();
                         await PRO.clearAllData();
                       }),
                     ),
@@ -110,6 +112,7 @@ class SettingController extends GetxController {
       case "Tentang Kalm":
         if (PRO.aboutResModel == null) {
           await PRO.getAboutUs();
+          Loading.hide();
           await pushNewScreen(context, screen: AboutUsPage());
         } else {
           await pushNewScreen(context, screen: AboutUsPage());
@@ -134,6 +137,7 @@ class SettingController extends GetxController {
           await pushNewScreen(context, screen: PackagesPage());
         } else {
           await PRO.getSubSubcriptionList();
+          Loading.hide();
           await pushNewScreen(context, screen: PackagesPage());
         }
         break;
@@ -148,6 +152,7 @@ class SettingController extends GetxController {
       case "Cara Penggunaan":
         if (PRO.howToResModel == null) {
           await PRO.getHowTo();
+          Loading.hide();
           await pushNewScreen(context, screen: HowToUsePage());
         } else {
           await pushNewScreen(context, screen: HowToUsePage());
@@ -156,6 +161,7 @@ class SettingController extends GetxController {
       case "Gratitude Journal":
         if (PRO.gratitudeJournalHistoryResModel == null) {
           await PRO.getGratitudeJournalHistory();
+          Loading.hide();
           await pushNewScreen(context, screen: GratitudeJournalHistoryPage());
         } else {
           await pushNewScreen(context, screen: GratitudeJournalHistoryPage());
@@ -167,6 +173,7 @@ class SettingController extends GetxController {
       case "Kebijakan Privasi":
         if (PRO.privacyPolicyResModel == null) {
           await PRO.getPrivacyPolicy();
+          Loading.hide();
           await pushNewScreen(context, screen: PrivacyPolicyPage());
         } else {
           await pushNewScreen(context, screen: PrivacyPolicyPage());
@@ -175,6 +182,7 @@ class SettingController extends GetxController {
       case "Syarat dan Ketentuan":
         if (PRO.termAndConditionResModel == null) {
           await PRO.getTermAndCondition();
+          Loading.hide();
           await pushNewScreen(context, screen: TermAndConditionPage());
         } else {
           await pushNewScreen(context, screen: TermAndConditionPage());
@@ -183,6 +191,7 @@ class SettingController extends GetxController {
       case "Hubungi Kami":
         if (PRO.contactUsResModel == null) {
           await PRO.getContactUs();
+          Loading.hide();
           await pushNewScreen(context, screen: ContactUsPage());
         } else {
           await pushNewScreen(context, screen: ContactUsPage());
@@ -195,7 +204,7 @@ class SettingController extends GetxController {
         await GO_TO_STORE();
         break;
       default:
-        print("lain");
+        Loading.hide();
     }
   }
 }
