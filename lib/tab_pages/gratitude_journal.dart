@@ -52,8 +52,9 @@ class GratitudeJournalPage extends StatelessWidget {
               TEXT(DATE_FORMAT(DateTime.now())),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                    List.generate(PRO.gratitudeJournalResModel?.gratitudeData?.length ?? 0, (i) {
+                children: List.generate(
+                    PRO.gratitudeJournalResModel?.gratitudeData?.length ?? 0,
+                    (i) {
                   var _data = PRO.gratitudeJournalResModel!.gratitudeData![i];
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,17 +66,20 @@ class GratitudeJournalPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
-                            children: List.generate(PRO.gratitudeEditingController[i].length, (j) {
+                            children: List.generate(
+                                PRO.gratitudeEditingController[i].length, (j) {
                               return Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 10, right: 5),
+                                    padding: const EdgeInsets.only(
+                                        top: 10, right: 5),
                                     child: CircleAvatar(
                                       radius: 10,
                                       backgroundColor: ORANGEKALM,
                                       child: TEXT("${(j + 1)}",
-                                          style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                                          style: COSTUM_TEXT_STYLE(
+                                              color: Colors.white)),
                                     ),
                                   ),
                                   Expanded(child: _textField(i, j, _)),
@@ -92,13 +96,16 @@ class GratitudeJournalPage extends StatelessWidget {
               SPACE(height: 20),
               SizedBox(
                   width: Get.width / 1.5,
-                  child: BUTTON("Gratitude Journal History", onPressed: () async {
+                  child:
+                      BUTTON("Gratitude Journal History", onPressed: () async {
                     if (PRO.gratitudeJournalHistoryResModel == null) {
                       await PRO.getGratitudeJournalHistory();
                       Loading.hide();
-                      await pushNewScreen(context, screen: GratitudeJournalHistoryPage());
+                      await pushNewScreen(context,
+                          screen: GratitudeJournalHistoryPage());
                     } else {
-                      await pushNewScreen(context, screen: GratitudeJournalHistoryPage());
+                      await pushNewScreen(context,
+                          screen: GratitudeJournalHistoryPage());
                     }
                   }, verticalPad: 15, circularRadius: 30))
             ],
@@ -115,7 +122,8 @@ class GratitudeJournalPage extends StatelessWidget {
       textInputAction: TextInputAction.newline,
       textAlignVertical: TextAlignVertical.center,
       controller: PRO.gratitudeEditingController[i][j],
-      onChanged: (v) => TEXTFIELD_DEBOUNCER(v, () async => await _.submit(), second: 3),
+      onChanged: (v) =>
+          TEXTFIELD_DEBOUNCER(v, () async => await _.submit(), second: 3),
     );
   }
 }
@@ -133,7 +141,8 @@ class GratitudeJournalController extends GetxController {
         return {"id": (i + 1), "answer": _answer[i]};
       })
     };
-    var _res = await Api().POST(GRATITUDE_JOURNAL, _payload, useToken: true, useLoading: false);
+    var _res = await Api()
+        .POST(GRATITUDE_JOURNAL, _payload, useToken: true, useLoading: false);
     if (_res?.statusCode == 200) {
       await PRO.getGratitudeJournal(useLoading: false);
       Loading.hide();

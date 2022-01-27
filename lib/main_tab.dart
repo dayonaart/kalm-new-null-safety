@@ -18,7 +18,8 @@ GetBuilder<KalmAppController> KalmMainTab() {
   return GetBuilder<KalmAppController>(initState: (st) async {
     await PRO.checkAppVersion();
     var keyboardVisibilityController = KeyboardVisibilityController();
-    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
       PRO.updateKeyboardVisibility(visible);
     });
     PRO.matchupRef.onValue.listen((event) async {
@@ -60,7 +61,13 @@ class KalmAppController extends GetxController {
   }
 
   List<Widget> pages(BuildContext context) {
-    return [HomePage(), GratitudeJournalPage(), page3(context), DiscoveryPage(), SettingPage()];
+    return [
+      HomePage(),
+      GratitudeJournalPage(),
+      page3(context),
+      DiscoveryPage(),
+      SettingPage()
+    ];
   }
 
   Widget page3(BuildContext context) {
@@ -97,13 +104,15 @@ class KalmAppController extends GetxController {
   int selectedIndex = 0;
 
   Future<void> _updateRead() async {
-    var _snap = PRO.database.ref("chats/${PRO.counselorData?.matchupId ?? "100111"}");
+    var _snap =
+        PRO.database.ref("chats/${PRO.counselorData?.matchupId ?? "100111"}");
     var _getRead = await _snap
         .orderByChild("code")
         .equalTo("CONS-210409025411162")
         // .equalTo(PRO.counselorData?.counselor?.code)
         .once();
-    var _chatModel = Map<String, dynamic>.from(_getRead.snapshot.value as Map<Object?, Object?>);
+    var _chatModel = Map<String, dynamic>.from(
+        _getRead.snapshot.value as Map<Object?, Object?>);
     _chatModel.forEach((key, value) {
       _snap.child(key).child("status").set("read");
     });

@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
 import 'package:kalm/color/colors.dart';
@@ -123,6 +122,7 @@ class VoucherController extends GetxController {
     if (_res?.statusCode == 200) {
       voucherResModel = VoucherResModel.fromJson(_res?.data);
       update();
+      Loading.hide();
       await SHOW_DIALOG(
           "Apakah Anda ingin menggunakan Voucher\n${voucherResModel?.voucherData?.code}",
           onAcc: () async {
@@ -133,6 +133,7 @@ class VoucherController extends GetxController {
       assignVoucherData = null;
       voucherResModel = null;
       update();
+      Loading.hide();
       return;
     }
   }
@@ -142,6 +143,7 @@ class VoucherController extends GetxController {
     if (_res?.statusCode == 200) {
       assignVoucherData = AssignVoucherResModel.fromJson(_res?.data).assignVoucherData;
       update();
+      await PRO.updateSession();
       Loading.hide();
     } else {
       assignVoucherData = null;

@@ -51,7 +51,8 @@ class ContactUsPage extends StatelessWidget {
                 ),
                 SPACE(height: 20),
                 BUTTON("Kirim",
-                    onPressed: _.validationField ? () async => await _.submit() : null,
+                    onPressed:
+                        _.validationField ? () async => await _.submit() : null,
                     verticalPad: 12,
                     circularRadius: 30),
                 SPACE(height: 20),
@@ -80,7 +81,9 @@ class ContactUsController extends GetxController {
   }
 
   Future<void> submit() async {
-    var _res = await Api().POST(SETTING_CONTACT, {"message": fieldController.text}, useToken: true);
+    var _res = await Api().POST(
+        SETTING_CONTACT, {"message": fieldController.text},
+        useToken: true);
     if (_res?.statusCode == 200) {
       fieldController.clear();
       fieldFocus.unfocus();

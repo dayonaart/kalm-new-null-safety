@@ -971,7 +971,6 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> submit(BuildContext context) async {
-    print(payload);
     if (!addressValiation) {
       ERROR_SNACK_BAR("Perhatian", "Alamat wajib diisi semua");
       return;
@@ -990,6 +989,7 @@ class EditProfileController extends GetxController {
       Loading.hide();
       Navigator.pop(context);
     } else {
+      Navigator.pop(context);
       return;
     }
   }

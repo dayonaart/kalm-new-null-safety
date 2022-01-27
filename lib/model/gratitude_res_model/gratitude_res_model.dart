@@ -7,7 +7,10 @@ class GratitudeResModel {
   List<GratitudeData>? gratitudeData;
   List<GratitudeJournalHistoryData>? gratitudeJournalHistoryResModel;
   GratitudeResModel(
-      {this.status, this.message, this.gratitudeData, this.gratitudeJournalHistoryResModel});
+      {this.status,
+      this.message,
+      this.gratitudeData,
+      this.gratitudeJournalHistoryResModel});
 
   factory GratitudeResModel.fromJson(Map<String, dynamic> json) {
     return GratitudeResModel(
@@ -20,7 +23,8 @@ class GratitudeResModel {
             : null,
         gratitudeJournalHistoryResModel: json['data'].runtimeType == List
             ? (json['data'] as List<dynamic>?)
-                ?.map((e) => GratitudeJournalHistoryData.fromJson(e as Map<String, dynamic>))
+                ?.map((e) => GratitudeJournalHistoryData.fromJson(
+                    e as Map<String, dynamic>))
                 .toList()
             : null);
   }
@@ -29,6 +33,7 @@ class GratitudeResModel {
         'status': status,
         'message': message,
         'data': gratitudeData?.map((e) => e.toJson()).toList(),
-        'gratitude_history': gratitudeJournalHistoryResModel?.map((e) => e.toJson()).toList()
+        'gratitude_history':
+            gratitudeJournalHistoryResModel?.map((e) => e.toJson()).toList()
       };
 }

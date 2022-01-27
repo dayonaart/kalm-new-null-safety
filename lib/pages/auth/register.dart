@@ -31,11 +31,13 @@ class RegisterPage extends StatelessWidget {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     children: [
                       if (MediaQuery.of(context).viewInsets.bottom == 0.0)
-                        Image.asset('assets/icon/register_icon.png', scale: 2.5),
+                        Image.asset('assets/icon/register_icon.png',
+                            scale: 2.5),
                       SPACE(height: 20),
                       TEXT_FIELD(_.firstNameField,
                           focusNode: _.firstNameFocus,
@@ -69,8 +71,9 @@ class RegisterPage extends StatelessWidget {
                           onSubmitted: (val) => _.onSubmittedPassword(val),
                           focusNode: _.passwordFocus,
                           onChanged: (val) => _.onChangePassword(val),
-                          prefixIcon: Icon(
-                              _.passwordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
+                          prefixIcon: Icon(_.passwordObsecure
+                              ? Icons.lock_outline
+                              : Icons.lock_open_outlined),
                           hint: "Password",
                           suffixIcon: IconButton(
                               onPressed: () => _.onChangePasswordObsecure(),
@@ -85,8 +88,9 @@ class RegisterPage extends StatelessWidget {
                           onSubmitted: (val) => _.onSubmittedRePassword(val),
                           focusNode: _.rePasswordFocus,
                           onChanged: (val) => _.onChangeRePassword(val),
-                          prefixIcon: Icon(
-                              _.rePasswordObsecure ? Icons.lock_outline : Icons.lock_open_outlined),
+                          prefixIcon: Icon(_.rePasswordObsecure
+                              ? Icons.lock_outline
+                              : Icons.lock_open_outlined),
                           hint: "Konfirmasi Password",
                           suffixIcon: IconButton(
                               onPressed: () => _.onChangeRePasswordObsecure(),
@@ -99,7 +103,9 @@ class RegisterPage extends StatelessWidget {
                       BUTTON("Daftar",
                           verticalPad: 15,
                           circularRadius: 30,
-                          onPressed: _.validationForm ? () async => await _.submit() : null),
+                          onPressed: _.validationForm
+                              ? () async => await _.submit()
+                              : null),
                       SPACE(height: 20),
                       SizedBox(
                         width: Get.width,
@@ -111,7 +117,8 @@ class RegisterPage extends StatelessWidget {
                                 onTap: () => Get.offAll(LoginPage()),
                                 child: TEXT("Login",
                                     style: COSTUM_TEXT_STYLE(
-                                        color: ORANGEKALM, fontWeight: FontWeight.w600))),
+                                        color: ORANGEKALM,
+                                        fontWeight: FontWeight.w600))),
                           ],
                         ),
                       )
@@ -126,7 +133,11 @@ class RegisterPage extends StatelessWidget {
 }
 
 class RegisterController extends GetxController {
-  Widget? validateFirstName, validateLastName, validateEmail, validatePassword, validateRePassword;
+  Widget? validateFirstName,
+      validateLastName,
+      validateEmail,
+      validatePassword,
+      validateRePassword;
   FocusNode firstNameFocus = FocusNode();
   FocusNode lastNameFocus = FocusNode();
   FocusNode emailFocus = FocusNode();
@@ -268,7 +279,8 @@ class RegisterController extends GetxController {
           role: "10");
       PRO.updateRegisterPayload(_payload);
       Loading.hide();
-      Get.to(RegisterTncPage(registerTncResModel: RegisterTncResModel.fromJson(_res?.data)));
+      Get.to(RegisterTncPage(
+          registerTncResModel: RegisterTncResModel.fromJson(_res?.data)));
     } else {
       Loading.hide();
       return;

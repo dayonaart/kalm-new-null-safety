@@ -65,20 +65,25 @@ class RegisterTncPage extends StatelessWidget {
                 decoration: BoxDecoration(
                     border: Border.all(width: 0.5, color: BLUEKALM),
                     borderRadius: const BorderRadiusDirectional.only(
-                        topEnd: Radius.circular(10), topStart: Radius.circular(10))),
+                        topEnd: Radius.circular(10),
+                        topStart: Radius.circular(10))),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
                     children: [
                       TEXT(
                           "Dengan membaca syarat dan ketentuan,Anda dengan ini setuju, memahami dan menerima Syarat Dan Ketentuan tersebut",
-                          style: COSTUM_TEXT_STYLE(fonstSize: 12, fontStyle: FontStyle.italic),
+                          style: COSTUM_TEXT_STYLE(
+                              fonstSize: 12, fontStyle: FontStyle.italic),
                           textAlign: TextAlign.center),
                       SPACE(height: 15),
                       SizedBox(
                           width: Get.width / 1.4,
                           child: BUTTON("Selanjutnya",
-                              onPressed: _.haveReadTnc ? () async => await _.submit() : null,
+                              onPressed: _.haveReadTnc
+                                  ? () async => await _.submit()
+                                  : null,
                               verticalPad: 15,
                               circularRadius: 30)),
                       SPACE(),

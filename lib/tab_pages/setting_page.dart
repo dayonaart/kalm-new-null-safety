@@ -34,7 +34,8 @@ class SettingPage extends StatelessWidget {
           child: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Column(
                   children: [
                     Column(
@@ -47,17 +48,20 @@ class SettingPage extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       TEXT(e),
                                       Transform.rotate(
                                         angle: math.pi,
-                                        child: const Icon(Icons.arrow_back_ios_new,
+                                        child: const Icon(
+                                            Icons.arrow_back_ios_new,
                                             color: Colors.grey),
                                       )
                                     ],
                                   ),
-                                  const Divider(thickness: 1, color: Colors.grey),
+                                  const Divider(
+                                      thickness: 1, color: Colors.grey),
                                 ],
                               ),
                             ),
@@ -68,8 +72,9 @@ class SettingPage extends StatelessWidget {
                     SPACE(),
                     SizedBox(
                       width: Get.width / 1.3,
-                      child: BUTTON("Keluar", circularRadius: 30, verticalPad: 15,
-                          onPressed: () async {
+                      child: BUTTON("Keluar",
+                          circularRadius: 30,
+                          verticalPad: 15, onPressed: () async {
                         var _res = await Api().POST(LOGOUT, {}, useToken: true);
                         PRO.updateInitialIndexTab(0);
                         Loading.hide();
@@ -79,7 +84,8 @@ class SettingPage extends StatelessWidget {
                     SPACE(),
                     TEXT("APP VERSION"),
                     SPACE(),
-                    TEXT(STATE(context).APP_VERSION, style: COSTUM_TEXT_STYLE(color: Colors.grey))
+                    TEXT(STATE(context).APP_VERSION,
+                        style: COSTUM_TEXT_STYLE(color: Colors.grey))
                   ],
                 ),
               ),
@@ -123,7 +129,8 @@ class SettingController extends GetxController {
         break;
       case "Profil":
         if (PRO.userData?.status != 1) {
-          await SHOW_DIALOG("Pastikan Anda telah melengkapi data Kuisioner di menu chat",
+          await SHOW_DIALOG(
+              "Pastikan Anda telah melengkapi data Kuisioner di menu chat",
               onAcc: () {
             Get.back();
             PRO.updateInitialIndexTab(2);

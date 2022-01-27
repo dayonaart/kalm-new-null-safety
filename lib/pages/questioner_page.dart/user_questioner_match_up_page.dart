@@ -54,7 +54,8 @@ class UserQustionerMatchupPage extends StatelessWidget {
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _.userMatchupResModel(context: context)!.map((a) {
+                          children:
+                              _.userMatchupResModel(context: context)!.map((a) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -62,45 +63,64 @@ class UserQustionerMatchupPage extends StatelessWidget {
                                   width: Get.width,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(width: 0.5, color: BLUEKALM)),
+                                      border: Border.all(
+                                          width: 0.5, color: BLUEKALM)),
                                   child: Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
                                     child: TEXT(a.question,
                                         style: COSTUM_TEXT_STYLE(
-                                            fonstSize: 18, fontWeight: FontWeight.bold)),
+                                            fonstSize: 18,
+                                            fontWeight: FontWeight.bold)),
                                   ),
                                 ),
                                 if (a.id == 5)
                                   Column(
                                     children: a.matchupAnswers!.map((b) {
                                       return Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SPACE(height: 20),
                                           Container(
                                             width: Get.width,
                                             decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.only(
-                                                    topLeft: Radius.circular(10),
-                                                    topRight: Radius.circular(10)),
-                                                border: Border.all(width: 1, color: BLUEKALM)),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(10),
+                                                        topRight:
+                                                            Radius.circular(
+                                                                10)),
+                                                border: Border.all(
+                                                    width: 1, color: BLUEKALM)),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 5),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                               child: TEXT(b.answer,
                                                   style: COSTUM_TEXT_STYLE(
-                                                      fontWeight: FontWeight.bold)),
+                                                      fontWeight:
+                                                          FontWeight.bold)),
                                             ),
                                           ),
                                           Container(
                                               decoration: BoxDecoration(
-                                                  borderRadius: const BorderRadius.only(
-                                                      bottomLeft: Radius.circular(10),
-                                                      bottomRight: Radius.circular(10)),
-                                                  border: Border.all(width: 0.5, color: BLUEKALM)),
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  10),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  10)),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: BLUEKALM)),
                                               child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: _gridAnswer(a.id, b),
                                               ))
                                         ],
@@ -119,9 +139,10 @@ class UserQustionerMatchupPage extends StatelessWidget {
                               if (PRO.userData?.status == 1) _kalmselorCode(_),
                               SPACE(height: 20),
                               BUTTON("Selanjutnya",
-                                  onPressed: _.userMatchupPayload().contains(null)
-                                      ? null
-                                      : () async => await _.submit(context),
+                                  onPressed:
+                                      _.userMatchupPayload().contains(null)
+                                          ? null
+                                          : () async => await _.submit(context),
                                   verticalPad: 15,
                                   circularRadius: 30)
                             ],
@@ -150,8 +171,11 @@ class UserQustionerMatchupPage extends StatelessWidget {
             placeholder: "XXX-XXX",
             textCapitalization: TextCapitalization.characters,
             textAlignVertical: TextAlignVertical.center,
-            style: COSTUM_TEXT_STYLE(color: BLUEKALM, fonstSize: 20, fontWeight: FontWeight.w600),
-            inputFormatters: [CustomInputFormatter(mask: "xxx-xxx", separator: "-")],
+            style: COSTUM_TEXT_STYLE(
+                color: BLUEKALM, fonstSize: 20, fontWeight: FontWeight.w600),
+            inputFormatters: [
+              CustomInputFormatter(mask: "xxx-xxx", separator: "-")
+            ],
             decoration: BoxDecoration(
                 border: Border.all(width: 0.5, color: BLUEKALM),
                 borderRadius: BorderRadius.circular(10)),
@@ -167,7 +191,8 @@ class UserQustionerMatchupPage extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: TEXT("!"),
                 ),
-                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(width: 0.2)),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, border: Border.all(width: 0.2)),
               ),
               SPACE(height: 5),
               TEXT('Kalmselor Code')
@@ -192,7 +217,8 @@ class UserQustionerMatchupPage extends StatelessWidget {
   String _languangeAnswer(List<MatchupAnswer?>? answer) {
     try {
       return answer!
-          .singleWhere((e) => e!.id == _controller.userMatchupPayload().first!.answer!.first)!
+          .singleWhere((e) =>
+              e!.id == _controller.userMatchupPayload().first!.answer!.first)!
           .answer!;
     } catch (e) {
       return "Pilih Bahasa";
@@ -205,7 +231,8 @@ class UserQustionerMatchupPage extends StatelessWidget {
         SPACE(),
         CupertinoTextField(
           style: COSTUM_TEXT_STYLE(color: BLUEKALM),
-          controller: TextEditingController(text: _languangeAnswer(matchupAnswers)),
+          controller:
+              TextEditingController(text: _languangeAnswer(matchupAnswers)),
           readOnly: true,
           onTap: !isEdit!
               ? null
@@ -216,7 +243,8 @@ class UserQustionerMatchupPage extends StatelessWidget {
                       decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10))),
                       height: Get.height / 4.5,
                       child: Column(
                         children: [
@@ -230,7 +258,11 @@ class UserQustionerMatchupPage extends StatelessWidget {
                                 OUTLINE_BUTTON("Pilih",
                                     useExpanded: false,
                                     onPressed: () => _controller.updatePayload(
-                                        _controller.userMatchupResModel()!.first.id, _answer)),
+                                        _controller
+                                            .userMatchupResModel()!
+                                            .first
+                                            .id,
+                                        _answer)),
                               ],
                             ),
                           ),
@@ -249,10 +281,12 @@ class UserQustionerMatchupPage extends StatelessWidget {
                                       width: Get.width / 1.2,
                                       decoration: BoxDecoration(
                                           border: e?.id == _answer
-                                              ? Border.all(width: 0.5, color: BLUEKALM)
+                                              ? Border.all(
+                                                  width: 0.5, color: BLUEKALM)
                                               : null,
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10)),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
                                       child: Center(
                                         child: TEXT(e?.answer),
                                       ));
@@ -296,7 +330,8 @@ class UserQustionerMatchupPage extends StatelessWidget {
                   child: Container(
                       decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
-                    color: _activeColorAnswer(_controller.answerPayload.contains(c.id)),
+                    color: _activeColorAnswer(
+                        _controller.answerPayload.contains(c.id)),
                   )),
                 ),
                 height: 20,
@@ -306,7 +341,9 @@ class UserQustionerMatchupPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5)),
               ),
               SPACE(),
-              SizedBox(width: Get.width / 3.5, child: TEXT(c.answer, textAlign: TextAlign.start)),
+              SizedBox(
+                  width: Get.width / 3.5,
+                  child: TEXT(c.answer, textAlign: TextAlign.start)),
             ],
           )),
         );
@@ -351,17 +388,21 @@ class UserQustionerMatchupController extends GetxController {
     update();
   }
 
-  void updateExistingPayload(List<int?>? gridAnswer, List<int?>? languageAnswer) {
+  void updateExistingPayload(
+      List<int?>? gridAnswer, List<int?>? languageAnswer) {
     answerPayload = gridAnswer!;
-    userMatchupPayload()[0] = UserMatchupPayload(question: 1, answer: languageAnswer);
-    userMatchupPayload()[1] = UserMatchupPayload(question: 1, answer: gridAnswer);
+    userMatchupPayload()[0] =
+        UserMatchupPayload(question: 1, answer: languageAnswer);
+    userMatchupPayload()[1] =
+        UserMatchupPayload(question: 1, answer: gridAnswer);
     update();
   }
 
   void updatePayload(int? qId, int? answer) {
     int? i = userMatchupResModel()?.indexWhere((a) => a.id == qId);
     if (i == 0) {
-      userMatchupPayload()[i!] = UserMatchupPayload(question: qId, answer: [answer]);
+      userMatchupPayload()[i!] =
+          UserMatchupPayload(question: qId, answer: [answer]);
       Get.back();
     } else {
       if (answerPayload.contains(answer)) {
@@ -369,13 +410,15 @@ class UserQustionerMatchupController extends GetxController {
       } else {
         answerPayload.add(answer);
       }
-      userMatchupPayload()[i!] = UserMatchupPayload(question: qId, answer: answerPayload);
+      userMatchupPayload()[i!] =
+          UserMatchupPayload(question: qId, answer: answerPayload);
     }
     update();
   }
 
   Future<UserModel?> _checkKalmselorCode() async {
-    var _checkCode = await Api().GET(CHECK_UNIQCODE + kalmselorCodeController.text, useToken: true);
+    var _checkCode = await Api()
+        .GET(CHECK_UNIQCODE + kalmselorCodeController.text, useToken: true);
     if (_checkCode?.statusCode == 200) {
       return UserModel.fromJson(_checkCode!.data);
     } else {
@@ -384,8 +427,9 @@ class UserQustionerMatchupController extends GetxController {
   }
 
   Future<bool> _assignKalmselorCode() async {
-    var _assignCode = await Api()
-        .POST(ASSIGN_UNIQCODE, {"unique_code": kalmselorCodeController.text}, useToken: true);
+    var _assignCode = await Api().POST(
+        ASSIGN_UNIQCODE, {"unique_code": kalmselorCodeController.text},
+        useToken: true);
     // print(_assignCode?.toJson());
     if (_assignCode?.statusCode == 200) {
       return true;
@@ -400,7 +444,8 @@ class UserQustionerMatchupController extends GetxController {
       if (_res == null) {
         return;
       } else {
-        await SHOW_DIALOG("${_res.message}\n${_res.data?.firstName} ${_res.data?.lastName ?? ""}",
+        await SHOW_DIALOG(
+            "${_res.message}\n${_res.data?.firstName} ${_res.data?.lastName ?? ""}",
             customButton: BUTTON("Selanjutnya", onPressed: () async {
               Get.back();
               if (await _assignKalmselorCode()) {
@@ -429,8 +474,9 @@ class UserQustionerMatchupController extends GetxController {
       }
     }).toList();
     // print(_payload);
-    var _res = await Api()
-        .POST(MATCHUP, {"user_code": PRO.userData?.code, "data": _payload}, useToken: true);
+    var _res = await Api().POST(
+        MATCHUP, {"user_code": PRO.userData?.code, "data": _payload},
+        useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
       Loading.hide();

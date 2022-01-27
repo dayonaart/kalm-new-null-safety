@@ -66,11 +66,15 @@ class PackagesPage extends StatelessWidget {
                   ),
                 if (_.optionIndex == 1)
                   Builder(builder: (context) {
-                    if (STATE(context).userData!.userSubscriptionList!.isEmpty) {
+                    if (STATE(context)
+                        .userData!
+                        .userSubscriptionList!
+                        .isEmpty) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TEXT("Anda belum memiliki paket berlangganan",
-                            style: Get.textTheme.headline1, textAlign: TextAlign.center),
+                            style: Get.textTheme.headline1,
+                            textAlign: TextAlign.center),
                       );
                     } else {
                       return _content(_);
@@ -99,13 +103,18 @@ class PackagesPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 20),
                       child: TEXT("Voucher",
                           style: COSTUM_TEXT_STYLE(
-                              color: Colors.white, fontWeight: FontWeight.bold, fonstSize: 20)),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fonstSize: 20)),
                     )),
                 height: 50,
                 circularRadius: 50,
                 fillColor: const Color(0xFFE6B363)),
             BOX_BORDER(Image.asset("assets/icon/voucher.png", scale: 4),
-                circularRadius: 50, height: 70, width: 70, fillColor: Colors.white),
+                circularRadius: 50,
+                height: 70,
+                width: 70,
+                fillColor: Colors.white),
           ],
         ),
       ),
@@ -139,7 +148,8 @@ class PackagesPage extends StatelessWidget {
               try {
                 return Column(
                   children: [
-                    if (STATE(context).pendingPaymentResModel?.pendingData != null)
+                    if (STATE(context).pendingPaymentResModel?.pendingData !=
+                        null)
                       _pendingPackages(context, _),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,7 +180,8 @@ class PackagesPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TEXT("${(_.remainingActivePackageDay(context)!.toInt())} Hari Tersisa"),
+                TEXT(
+                    "${(_.remainingActivePackageDay(context)!.toInt())} Hari Tersisa"),
                 SPACE(),
                 BOX_BORDER(
                     Padding(
@@ -202,7 +213,8 @@ class PackagesPage extends StatelessWidget {
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10),
-      children: List.generate(STATE(context).userData!.userSubscriptionList!.length, (i) {
+      children: List.generate(
+          STATE(context).userData!.userSubscriptionList!.length, (i) {
         var _data = STATE(context).userData!.userSubscriptionList!;
         return Container(
           decoration: BoxDecoration(
@@ -222,7 +234,8 @@ class PackagesPage extends StatelessWidget {
                 decoration: const BoxDecoration(
                     color: BLUEKALM,
                     borderRadius: BorderRadiusDirectional.only(
-                        topEnd: Radius.circular(10), topStart: Radius.circular(10))),
+                        topEnd: Radius.circular(10),
+                        topStart: Radius.circular(10))),
               ),
               Padding(
                 padding: const EdgeInsets.all(5.0),
@@ -252,7 +265,8 @@ class PackagesPage extends StatelessWidget {
 
   InkWell _pendingPackages(BuildContext context, PackagesController _) {
     return InkWell(
-      onTap: () async => await pushNewScreen(context, screen: PaymentDetailPage()),
+      onTap: () async =>
+          await pushNewScreen(context, screen: PaymentDetailPage()),
       child: GridView(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
@@ -278,7 +292,8 @@ class PackagesPage extends StatelessWidget {
                   decoration: const BoxDecoration(
                       color: BLUEKALM,
                       borderRadius: BorderRadiusDirectional.only(
-                          topEnd: Radius.circular(10), topStart: Radius.circular(10))),
+                          topEnd: Radius.circular(10),
+                          topStart: Radius.circular(10))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
@@ -293,9 +308,11 @@ class PackagesPage extends StatelessWidget {
                         ],
                       ),
                       SPACE(),
-                      _packageDate(_data.pendingData!.startAt!, _data.pendingData!.endAt!, true),
+                      _packageDate(_data.pendingData!.startAt!,
+                          _data.pendingData!.endAt!, true),
                       SPACE(height: 3),
-                      _packageDate(_data.pendingData!.startAt!, _data.pendingData!.endAt!, false),
+                      _packageDate(_data.pendingData!.startAt!,
+                          _data.pendingData!.endAt!, false),
                     ],
                   ),
                 )
@@ -322,7 +339,9 @@ class PackagesPage extends StatelessWidget {
             SizedBox(
               width: Get.width,
               child: TEXT(
-                  isStart ? DATE_FORMAT(DateTime.parse(start)) : DATE_FORMAT(DateTime.parse(end)),
+                  isStart
+                      ? DATE_FORMAT(DateTime.parse(start))
+                      : DATE_FORMAT(DateTime.parse(end)),
                   style: COSTUM_TEXT_STYLE(color: Colors.white, fonstSize: 12)),
             ),
           ],
@@ -335,7 +354,8 @@ class PackagesPage extends StatelessWidget {
     return ListView(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      children: List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
+      children: List.generate(
+          PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
         var _sub = PRO.subscriptionListResModel!.subscriptionData!;
         return Column(
           children: [
@@ -344,15 +364,19 @@ class PackagesPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: _.openSubController[i] ? BLUEKALM : Colors.grey[400]),
+                    color:
+                        _.openSubController[i] ? BLUEKALM : Colors.grey[400]),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      TEXT(_sub[i].name, style: COSTUM_TEXT_STYLE(color: Colors.white)),
-                      TEXT("BERLANGGANAN", style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                      TEXT(_sub[i].name,
+                          style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                      TEXT("BERLANGGANAN",
+                          style: COSTUM_TEXT_STYLE(color: Colors.white)),
                     ],
                   ),
                 ),
@@ -366,12 +390,14 @@ class PackagesPage extends StatelessWidget {
     );
   }
 
-  Container _subscriptionBox(List<SubscriptionData> _sub, int i, PackagesController _) {
+  Container _subscriptionBox(
+      List<SubscriptionData> _sub, int i, PackagesController _) {
     return Container(
       width: Get.width / 1.2,
       decoration: BoxDecoration(
           border: Border.all(color: BLUEKALM),
-          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20))),
+          borderRadius:
+              const BorderRadius.vertical(bottom: Radius.circular(20))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
         child: Column(
@@ -382,20 +408,24 @@ class PackagesPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Row(
-                    crossAxisAlignment:
-                        j != 0 ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                    crossAxisAlignment: j != 0
+                        ? CrossAxisAlignment.center
+                        : CrossAxisAlignment.start,
                     children: [
                       CircleAvatar(
                         backgroundColor: BLUEKALM,
                         radius: 15,
-                        child: TEXT("${j + 1}", style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                        child: TEXT("${j + 1}",
+                            style: COSTUM_TEXT_STYLE(color: Colors.white)),
                       ),
                       SPACE(),
                       if (_.promoResModel?.promoData != null && j == 2)
-                        TEXT("Total biaya Rp. ${CURRENCY(_.promoResModel?.promoData?.finalAmount)}")
+                        TEXT(
+                            "Total biaya Rp. ${CURRENCY(_.promoResModel?.promoData?.finalAmount)}")
                       else if (_.promoResModel?.promoData != null && j == 1)
                         TEXT(_sub[i].note![j],
-                            style: const TextStyle(decoration: TextDecoration.lineThrough))
+                            style: const TextStyle(
+                                decoration: TextDecoration.lineThrough))
                       else
                         TEXT(_sub[i].note![j])
                     ],
@@ -412,7 +442,8 @@ class PackagesPage extends StatelessWidget {
                   children: [
                     TEXT(
                         "Anda mendapatkan potongan sebesar Rp. ${_.promoResModel?.promoData?.value}",
-                        style: COSTUM_TEXT_STYLE(color: ORANGEKALM, fonstSize: 11)),
+                        style: COSTUM_TEXT_STYLE(
+                            color: ORANGEKALM, fonstSize: 11)),
                     SPACE(height: 5),
                     TEXT(_.promoResModel?.promoData?.note),
                   ],
@@ -435,7 +466,9 @@ class PackagesPage extends StatelessWidget {
                       padding: const EdgeInsets.all(2.0),
                       child: Container(
                           decoration: BoxDecoration(
-                              color: _.checkBoxController[i] ? ORANGEKALM : Colors.white,
+                              color: _.checkBoxController[i]
+                                  ? ORANGEKALM
+                                  : Colors.white,
                               border: Border.all(width: 0.5, color: BLUEKALM),
                               borderRadius: BorderRadius.circular(3))),
                     ),
@@ -466,10 +499,12 @@ class PackagesPage extends StatelessWidget {
             if (_.loadingPromo[i]) const CupertinoActivityIndicator(radius: 10),
             Card(
               color: BLUEKALM,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: TEXT("Add", style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                child:
+                    TEXT("Add", style: COSTUM_TEXT_STYLE(color: Colors.white)),
               ),
             ),
           ],
@@ -480,7 +515,8 @@ class PackagesPage extends StatelessWidget {
       placeholderStyle: COSTUM_TEXT_STYLE(color: Colors.white),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       placeholder: 'Masukan Kode Promo',
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.grey[400]),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30), color: Colors.grey[400]),
     );
   }
 
@@ -495,13 +531,16 @@ class PackagesPage extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: _.optionIndex == 0 ? ORANGEKALM : Colors.grey[400],
                     borderRadius: const BorderRadiusDirectional.only(
-                        topStart: Radius.circular(25), bottomStart: Radius.circular(25))),
+                        topStart: Radius.circular(25),
+                        bottomStart: Radius.circular(25))),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                   child: Center(
                       child: TEXT("KONSELING",
-                          style:
-                              COSTUM_TEXT_STYLE(color: Colors.white, fontWeight: FontWeight.w600))),
+                          style: COSTUM_TEXT_STYLE(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600))),
                 )),
           ),
         ),
@@ -513,13 +552,16 @@ class PackagesPage extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: _.optionIndex == 1 ? ORANGEKALM : Colors.grey[400],
                     borderRadius: const BorderRadiusDirectional.only(
-                        topEnd: Radius.circular(25), bottomEnd: Radius.circular(25))),
+                        topEnd: Radius.circular(25),
+                        bottomEnd: Radius.circular(25))),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                   child: Center(
                       child: TEXT("KONTEN",
-                          style:
-                              COSTUM_TEXT_STYLE(color: Colors.white, fontWeight: FontWeight.w600))),
+                          style: COSTUM_TEXT_STYLE(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600))),
                 )),
           ),
         ),
@@ -535,29 +577,30 @@ class PackagesController extends GetxController {
       openSubController.contains(true);
   SubscriptionPayload? subscriptionPayload;
   PromoResModel? promoResModel;
-  List<FocusNode> promoFocus =
-      List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
+  List<FocusNode> promoFocus = List.generate(
+      PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
     return FocusNode();
   });
-  List<TextEditingController> promoController =
-      List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
+  List<TextEditingController> promoController = List.generate(
+      PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
     return TextEditingController();
   });
   int optionIndex = 0;
-  List<bool> openSubController =
-      List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
+  List<bool> openSubController = List.generate(
+      PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
     return false;
   });
-  List<bool> checkBoxController =
-      List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
+  List<bool> checkBoxController = List.generate(
+      PRO.subscriptionListResModel!.subscriptionData!.length, (i) {
     return false;
   });
 
   int? activePackageDay(BuildContext context) {
     try {
-      DateTime _start =
-          DateTime.parse(STATE(context).userData!.userSubscriptionList!.first!.startAt!);
-      DateTime _end = DateTime.parse(STATE(context).userData!.userSubscriptionList!.last!.endAt!);
+      DateTime _start = DateTime.parse(
+          STATE(context).userData!.userSubscriptionList!.first!.startAt!);
+      DateTime _end = DateTime.parse(
+          STATE(context).userData!.userSubscriptionList!.last!.endAt!);
       return _end.difference(_start).inDays;
     } catch (e) {
       return null;
@@ -566,7 +609,8 @@ class PackagesController extends GetxController {
 
   double? remainingActivePackageDay(BuildContext context) {
     try {
-      DateTime _end = DateTime.parse(STATE(context).userData!.userSubscriptionList!.last!.endAt!);
+      DateTime _end = DateTime.parse(
+          STATE(context).userData!.userSubscriptionList!.last!.endAt!);
       return _end.difference(DateTime.now()).inDays.toDouble();
     } catch (e) {
       return null;
@@ -587,8 +631,8 @@ class PackagesController extends GetxController {
 
   void onChangeCheckBox(int i, SubscriptionData sub) {
     checkBoxController[i] = !checkBoxController[i];
-    subscriptionPayload =
-        SubscriptionPayload(subscriptionId: sub.id, promoCode: promoResModel?.promoData?.code);
+    subscriptionPayload = SubscriptionPayload(
+        subscriptionId: sub.id, promoCode: promoResModel?.promoData?.code);
     update();
   }
 
@@ -624,7 +668,8 @@ class PackagesController extends GetxController {
   Future<void> submit(BuildContext context) async {
     // debugPrint(jsonEncode(subscriptionPayload?.toJson()), wrapWidth: 1024);
     if (PRO.pendingPaymentResModel?.pendingData != null) {
-      SHOW_DIALOG("Anda masih memiliki pembayaran yang belum selesai\nLajutkan", onAcc: () async {
+      SHOW_DIALOG("Anda masih memiliki pembayaran yang belum selesai\nLajutkan",
+          onAcc: () async {
         _clearValidation();
         update();
         Get.back();
@@ -632,7 +677,8 @@ class PackagesController extends GetxController {
         await pushNewScreen(context, screen: PaymentDetailPage());
       });
     } else {
-      var _res = await Api().POST(USER_SUBSCRIBE, subscriptionPayload?.toJson(), useToken: true);
+      var _res = await Api()
+          .POST(USER_SUBSCRIBE, subscriptionPayload?.toJson(), useToken: true);
       if (_res?.statusCode == 200) {
         _clearValidation();
         update();
@@ -653,8 +699,8 @@ class PackagesController extends GetxController {
     checkBoxController[_checkIndex] = false;
   }
 
-  List<bool> loadingPromo =
-      List.generate(PRO.subscriptionListResModel!.subscriptionData!.length, (i) => false);
+  List<bool> loadingPromo = List.generate(
+      PRO.subscriptionListResModel!.subscriptionData!.length, (i) => false);
 
   Future<void> checkPromo(int i) async {
     if (promoController[i].text.isEmpty) {
@@ -664,7 +710,8 @@ class PackagesController extends GetxController {
       update();
       var _res = await Api().GET(
           PROMO_CHECK(
-              subsId: PRO.subscriptionListResModel?.subscriptionData?[i].id?.toString(),
+              subsId: PRO.subscriptionListResModel?.subscriptionData?[i].id
+                  ?.toString(),
               promo: promoController[i].text),
           useToken: true,
           useLoading: false);

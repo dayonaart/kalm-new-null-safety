@@ -31,7 +31,8 @@ class ChatPage extends StatelessWidget {
                   return ChatRoomPage();
                 } else if (STATE(context).isPendingKalmselorCode) {
                   return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
                       child: _pendingKalmselorCode(context));
                 } else if (STATE(context).isShowTnc) {
                   return _showTnc(context, _);
@@ -57,7 +58,8 @@ class ChatPage extends StatelessWidget {
                   backgroundColor: BLUEKALM,
                   radius: 70,
                   child: IMAGE_CACHE(
-                      IMAGE_URL + "users/${STATE(context).counselorData?.counselor?.photo}",
+                      IMAGE_URL +
+                          "users/${STATE(context).counselorData?.counselor?.photo}",
                       width: 130,
                       height: 130,
                       circularRadius: 70)),
@@ -75,8 +77,8 @@ class ChatPage extends StatelessWidget {
                         onPressed: STATE(context).tncResModel == null
                             ? null
                             : () async => await _.accTnc(),
-                        suffixIcon:
-                            Image.asset('assets/icon/accept.png', scale: 5, color: Colors.white)),
+                        suffixIcon: Image.asset('assets/icon/accept.png',
+                            scale: 5, color: Colors.white)),
                     SPACE(),
                     BUTTON("Tolak",
                         backgroundColor: BLUEKALM,
@@ -85,8 +87,8 @@ class ChatPage extends StatelessWidget {
                         onPressed: STATE(context).tncResModel == null
                             ? null
                             : () async => await _.rejectTnc(),
-                        suffixIcon:
-                            Image.asset('assets/icon/decline.png', scale: 5, color: Colors.white)),
+                        suffixIcon: Image.asset('assets/icon/decline.png',
+                            scale: 5, color: Colors.white)),
                   ],
                 ),
               ),
@@ -99,8 +101,9 @@ class ChatPage extends StatelessWidget {
 
   Container _tncDesc(ChatController _, BuildContext context) {
     return Container(
-        decoration:
-            BoxDecoration(border: Border.all(width: 0.5), borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.5),
+            borderRadius: BorderRadius.circular(10)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -110,7 +113,8 @@ class ChatPage extends StatelessWidget {
                   children: [
                     TEXT(
                         "${STATE(context).counselorData?.counselor?.firstName} ${STATE(context).counselorData?.counselor?.lastName}",
-                        style: COSTUM_TEXT_STYLE(fonstSize: 20, fontWeight: FontWeight.bold)),
+                        style: COSTUM_TEXT_STYLE(
+                            fonstSize: 20, fontWeight: FontWeight.bold)),
                     SPACE(),
                     TEXT(STATE(context)
                         .tncResModel
@@ -137,8 +141,10 @@ class ChatPage extends StatelessWidget {
           TEXT('Mohon Menunggu'),
           SPACE(),
           TEXT("Anda akan dihubungkan dengan Kalmselor"),
-          TEXT(" ${STATE(context).pendingKalmselorCodeModel?.data?.counselorFullname}",
-              style: COSTUM_TEXT_STYLE(fonstSize: 18, fontWeight: FontWeight.w500)),
+          TEXT(
+              " ${STATE(context).pendingKalmselorCodeModel?.data?.counselorFullname}",
+              style: COSTUM_TEXT_STYLE(
+                  fonstSize: 18, fontWeight: FontWeight.w500)),
           SPACE(height: 20),
           SizedBox(
               width: Get.width / 1.5,
@@ -164,7 +170,8 @@ class ChatPage extends StatelessWidget {
           SPACE(),
           TEXT('Mohon Menunggu'),
           SPACE(),
-          TEXT("Kalmselor yang cocok akan segera melayani\nAnda selambat-lambatnya dalam 1x24 jam"),
+          TEXT(
+              "Kalmselor yang cocok akan segera melayani\nAnda selambat-lambatnya dalam 1x24 jam"),
           SPACE(height: 20),
           SizedBox(
               width: Get.width / 1.5,
@@ -237,9 +244,11 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-class ChatController extends GetxController with GetSingleTickerProviderStateMixin {
+class ChatController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   Future<void> accTnc() async {
-    var _res = await Api().POST(ACC_TNC(PRO.counselorData!.counselor!.code!), {}, useToken: true);
+    var _res = await Api()
+        .POST(ACC_TNC(PRO.counselorData!.counselor!.code!), {}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.updateSession(useLoading: true);
       Loading.hide();
@@ -250,7 +259,8 @@ class ChatController extends GetxController with GetSingleTickerProviderStateMix
   }
 
   Future<void> rejectTnc() async {
-    var _res = await Api().POST(REJECT_TNC, {"reason": "Reject TNC by User"}, useToken: true);
+    var _res = await Api()
+        .POST(REJECT_TNC, {"reason": "Reject TNC by User"}, useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.updateSession(useLoading: true);
       Loading.hide();

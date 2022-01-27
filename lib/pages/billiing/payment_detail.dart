@@ -32,7 +32,8 @@ class PaymentDetailPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TEXT('Terima kasih telah melakukan transaksi dengan KALM',
-                          textAlign: TextAlign.center, style: Get.textTheme.headline2),
+                          textAlign: TextAlign.center,
+                          style: Get.textTheme.headline2),
                     ],
                   ),
                 );
@@ -98,7 +99,8 @@ class PaymentDetailPage extends StatelessWidget {
           SPACE(),
           const Divider(thickness: 1),
           SPACE(),
-          _item("assets/icon/dollar.png", "Rp. ${CURRENCY(_.data(context).package?.price)}"),
+          _item("assets/icon/dollar.png",
+              "Rp. ${CURRENCY(_.data(context).package?.price)}"),
           SPACE(),
           const Divider(thickness: 1),
           SPACE(),
@@ -122,5 +124,6 @@ class PaymentDetailPage extends StatelessWidget {
 }
 
 class PaymentDetailController extends GetxController {
-  PendingData data(BuildContext context) => STATE(context).pendingPaymentResModel!.pendingData!;
+  PendingData data(BuildContext context) =>
+      STATE(context).pendingPaymentResModel!.pendingData!;
 }

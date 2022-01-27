@@ -48,7 +48,9 @@ class ChangeClientPage extends StatelessWidget {
                 SizedBox(
                     width: Get.width / 1.5,
                     child: BUTTON("Kirim",
-                        onPressed: _.validationPaylaod ? () async => await _.submit(context) : null,
+                        onPressed: _.validationPaylaod
+                            ? () async => await _.submit(context)
+                            : null,
                         circularRadius: 20)),
                 TEXT("*Wajib pilih salah satu",
                     style: COSTUM_TEXT_STYLE(fonstSize: 12, color: Colors.grey))
@@ -117,7 +119,8 @@ class ChangeClientController extends GetxController {
   Map<String, String> payload = {"reason": ""};
   bool validateOtherReason = false;
   bool get validationPaylaod =>
-      validateOtherReason || payload['reason']!.isNotEmpty && payload['reason']! != "Lainnya";
+      validateOtherReason ||
+      payload['reason']!.isNotEmpty && payload['reason']! != "Lainnya";
   otherReasonOnChange(String val) {
     if (val.length > 8) {
       validateOtherReason = true;
@@ -147,7 +150,8 @@ class ChangeClientController extends GetxController {
       payload.update("reason", (value) => otherReasonController.text);
     }
     // print(REQUEST_CHANGE_COUNSELOR);
-    var _res = await Api().POST(REQUEST_CHANGE_COUNSELOR, payload, useToken: true);
+    var _res =
+        await Api().POST(REQUEST_CHANGE_COUNSELOR, payload, useToken: true);
     // debugPrint(jsonEncode(_res?.data), wrapWidth: 1024);
 
     if (_res?.statusCode == 200) {

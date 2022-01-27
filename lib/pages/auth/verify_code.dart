@@ -35,7 +35,8 @@ class VerifyCodePage extends StatelessWidget {
                   children: [
                     IconButton(
                         onPressed: () {
-                          SHOW_DIALOG("Apakah Anda yakin ingin keluar dari verifikasi kode?",
+                          SHOW_DIALOG(
+                              "Apakah Anda yakin ingin keluar dari verifikasi kode?",
                               onAcc: () async {
                             // await PRO.clearAllData();
                             await Get.offAll(LoginPage());
@@ -62,15 +63,20 @@ class VerifyCodePage extends StatelessWidget {
               child: ListView(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 20),
                     child: Column(
                       children: [
                         TEXT("KODE VERIFiKASI", style: Get.textTheme.headline2),
                         SPACE(),
                         TEXT("Kami telah mengirimkan kode verifikasi ke"),
-                        TEXT(resendCode ? PRO.userData?.email : PRO.registerPayload?.email,
-                            style:
-                                COSTUM_TEXT_STYLE(color: ORANGEKALM, fontWeight: FontWeight.w600)),
+                        TEXT(
+                            resendCode
+                                ? PRO.userData?.email
+                                : PRO.registerPayload?.email,
+                            style: COSTUM_TEXT_STYLE(
+                                color: ORANGEKALM,
+                                fontWeight: FontWeight.w600)),
                         SPACE(),
                         TEXT("Masukan kode untuk melanjutkan"),
                         SPACE(),
@@ -79,7 +85,9 @@ class VerifyCodePage extends StatelessWidget {
                         SizedBox(
                             width: Get.width / 1.8,
                             child: BUTTON("Submit",
-                                onPressed: _.validationCode ? () async => await _.submit() : null,
+                                onPressed: _.validationCode
+                                    ? () async => await _.submit()
+                                    : null,
                                 verticalPad: 10,
                                 circularRadius: 30)),
                         SPACE(height: 20),
@@ -104,11 +112,14 @@ class VerifyCodePage extends StatelessWidget {
           height: Get.height / 10,
           width: Get.width / 5,
           decoration: BoxDecoration(
-              border: Border.all(width: 1, color: BLUEKALM), shape: BoxShape.rectangle),
+              border: Border.all(width: 1, color: BLUEKALM),
+              shape: BoxShape.rectangle),
           child: Center(
               child: TEXT(_controller.codeList()[i],
                   style: COSTUM_TEXT_STYLE(
-                      fonstSize: 40, fontWeight: FontWeight.bold, color: ORANGEKALM))),
+                      fonstSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: ORANGEKALM))),
         );
       }),
     );
@@ -123,18 +134,21 @@ class VerifyCodePage extends StatelessWidget {
               children: [
                 if (int.tryParse(snap.data!) != 0)
                   Container(
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: BLUEKALM),
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, color: BLUEKALM),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: TEXT(snap.data ?? "",
-                          style:
-                              COSTUM_TEXT_STYLE(fontWeight: FontWeight.bold, color: Colors.white)),
+                          style: COSTUM_TEXT_STYLE(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
                     ),
                   ),
                 SPACE(),
                 if (int.tryParse(snap.data!) == 0)
                   InkWell(
-                      onTap: () async => await _.resendCode(PRO.userData!.email!),
+                      onTap: () async =>
+                          await _.resendCode(PRO.userData!.email!),
                       child: TEXT("Kirim Ulang Kode")),
               ],
             );
@@ -182,7 +196,8 @@ class VerifyCodeController extends GetxController {
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
       restartCoundownResend();
-      SUCCESS_SNACK_BAR(_res?.message, "Kode verifikasi berhasil dikirimkan ke email $email}");
+      SUCCESS_SNACK_BAR(_res?.message,
+          "Kode verifikasi berhasil dikirimkan ke email $email}");
     } else {
       return;
     }

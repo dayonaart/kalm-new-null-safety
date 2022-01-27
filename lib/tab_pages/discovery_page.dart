@@ -44,12 +44,16 @@ class DiscoveryPage extends StatelessWidget {
                               BUTTON("Discovery",
                                   isExpanded: true,
                                   onPressed: () => _.onChangeTab(0),
-                                  backgroundColor: _.selectedTab == 0 ? ORANGEKALM : Colors.grey),
+                                  backgroundColor: _.selectedTab == 0
+                                      ? ORANGEKALM
+                                      : Colors.grey),
                               SPACE(),
                               BUTTON("Directory",
                                   isExpanded: true,
                                   onPressed: () => _.onChangeTab(1),
-                                  backgroundColor: _.selectedTab == 1 ? ORANGEKALM : Colors.grey),
+                                  backgroundColor: _.selectedTab == 1
+                                      ? ORANGEKALM
+                                      : Colors.grey),
                             ],
                           ),
                         ),
@@ -87,7 +91,10 @@ class DiscoveryPage extends StatelessWidget {
                   TEXT("Artikel", style: Get.textTheme.headline2),
                   IconButton(
                       onPressed: () => _.onChangeArticleView(),
-                      icon: Icon((_.isArticleGrid ? Icons.map_rounded : Icons.grid_on_outlined),
+                      icon: Icon(
+                          (_.isArticleGrid
+                              ? Icons.map_rounded
+                              : Icons.grid_on_outlined),
                           color: ORANGEKALM))
                 ],
               ),
@@ -95,7 +102,8 @@ class DiscoveryPage extends StatelessWidget {
             SPACE(),
           ],
         ),
-        if (!_.isArticleGrid) ARTICLE_CAROUSEL(context, STATE(context).articleDirectoryResModel),
+        if (!_.isArticleGrid)
+          ARTICLE_CAROUSEL(context, STATE(context).articleDirectoryResModel),
         if (_.isArticleGrid) _articleGridView(context),
       ],
     );
@@ -110,7 +118,8 @@ class DiscoveryPage extends StatelessWidget {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5),
         children: STATE(context).articleDirectoryResModel!.data!.map((e) {
-          return IMAGE_CACHE(IMAGE_URL + ARTICLE + (e.file ?? ""), onTapImage: () {
+          return IMAGE_CACHE(IMAGE_URL + ARTICLE + (e.file ?? ""),
+              onTapImage: () {
             pushNewScreen(context, screen: DetailArticlePage(articleData: e));
           },
               widgetInsideImage: Positioned(
@@ -129,7 +138,8 @@ class DiscoveryPage extends StatelessWidget {
                             height: 40,
                             width: Get.width / 3,
                             child: TEXT(e.name,
-                                textAlign: TextAlign.center, style: const TextStyle(fontSize: 10))),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 10))),
                       ),
                     ),
                   )));
@@ -157,7 +167,8 @@ class DiscoveryPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SPACE(),
-                      TEXT(e.dataItem![i].title, style: Get.textTheme.headline1),
+                      TEXT(e.dataItem![i].title,
+                          style: Get.textTheme.headline1),
                       Column(
                         children: e.dataItem![i].item!.map((f) {
                           return Column(
@@ -167,25 +178,30 @@ class DiscoveryPage extends StatelessWidget {
                               Container(
                                 width: Get.width,
                                 decoration: BoxDecoration(
-                                    border: Border.all(width: 0.5, color: BLUEKALM),
+                                    border:
+                                        Border.all(width: 0.5, color: BLUEKALM),
                                     borderRadius: BorderRadius.circular(10)),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SPACE(),
-                                      TEXT(f.name, style: Get.textTheme.bodyText2),
+                                      TEXT(f.name,
+                                          style: Get.textTheme.bodyText2),
                                       SPACE(),
                                       if (f.address != "")
                                         Column(
                                           children: [
                                             Row(
                                               children: [
-                                                const Icon(Icons.location_city_outlined),
+                                                const Icon(Icons
+                                                    .location_city_outlined),
                                                 SPACE(width: 5),
                                                 SizedBox(
-                                                    width: Get.width / 1.3, child: TEXT(f.address)),
+                                                    width: Get.width / 1.3,
+                                                    child: TEXT(f.address)),
                                               ],
                                             ),
                                             SPACE(),
@@ -234,7 +250,8 @@ class DiscoveryPage extends StatelessWidget {
   InkWell _launchEmail(Item f) {
     String? encodeQueryParameters(Map<String, String> params) {
       return params.entries
-          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .map((e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
           .join('&');
     }
 
@@ -243,7 +260,8 @@ class DiscoveryPage extends StatelessWidget {
           final Uri emailLaunchUri = Uri(
             scheme: 'mailto',
             path: f.email,
-            query: encodeQueryParameters(<String, String>{'subject': 'Hello Kalm'}),
+            query: encodeQueryParameters(
+                <String, String>{'subject': 'Hello Kalm'}),
           );
 
           await launch(emailLaunchUri.toString());
@@ -317,7 +335,8 @@ class DiscoveryController extends GetxController {
     update();
   }
 
-  final Completer<WebViewController> webController = Completer<WebViewController>();
+  final Completer<WebViewController> webController =
+      Completer<WebViewController>();
   int selectedTab = 0;
   void onChangeTab(int index) {
     selectedTab = index;

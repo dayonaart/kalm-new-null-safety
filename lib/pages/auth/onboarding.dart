@@ -23,7 +23,9 @@ class OnBoardingPage extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Align(alignment: Alignment.bottomCenter, child: Image.asset(_.wave())),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Image.asset(_.wave())),
               CarouselSlider(
                   items: _.onboardingResModel?.data?.map((e) {
                     return Padding(
@@ -37,7 +39,9 @@ class OnBoardingPage extends StatelessWidget {
                             children: [
                               TEXT(e.name,
                                   style: COSTUM_TEXT_STYLE(
-                                      fontWeight: FontWeight.w800, fonstSize: 25, color: BLUEKALM)),
+                                      fontWeight: FontWeight.w800,
+                                      fonstSize: 25,
+                                      color: BLUEKALM)),
                               SPACE(),
                               TEXT(e.description),
                             ],
@@ -62,21 +66,26 @@ class OnBoardingPage extends StatelessWidget {
                           onTap: () => Get.to(RegisterPage()),
                           child: TEXT(_.skipNext(),
                               style: COSTUM_TEXT_STYLE(
-                                  fontWeight: FontWeight.bold, color: ORANGEKALM)),
+                                  fontWeight: FontWeight.bold,
+                                  color: ORANGEKALM)),
                         ),
                         SPACE(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.max,
-                          children: List.generate(_.onboardingResModel?.data?.length ?? 0, (i) {
+                          children: List.generate(
+                              _.onboardingResModel?.data?.length ?? 0, (i) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 3),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 3),
                               child: Container(
                                 width: 30,
                                 height: 8,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: _.indexFlash == i ? ORANGEKALM : Colors.grey),
+                                    color: _.indexFlash == i
+                                        ? ORANGEKALM
+                                        : Colors.grey),
                               ),
                             );
                           }),
@@ -95,7 +104,9 @@ class OnboardingController extends GetxController {
   int indexFlash = 0;
   String skipNext() {
     try {
-      return indexFlash == (onboardingResModel!.data!.length - 1) ? "Mulai" : "Skip";
+      return indexFlash == (onboardingResModel!.data!.length - 1)
+          ? "Mulai"
+          : "Skip";
     } catch (e) {
       return "";
     }

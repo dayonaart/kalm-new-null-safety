@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +11,7 @@ import 'package:kalm/model/user_quetioner_res_model/questioner_data.dart';
 import 'package:kalm/model/user_quetioner_res_model/user_quetioner_res_model.dart';
 import 'package:kalm/pages/questioner_page.dart/user_questioner_match_up_page.dart';
 import 'package:kalm/utilities/date_format.dart';
+import 'package:kalm/utilities/util.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/date_picker.dart';
 import 'package:kalm/widget/dialog.dart';
@@ -27,16 +26,37 @@ import 'package:kalm/widget/textfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserQustionerPage extends StatelessWidget {
+  List<UserQuestionerPayload?>? existingAnswer;
+  UserQustionerPage({Key? key, this.existingAnswer}) : super(key: key);
   final _controller = Get.put(UserQustionerController());
   @override
   Widget build(BuildContext context) {
     return GetBuilder<UserQustionerController>(initState: (st) async {
       await PRO.getUserQuestioner(useLoading: false);
       await PRO.getCountry(useLoading: false);
+      if (PRO.userData?.status == 1) {
+        await PRO.getStates(PRO.userData?.countryId);
+        await PRO.getCity(PRO.userData?.stateId);
+        for (var i = 0; i < existingAnswer!.length; i++) {
+          if (i == 0) {
+            try {
+              _controller.selectingTempCountry =
+                  ADDRESS_ROOT()?.where((e) => e.id == PRO.userData?.countryId).first.name;
+              _controller.selectingTempState =
+                  STATES_DATA()?.where((e) => e.id == PRO.userData?.stateId).first.name;
+              _controller.selectingTempCity =
+                  CITIES_DATA()?.where((e) => e.id == PRO.userData?.cityId).first.name;
+            } catch (e) {}
+          } else if (i == 1) {
+            _controller.selectedDate = PRO.userData!.dob;
+          } else {
+            _controller.updatePayload(existingAnswer![i]!, i);
+          }
+        }
+      }
     }, builder: (_) {
-      // PR(_.payloaditem()?.map((e) => e).toList());
       return SAFE_AREA(
-          canBack: false,
+          canBack: existingAnswer != null,
           child: Builder(builder: (context) {
             if ((_.userQuestionerResModel(context: context) == null) &&
                 _.userQuestionerResModel(context: context)?.questionerData == null) {
@@ -71,12 +91,13 @@ class UserQustionerPage extends StatelessWidget {
                           }).toList(),
                         ),
                         SPACE(height: 20),
-                        SizedBox(
-                            width: Get.width / 1.5,
-                            child: BUTTON("Selanjutnya",
-                                onPressed: () async => await _.submit(context),
-                                verticalPad: 15,
-                                circularRadius: 30))
+                        if (existingAnswer == null)
+                          SizedBox(
+                              width: Get.width / 1.5,
+                              child: BUTTON("Selanjutnya",
+                                  onPressed: () async => await _.submit(context),
+                                  verticalPad: 15,
+                                  circularRadius: 30))
                       ],
                     ),
                   )
@@ -116,15 +137,20 @@ class UserQustionerPage extends StatelessWidget {
                 crossAxisCount: (e.answer?.length ?? 2) < 4 ? (e.answer?.length ?? 2) : 2),
             children: e.answer!.map((ans) {
               return OUTLINE_BUTTON(ans.answer ?? "",
-                  onPressed: () => _.updatePayload(
-                      UserQuestionerPayload(
-                          questionnaireId: e.id,
-                          answer: ans.id,
-                          answerDescription: ans.answer,
-                          question: e.question),
-                      i),
-                  backgroundColor:
-                      (_.payloaditem()?[i]?.answer == ans.id) ? BLUEKALM : Colors.white,
+                  onPressed: existingAnswer != null
+                      ? null
+                      : () => _.updatePayload(
+                          UserQuestionerPayload(
+                              questionnaireId: e.id,
+                              answer: ans.id,
+                              answerDescription: ans.answer,
+                              question: e.question),
+                          i),
+                  backgroundColor: (_.payloaditem()?[i]?.answer == ans.id)
+                      ? existingAnswer != null
+                          ? Colors.grey
+                          : BLUEKALM
+                      : Colors.white,
                   textColor: (_.payloaditem()?[i]?.answer == ans.id) ? Colors.white : BLUEKALM);
             }).toList(),
           ),
@@ -146,51 +172,57 @@ class UserQustionerPage extends StatelessWidget {
           controller: TextEditingController(text: _.selectingTempCountry),
           placeholder: "Pilih Negara",
           readOnly: true,
-          onTap: () async {
-            _.selectingTempCountry = PRO.countryResModel?.data![0].name;
-            await _bottomSheetAddress(_,
-                title: "Pilih Negara",
-                condition: "country",
-                data: PRO.countryResModel?.data,
-                onSelecting: (i, st) => _.selectTempCountry(i, st),
-                onSelected: () => _.selectAddress("country"));
-            await PRO.getStates(_.addressPayload['country']);
-          },
+          onTap: existingAnswer != null
+              ? null
+              : () async {
+                  _.selectingTempCountry = PRO.countryResModel?.data![0].name;
+                  await _bottomSheetAddress(_,
+                      title: "Pilih Negara",
+                      condition: "country",
+                      data: PRO.countryResModel?.data,
+                      onSelecting: (i, st) => _.selectTempCountry(i, st),
+                      onSelected: () => _.selectAddress("country"));
+                  await PRO.getStates(_.addressPayload['country']);
+                },
         ),
         if (_.addressPayload['country'] != 3)
           CupertinoTextField(
             controller: TextEditingController(text: _.selectingTempState),
             placeholder: "Pilih Wilayah",
             readOnly: true,
-            onTap: STATE(context).stateResItem == null
+            onTap: existingAnswer != null
                 ? null
-                : () async {
-                    _.selectingTempState = PRO.stateResItem?.data![0].name;
-                    await _bottomSheetAddress(_,
-                        title: "Pilih Wilayah",
-                        condition: "state",
-                        data: PRO.stateResItem?.data,
-                        onSelecting: (i, st) => _.selectTempState(i, st),
-                        onSelected: () => _.selectAddress("state"));
-                    await PRO.getCity(_.addressPayload['state']);
-                  },
+                : STATE(context).stateResItem == null
+                    ? null
+                    : () async {
+                        _.selectingTempState = PRO.stateResItem?.data![0].name;
+                        await _bottomSheetAddress(_,
+                            title: "Pilih Wilayah",
+                            condition: "state",
+                            data: PRO.stateResItem?.data,
+                            onSelecting: (i, st) => _.selectTempState(i, st),
+                            onSelected: () => _.selectAddress("state"));
+                        await PRO.getCity(_.addressPayload['state']);
+                      },
           ),
         if (_.addressPayload['country'] != 3)
           CupertinoTextField(
             controller: TextEditingController(text: _.selectingTempCity),
             placeholder: "Pilih kota",
             readOnly: true,
-            onTap: STATE(context).cityResItem == null
+            onTap: existingAnswer != null
                 ? null
-                : () async {
-                    _.selectingTempCity = PRO.cityResItem?.data![0].name;
-                    await _bottomSheetAddress(_,
-                        title: "Pilih Kota",
-                        condition: "city",
-                        data: PRO.cityResItem?.data,
-                        onSelecting: (i, st) => _.selectTempCity(i, st),
-                        onSelected: () => _.selectAddress("city"));
-                  },
+                : STATE(context).cityResItem == null
+                    ? null
+                    : () async {
+                        _.selectingTempCity = PRO.cityResItem?.data![0].name;
+                        await _bottomSheetAddress(_,
+                            title: "Pilih Kota",
+                            condition: "city",
+                            data: PRO.cityResItem?.data,
+                            onSelecting: (i, st) => _.selectTempCity(i, st),
+                            onSelected: () => _.selectAddress("city"));
+                      },
           ),
       ],
     );
@@ -293,9 +325,11 @@ class UserQustionerPage extends StatelessWidget {
             }
           }),
           readOnly: true,
-          onTap: () async {
-            _datePicker(_, e, i);
-          },
+          onTap: existingAnswer != null
+              ? null
+              : () async {
+                  _datePicker(_, e, i);
+                },
           controller: TextEditingController(text: DATE_FORMAT(_.selectedDate)),
         ),
         Builder(builder: (context) {

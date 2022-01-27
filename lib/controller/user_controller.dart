@@ -18,6 +18,7 @@ import 'package:kalm/model/firebase_wording_model.dart';
 import 'package:kalm/model/gratitude_res_model/gratitude_res_model.dart';
 import 'package:kalm/model/how_to_res_model/how_to_res_model.dart';
 import 'package:kalm/model/indodana_res_model/indodana_res_model.dart';
+import 'package:kalm/model/ors_res_model/ors_res_model.dart';
 import 'package:kalm/model/ovo_res_model/ovo_res_model.dart';
 import 'package:kalm/model/payment_list_res_model/payment_list_res_model.dart';
 import 'package:kalm/model/pending_kalmselor_code_model/pending_kalmselor_code_model.dart';
@@ -121,6 +122,24 @@ class UserController extends ChangeNotifier {
   late FirebaseAuth firebaseAuth;
   late FirebaseWordingModel firebaseWordingModel;
   late DatabaseReference wording;
+  late DatabaseReference orsRef;
+
+  List<OrsResModel>? orsResModel;
+  void getOrs() {
+    orsRef = database.ref("ors_main/");
+    orsRef.onValue.listen((e) {
+      var _model = List<dynamic>.from(e.snapshot.value as dynamic);
+      orsResModel = List.generate(
+          _model.length, (i) => OrsResModel.fromJson(_model[i] as Map<Object?, Object?>));
+      notifyListeners();
+    });
+  }
+
+  List<dynamic>? get localOrs => _box.read(USER_ORS);
+  Future<void> saveOrs(List<double> data) async {
+    await _box.write(USER_ORS, data);
+  }
+
   Future<void> updateWording() async {
     try {
       firebaseAuth = FirebaseAuth.instance;
@@ -216,6 +235,7 @@ class UserController extends ChangeNotifier {
     print('GET COUNSELOR');
     var _res =
         await Api().GET(GET_COUNSELOR(userData!.code!), useToken: true, useLoading: useLoading);
+    PR(_res?.data['data']);
     if (_res?.statusCode == 200) {
       await getChat();
       counselorData = CounselorData.fromJson(_res?.data);

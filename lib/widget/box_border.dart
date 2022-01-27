@@ -9,8 +9,10 @@ Container BOX_BORDER(
   DecorationImage? decorationImage,
   double? height,
   double? width,
+  Key? key,
 }) {
   return Container(
+    key: key,
     width: width ?? Get.width,
     height: height,
     decoration: BoxDecoration(

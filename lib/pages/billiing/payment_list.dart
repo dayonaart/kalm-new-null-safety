@@ -43,7 +43,8 @@ class PaymentListPage extends StatelessWidget {
                                     height: 70,
                                     width: 70),
                                 SPACE(width: 20),
-                                TEXT(_.desc(_.data(context)![i].name!.toLowerCase())),
+                                TEXT(_.desc(
+                                    _.data(context)![i].name!.toLowerCase())),
                               ],
                             ),
                           ),
@@ -64,11 +65,16 @@ class PaymentListPage extends StatelessWidget {
 class PaymentListController extends GetxController {
   List<PaymentData>? data(BuildContext context, {bool isListen = true}) {
     if (bankName(context, isListen: isListen) != null) {
-      return STATE(context, isListen: isListen).paymentListResModel!.paymentData!.where((e) {
+      return STATE(context, isListen: isListen)
+          .paymentListResModel!
+          .paymentData!
+          .where((e) {
         return e.name?.toUpperCase() == bankName(context, isListen: isListen);
       }).toList();
     } else {
-      return STATE(context, isListen: isListen).paymentListResModel!.paymentData!;
+      return STATE(context, isListen: isListen)
+          .paymentListResModel!
+          .paymentData!;
     }
   }
 

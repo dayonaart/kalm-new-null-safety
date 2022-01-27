@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
 import 'package:kalm/controller/user_controller.dart';
+import 'package:kalm/pages/ors.dart';
+import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/widget_carousel.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/safe_area.dart';
@@ -39,36 +41,29 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Builder(builder: (context) {
                       if (STATE(context).quoteResModel == null) {
-                        return AspectRatio(
-                            aspectRatio: 16 / 9, child: SHIMMER());
+                        return AspectRatio(aspectRatio: 16 / 9, child: SHIMMER());
                       } else {
                         return BOX_BORDER(
                             AspectRatio(
                               aspectRatio: 16 / 9,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: TEXT(STATE(context)
-                                    .quoteResModel
-                                    ?.data
-                                    ?.description),
+                                child: TEXT(STATE(context).quoteResModel?.data?.description),
                               ),
                             ),
                             decorationImage: DecorationImage(
                                 image: NetworkImage(IMAGE_URL +
                                     INSPIRATIONAL_QUOTE +
-                                    (STATE(context)
-                                        .quoteResModel!
-                                        .data!
-                                        .image!)),
+                                    (STATE(context).quoteResModel!.data!.image!)),
                                 fit: BoxFit.fill));
                       }
                     })),
                 SPACE(),
-                InkWell(
-                    onTap: () {
-                      PRO.readLocalUser();
-                    },
-                    child: Image.asset("assets/image/ors_icon.png")),
+                if (PRO.userData != null)
+                  InkWell(
+                      onTap: () async =>
+                          await pushNewScreen(context, screen: SAFE_AREA(child: OrsPage())),
+                      child: Image.asset("assets/image/ors_icon.png")),
                 SPACE(),
                 TEXT("Newest", style: Get.textTheme.headline1),
                 SPACE(),

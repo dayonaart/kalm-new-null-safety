@@ -82,7 +82,8 @@ class BankTransferPage extends StatelessWidget {
                 ),
                 if (_.openTutorController[i])
                   Column(
-                      children: List.generate(_.tutorModel![i].data?.length ?? 0, (j) {
+                      children: List.generate(
+                          _.tutorModel![i].data?.length ?? 0, (j) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       child: BOX_BORDER(Padding(
@@ -91,7 +92,8 @@ class BankTransferPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TEXT("${j + 1}.",
-                                  style: COSTUM_TEXT_STYLE(fontWeight: FontWeight.bold)),
+                                  style: COSTUM_TEXT_STYLE(
+                                      fontWeight: FontWeight.bold)),
                               SPACE(),
                               SizedBox(
                                   width: Get.width / 1.4,
@@ -114,7 +116,8 @@ class BankTransferPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          TEXT("${bankName(context)} Virtual Account", style: COSTUM_TEXT_STYLE(fonstSize: 20)),
+          TEXT("${bankName(context)} Virtual Account",
+              style: COSTUM_TEXT_STYLE(fonstSize: 20)),
           Image.asset(bankAssetIcon(context), scale: 15),
         ],
       ),
@@ -130,7 +133,8 @@ class BankTransferPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TEXT("Total Pembayaran", style: COSTUM_TEXT_STYLE(color: Colors.grey)),
+              TEXT("Total Pembayaran",
+                  style: COSTUM_TEXT_STYLE(color: Colors.grey)),
               SPACE(),
               TEXT('Rp. ${CURRENCY(_.response(context)?.package?.price)}',
                   style: COSTUM_TEXT_STYLE(fonstSize: 20)),
@@ -151,16 +155,19 @@ class BankTransferPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TEXT("Virtual Account", style: COSTUM_TEXT_STYLE(color: Colors.grey)),
+              TEXT("Virtual Account",
+                  style: COSTUM_TEXT_STYLE(color: Colors.grey)),
               SPACE(),
-              TEXT(_.vaNumber(context), style: COSTUM_TEXT_STYLE(fonstSize: 20)),
+              TEXT(_.vaNumber(context),
+                  style: COSTUM_TEXT_STYLE(fonstSize: 20)),
             ],
           ),
           InkWell(
               onTap: () async {
-                await Clipboard.setData(ClipboardData(text: _.vaNumber(context, listen: false)));
-                SUCCESS_SNACK_BAR(
-                    'Perhatian', "Berhasil disalin ${_.vaNumber(context, listen: false)}");
+                await Clipboard.setData(
+                    ClipboardData(text: _.vaNumber(context, listen: false)));
+                SUCCESS_SNACK_BAR('Perhatian',
+                    "Berhasil disalin ${_.vaNumber(context, listen: false)}");
               },
               child: TEXT("Salin"))
         ],
@@ -174,7 +181,8 @@ class BankTransferPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TEXT("Batas akhir transaksi", style: COSTUM_TEXT_STYLE(color: Colors.grey)),
+          TEXT("Batas akhir transaksi",
+              style: COSTUM_TEXT_STYLE(color: Colors.grey)),
           SPACE(),
           Builder(builder: (context) {
             try {
@@ -199,7 +207,8 @@ class BankTransferPage extends StatelessWidget {
   }
 }
 
-class BankTranferController extends GetxController with GetSingleTickerProviderStateMixin {
+class BankTranferController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   List<TutorialBankModel>? tutorModel;
   PendingData? response(BuildContext context, {bool listen = true}) {
     return STATE(context, isListen: listen).pendingPaymentResModel?.pendingData;
@@ -214,10 +223,14 @@ class BankTranferController extends GetxController with GetSingleTickerProviderS
     // debugPrint(jsonEncode(_model[0]), wrapWidth: 1024);
     var _tutor = _r.map((e) {
       return TutorialBankModel(
-          title: e['title'], name: e['name'], data: List<String>.from(e['data'] as List<Object?>));
+          title: e['title'],
+          name: e['name'],
+          data: List<String>.from(e['data'] as List<Object?>));
     }).toList();
-    tutorModel =
-        _tutor.where((e) => e.name == bankName(context, isListen: false)?.toLowerCase()).toList();
+    tutorModel = _tutor
+        .where(
+            (e) => e.name == bankName(context, isListen: false)?.toLowerCase())
+        .toList();
     openTutorController = List.generate(tutorModel?.length ?? 0, (i) => false);
     update();
   }
@@ -266,8 +279,15 @@ class BankTranferController extends GetxController with GetSingleTickerProviderS
 
   String? vaNumber(BuildContext context, {bool listen = true}) {
     if (response(context, listen: listen)?.otherResponse?.vaNumbers != null) {
-      return response(context, listen: listen)?.otherResponse?.vaNumbers?.first.vaNumber;
-    } else if (response(context, listen: listen)?.otherResponse?.permataVaNumber != null) {
+      return response(context, listen: listen)
+          ?.otherResponse
+          ?.vaNumbers
+          ?.first
+          .vaNumber;
+    } else if (response(context, listen: listen)
+            ?.otherResponse
+            ?.permataVaNumber !=
+        null) {
       return response(context, listen: listen)?.otherResponse?.permataVaNumber;
     } else {
       return "${response(context, listen: listen)?.otherResponse?.billKey}${response(context, listen: listen)?.otherResponse?.billerCode}";

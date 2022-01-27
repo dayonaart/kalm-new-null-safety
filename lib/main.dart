@@ -11,6 +11,7 @@ import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/main_tab.dart';
 import 'package:kalm/pages/auth/login.dart';
 import 'package:kalm/pages/auth/verify_code.dart';
+import 'package:kalm/pages/ors.dart';
 import 'package:kalm/pages/setting_page/pin_code.dart';
 import 'package:kalm/sdk/firebase.dart';
 import 'package:kalm/splash_screen.dart';
@@ -112,6 +113,7 @@ class KalmApp extends StatelessWidget {
     return GetMaterialApp(
       onReady: () async {
         await PRO.updateWording();
+        PRO.getOrs();
         PRO.readLocalUser();
         await PRO.updateSession(useLoading: false);
         await Future.microtask(() async {
@@ -155,12 +157,16 @@ class KalmApp extends StatelessWidget {
             color: BLUEKALM),
       )),
       debugShowCheckedModeBanner: false,
-      home: Stack(
-        children: [
-          SplashScreen(),
-          if (PIN_LOCK != null) PincodePage(isLock: true, createCode: PIN_LOCK)
-        ],
-      ),
+      home: _splashScreen(),
+    );
+  }
+
+  Stack _splashScreen() {
+    return Stack(
+      children: [
+        SplashScreen(),
+        if (PIN_LOCK != null) PincodePage(isLock: true, createCode: PIN_LOCK)
+      ],
     );
   }
 }
@@ -169,16 +175,20 @@ Future<void> STARTING({bool isLock = true}) async {
   if (PIN_LOCK != null && isLock) {
     return;
   } else {
-    if (PRO.userData != null) {
-      if (PRO.userData?.status == 1 || PRO.userData?.status == 2 || PRO.userData?.status == 3) {
-        await Get.offAll(KalmMainTab());
-      } else if (PRO.userData?.status == 5) {
-        await Get.offAll(VerifyCodePage(resendCode: true));
+    if (PRO.localOrs == null) {
+      await Get.offAll(SAFE_AREA(canBack: false, child: OrsPage()));
+    } else {
+      if (PRO.userData != null) {
+        if (PRO.userData?.status == 1 || PRO.userData?.status == 2 || PRO.userData?.status == 3) {
+          await Get.offAll(KalmMainTab());
+        } else if (PRO.userData?.status == 5) {
+          await Get.offAll(VerifyCodePage(resendCode: true));
+        } else {
+          await Get.offAll(LoginPage());
+        }
       } else {
         await Get.offAll(LoginPage());
       }
-    } else {
-      await Get.offAll(LoginPage());
     }
   }
 }

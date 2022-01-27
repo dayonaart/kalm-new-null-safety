@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/main.dart';
+import 'package:kalm/pages/auth/login.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
@@ -98,6 +99,7 @@ class PincodePage extends StatelessWidget {
 class PincodeController extends GetxController {
   bool get validationCode => !createCodeList.contains(null);
 
+  List<int> tryPassword = [];
   Future<void> checkingCode(BuildContext context,
       {String? confirmCode, bool isLock = false}) async {
     if (confirmCode != null && !isLock) {
@@ -113,7 +115,15 @@ class PincodeController extends GetxController {
       if (createCode == confirmCode) {
         await STARTING(isLock: false);
       } else {
-        ERROR_SNACK_BAR("Perhatian", 'Kode tidak sama');
+        tryPassword.add(0);
+
+        if (tryPassword.length > 3) {
+          await PRO.clearAllData();
+          Get.offAll(LoginPage());
+        } else {
+          ERROR_SNACK_BAR(
+              "Perhatian", 'Pin Salah\nAnda masih memiliki ${(4 - tryPassword.length)} kesempatan');
+        }
         return;
       }
     } else {

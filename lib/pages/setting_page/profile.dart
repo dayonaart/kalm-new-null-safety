@@ -4,13 +4,17 @@ import 'package:kalm/api/api.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/user_model/user_data.dart';
+import 'package:kalm/model/user_questioner_payload.dart';
 import 'package:kalm/pages/questioner_page.dart/user_questioner_match_up_page.dart';
+import 'package:kalm/pages/questioner_page.dart/user_questioner_page.dart';
 import 'package:kalm/pages/setting_page/edit_profile.dart';
 import 'package:kalm/utilities/date_format.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
+import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/persistent_tab/persistent_tab_util.dart';
 import 'package:kalm/widget/safe_area.dart';
+import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
 
@@ -141,39 +145,36 @@ class ProfileController extends GetxController {
             await pushNewScreen(context, screen: EditProfilePage());
             break;
           case 1:
-            // var _res = await Api().GET(GET_TO_KNOW, useToken: true);
-            // if (_res?.statusCode == 200) {
-            //   var _list = _res?.data['data'] as List<dynamic>;
-            //   // _list.sort((a, b) {
-            //   //   return DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at']));
-            //   // });
-            //   _list.sort((a, b) {
-            //     return (b['questionnaire_id'] as int).compareTo(a['questionnaire_id']);
-            //   });
-            //   var _model = _list.take(11).map((e) {
-            //     print(e);
-            //     print(e['questionnaire_id']);
-            //     try {
-            //       return UserQuestionerPayload.fromJson(e);
-            //     } catch (e) {
-            //       return UserQuestionerPayload();
-            //     }
-            //   }).toList();
-            // List<UserQuestionerPayload> _gen =
-            //     List.generate((_res?.data['data'] as List<dynamic>).length, (i) {
-            //   try {
-            //     return UserQuestionerPayload(
-            //         answer: _res?.data['data'][i]['answer'].runtimeType == int
-            //             ? _res?.data['data'][i]['answer']
-            //             : int.parse(_res?.data['data'][i]['answer']));
-            //   } catch (e) {
-            //     return UserQuestionerPayload(question: e.toString());
-            //   }
-            // });
-            // print(_model.map((e) => e.toJson()).toList());
-            // } else {}
+            var _res = await Api().GET(GET_TO_KNOW, useToken: true);
+            if (_res?.statusCode == 200) {
+              var _list = _res?.data['data'] as List<dynamic>;
+              _list.sort((a, b) {
+                return DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at']));
+              });
+              var _latestDate = _list.map((e) => e['created_at']).first;
+              var _filterData = _list.where((e) => e['created_at'] == _latestDate).toList();
+              var _model = _filterData.map((e) {
+                try {
+                  return UserQuestionerPayload(
+                      answer:
+                          e['answer'].runtimeType == int ? e['answer'] : int.parse(e['answer']));
+                } catch (e) {
+                  print(e);
+                  return UserQuestionerPayload();
+                }
+              }).toList();
+              try {
+                Loading.hide();
+                assert(_model.length == 12);
+                await pushNewScreen(context, screen: UserQustionerPage(existingAnswer: _model));
+              } catch (e) {
+                Loading.hide();
+                ERROR_SNACK_BAR("Perhatian", 'Data tidak valid');
+              }
+            } else {
+              Loading.hide();
+            }
 
-            // await pushNewScreen(context, screen: UserQustionerPage());
             break;
           case 2:
             var _gridAnswer = PRO.userData?.matchupJson?.map((e) {

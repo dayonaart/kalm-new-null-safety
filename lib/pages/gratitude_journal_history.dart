@@ -29,7 +29,8 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
                 SizedBox(
                     height: 40,
                     child: CupertinoTextField(
-                      decoration: BoxDecoration(border: Border.all(width: 0.5, color: BLUEKALM)),
+                      decoration: BoxDecoration(
+                          border: Border.all(width: 0.5, color: BLUEKALM)),
                       prefix: const Padding(
                         padding: EdgeInsets.only(left: 10, right: 5),
                         child: Icon(Icons.search_rounded),
@@ -45,14 +46,16 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
                     headerBackgroundColorStart: BLUEKALM,
                     header: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TEXT(y.key, style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                      child: TEXT(y.key,
+                          style: COSTUM_TEXT_STYLE(color: Colors.white)),
                     ),
                     children: y.value.entries.map((m) {
                       return CostumExpansionTile(
                         headerBackgroundColorStart: ORANGEKALM,
                         header: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: TEXT(m.key, style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                          child: TEXT(m.key,
+                              style: COSTUM_TEXT_STYLE(color: Colors.white)),
                         ),
                         children: m.value.entries.map((d) {
                           return CostumExpansionTile(
@@ -61,21 +64,27 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
                             expandedBackgroundColor: Colors.grey[200],
                             header: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: TEXT(d.key, style: COSTUM_TEXT_STYLE(color: Colors.white)),
+                              child: TEXT(d.key,
+                                  style:
+                                      COSTUM_TEXT_STYLE(color: Colors.white)),
                             ),
                             children: d.value.map((data) {
                               return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
                                 child: Column(
                                   children: [
-                                    TEXT(data.gratitudeQuestion, style: Get.textTheme.bodyText2),
+                                    TEXT(data.gratitudeQuestion,
+                                        style: Get.textTheme.bodyText2),
                                     SPACE(),
                                     BOX_BORDER(
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Column(
-                                          children: List.generate(data.answer?.length ?? 0, (i) {
-                                            return _textField(i, data.answer?[i]);
+                                          children: List.generate(
+                                              data.answer?.length ?? 0, (i) {
+                                            return _textField(
+                                                i, data.answer?[i]);
                                           }),
                                         ),
                                       ),
@@ -110,7 +119,8 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
             child: CircleAvatar(
               radius: 10,
               backgroundColor: ORANGEKALM,
-              child: TEXT("${(g + 1)}", style: COSTUM_TEXT_STYLE(color: Colors.white)),
+              child: TEXT("${(g + 1)}",
+                  style: COSTUM_TEXT_STYLE(color: Colors.white)),
             ),
           ),
           Expanded(
@@ -121,8 +131,9 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
                   border: Border.all(width: 0.5, color: BLUEKALM),
                   color: _backgroundTextSearch(text)),
               style: COSTUM_TEXT_STYLE(
-                  color:
-                      _backgroundTextSearch(text) == null ? Colors.black : _colorTextSearch(text)),
+                  color: _backgroundTextSearch(text) == null
+                      ? Colors.black
+                      : _colorTextSearch(text)),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               textInputAction: TextInputAction.newline,
               controller: TextEditingController(text: text),
@@ -160,11 +171,14 @@ class GratitudeJournalHistoryController extends GetxController {
   TextEditingController searchController = TextEditingController();
   List<GratitudeJournalHistoryData>? get data =>
       PRO.gratitudeJournalHistoryResModel?.gratitudeJournalHistoryResModel;
-  Map<String, Map<String, Map<String, List<GratitudeJournalHistoryData>>>> get queryData {
+  Map<String, Map<String, Map<String, List<GratitudeJournalHistoryData>>>>
+      get queryData {
     searchData?.sort((a, b) {
-      return DateTime.parse(a.createdAt!).compareTo(DateTime.parse(b.createdAt!));
+      return DateTime.parse(a.createdAt!)
+          .compareTo(DateTime.parse(b.createdAt!));
     });
-    return collection.groupBy<GratitudeJournalHistoryData, String>(searchData ?? data!, (y) {
+    return collection
+        .groupBy<GratitudeJournalHistoryData, String>(searchData ?? data!, (y) {
       return DateTime.parse(y.createdAt!).year.toString();
     }).map((y, month) {
       return MapEntry(
@@ -174,7 +188,8 @@ class GratitudeJournalHistoryController extends GetxController {
           }).map((d, day) {
             return MapEntry(
                 d,
-                collection.groupBy<GratitudeJournalHistoryData, String>(day, (e) {
+                collection.groupBy<GratitudeJournalHistoryData, String>(day,
+                    (e) {
                   return DateTime.parse(e.createdAt!).day.toString();
                 }));
           }));
