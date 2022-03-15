@@ -40,7 +40,8 @@ class ProfilePage extends StatelessWidget {
                       circularRadius: 100,
                     )),
                 SPACE(),
-                TEXT("${_.user(context)?.firstName} ${_.user(context)?.lastName ?? ""}",
+                TEXT(
+                    "${_.user(context)?.firstName} ${_.user(context)?.lastName ?? ""}",
                     style: Get.textTheme.headline2),
                 SPACE(height: 20),
                 Row(
@@ -149,15 +150,18 @@ class ProfileController extends GetxController {
             if (_res?.statusCode == 200) {
               var _list = _res?.data['data'] as List<dynamic>;
               _list.sort((a, b) {
-                return DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at']));
+                return DateTime.parse(b['created_at'])
+                    .compareTo(DateTime.parse(a['created_at']));
               });
               var _latestDate = _list.map((e) => e['created_at']).first;
-              var _filterData = _list.where((e) => e['created_at'] == _latestDate).toList();
+              var _filterData =
+                  _list.where((e) => e['created_at'] == _latestDate).toList();
               var _model = _filterData.map((e) {
                 try {
                   return UserQuestionerPayload(
-                      answer:
-                          e['answer'].runtimeType == int ? e['answer'] : int.parse(e['answer']));
+                      answer: e['answer'].runtimeType == int
+                          ? e['answer']
+                          : int.parse(e['answer']));
                 } catch (e) {
                   print(e);
                   return UserQuestionerPayload();
@@ -166,7 +170,8 @@ class ProfileController extends GetxController {
               try {
                 Loading.hide();
                 assert(_model.length == 12);
-                await pushNewScreen(context, screen: UserQustionerPage(existingAnswer: _model));
+                await pushNewScreen(context,
+                    screen: UserQustionerPage(existingAnswer: _model));
               } catch (e) {
                 Loading.hide();
                 ERROR_SNACK_BAR("Perhatian", 'Data tidak valid');

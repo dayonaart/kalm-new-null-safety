@@ -115,20 +115,14 @@
     <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-viewmodel:2.1.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.annotation:annotation-experimental:1.1.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.tracing:tracing:1.0.0@aar" level="project" />
-    <orderEntry type="module" module-name="android.firebase_database" />
-    <orderEntry type="module" module-name="android.firebase_auth" />
-    <orderEntry type="module" module-name="android.firebase_core" />
     <orderEntry type="module" module-name="android.flutter_plugin_android_lifecycle" />
     <orderEntry type="module" module-name="com.tekartik.sqflite.android.sqflite" />
-    <orderEntry type="module" module-name="android.image_picker" />
-    <orderEntry type="module" module-name="android.wonderpush_flutter" />
-    <orderEntry type="module" module-name="android.url_launcher_android" />
     <orderEntry type="module" module-name="android.path_provider_android" />
     <orderEntry type="module" module-name="android.wonderpush_fcm_flutter" />
+    <orderEntry type="module" module-name="android.flutter_device_identifier" />
     <orderEntry type="module" module-name="android.webview_flutter_android" />
     <orderEntry type="module" module-name="android.flutter_inappwebview" />
     <orderEntry type="module" module-name="android.connectivity" />
-    <orderEntry type="module" module-name="android.device_information" />
     <orderEntry type="module" module-name="android.flutter_keyboard_visibility" />
     <orderEntry type="module" module-name="android.package_info_plus" />
     <orderEntry type="module" module-name="android.launch_review" />

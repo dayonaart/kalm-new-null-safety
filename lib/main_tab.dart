@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:kalm/controller/user_controller.dart';
@@ -10,13 +11,31 @@ import 'package:kalm/tab_pages/gratitude_journal.dart';
 import 'package:kalm/tab_pages/home_page.dart';
 import 'package:kalm/tab_pages/setting_page.dart';
 import 'package:kalm/widget/curved_nav_bar.dart';
+import 'package:kalm/widget/dialog.dart';
 import 'package:kalm/widget/persistent_tab/persistent_kalm_tab.dart';
 import 'package:get/get.dart';
+import 'package:kalm/widget/snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 GetBuilder<KalmAppController> KalmMainTab() {
   late StreamSubscription<bool> keyboardSubscription;
   return GetBuilder<KalmAppController>(initState: (st) async {
-    await PRO.checkAppVersion();
+    if (!kIsWeb) await PRO.checkAppVersion();
+    if (PRO.surveyResModel != null && !(PRO.userData?.hasBuyPackage)!) {
+      SHOW_DIALOG(
+          "${PRO.surveyResModel?.title}\n${PRO.surveyResModel?.content}",
+          onAcc: () async {
+        if (await canLaunch(PRO.surveyResModel!.url!)) {
+          launch(PRO.surveyResModel!.url!);
+          Get.back();
+        } else {
+          Get.back();
+          ERROR_SNACK_BAR("Perhatian", 'Tidak dapat membuka link');
+        }
+      }, reject: () async {
+        Get.back();
+      });
+    }
     var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) {

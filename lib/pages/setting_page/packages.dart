@@ -67,9 +67,11 @@ class PackagesPage extends StatelessWidget {
                 if (_.optionIndex == 1)
                   Builder(builder: (context) {
                     if (STATE(context)
-                        .userData!
-                        .userSubscriptionList!
-                        .isEmpty) {
+                            .userData!
+                            .userSubscriptionList!
+                            .isEmpty &&
+                        STATE(context).pendingPaymentResModel?.pendingData ==
+                            null) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TEXT("Anda belum memiliki paket berlangganan",
@@ -126,18 +128,18 @@ class PackagesPage extends StatelessWidget {
       children: [
         TEXT("Informasi Tagihan Saya", style: COSTUM_TEXT_STYLE(fonstSize: 20)),
         SPACE(),
-        Builder(builder: (context) {
-          if (_.remainingActivePackageDay(context) != null) {
-            return Column(
-              children: [
-                _remainingDays(_, context),
-                SPACE(),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        }),
+        // Builder(builder: (context) {
+        //   if (_.remainingActivePackageDay(context) != null) {
+        //     return Column(
+        //       children: [
+        //         _remainingDays(_, context),
+        //         SPACE(),
+        //       ],
+        //     );
+        //   } else {
+        //     return Container();
+        //   }
+        // }),
         Container(
           decoration: BoxDecoration(
               border: Border.all(width: 0.5, color: BLUEKALM),
@@ -625,7 +627,7 @@ class PackagesController extends GetxController {
     optionIndex = i;
     update();
     if (i == 1) {
-      await PRO.getSubSubcriptionList(useLoading: false);
+      await PRO.getPendingPayment(useLoading: false);
     }
   }
 
@@ -677,6 +679,7 @@ class PackagesController extends GetxController {
         await pushNewScreen(context, screen: PaymentDetailPage());
       });
     } else {
+      // print(subscriptionPayload?.toJson());
       var _res = await Api()
           .POST(USER_SUBSCRIBE, subscriptionPayload?.toJson(), useToken: true);
       if (_res?.statusCode == 200) {
@@ -703,6 +706,7 @@ class PackagesController extends GetxController {
       PRO.subscriptionListResModel!.subscriptionData!.length, (i) => false);
 
   Future<void> checkPromo(int i) async {
+    checkBoxController[i] = false;
     if (promoController[i].text.isEmpty) {
       return;
     } else {
@@ -715,6 +719,7 @@ class PackagesController extends GetxController {
               promo: promoController[i].text),
           useToken: true,
           useLoading: false);
+
       if (_res?.statusCode == 200) {
         loadingPromo[i] = false;
         promoResModel = PromoResModel.fromJson(_res?.data);

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kalm/api/api.dart';
@@ -9,6 +10,7 @@ import 'package:kalm/pages/setting_page/account.dart';
 import 'package:kalm/pages/setting_page/contact_us.dart';
 import 'package:kalm/pages/setting_page/faq.dart';
 import 'package:kalm/pages/setting_page/how_to_use.dart';
+import 'package:kalm/pages/setting_page/notification.dart';
 import 'package:kalm/pages/setting_page/packages.dart';
 import 'package:kalm/pages/setting_page/pin_code.dart';
 import 'package:kalm/pages/setting_page/privacy_policy.dart';
@@ -109,7 +111,11 @@ class SettingController extends GetxController {
     'Kebijakan Privasi',
     'Syarat dan Ketentuan',
     'Hubungi Kami',
-    Platform.isAndroid ? ('Dukung Kami Playstore') : ('Dukung Kami AppStore'),
+    kIsWeb
+        ? "WEB"
+        : (Platform.isAndroid)
+            ? ('Dukung Kami Playstore')
+            : ('Dukung Kami AppStore'),
     // 'Theme (Developer Preview)',
   ];
 
@@ -148,9 +154,13 @@ class SettingController extends GetxController {
           await pushNewScreen(context, screen: PackagesPage());
         }
         break;
+      case "Notifikasi":
+        await pushNewScreen(context, screen: NotificationPage());
+        break;
       case "FAQ":
         if (PRO.faqResModel == null) {
           await PRO.getFaq();
+          Loading.hide();
           await pushNewScreen(context, screen: FaqPage());
         } else {
           await pushNewScreen(context, screen: FaqPage());

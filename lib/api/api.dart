@@ -6,11 +6,11 @@ import 'package:kalm/widget/loading.dart';
 import 'package:kalm/widget/snack_bar.dart';
 
 // API STG V2
-// String CMS = 'https://kalm-stg.cranium.id/';
-// String BASE_URL = 'https://kalm-stg.cranium.id/api/v2/';
-// String IMAGE_URL = "https://kalm-stg.cranium.id/files/";
-// String COUNSELOR_IMAGE_URL = 'https://kalm-stg.cranium.id/files/counselor-files/';
-// String KARS = 'https://kalm-stg.cranium.id/kars';
+String CMS = 'https://kalm-stg.cranium.id/';
+String BASE_URL = 'https://kalm-stg.cranium.id/api/v2/';
+String IMAGE_URL = "https://kalm-stg.cranium.id/files/";
+String COUNSELOR_IMAGE_URL = 'https://kalm-stg.cranium.id/files/counselor-files/';
+String KARS = 'https://kalm-stg.cranium.id/kars';
 
 // String CMS;
 // String BASE_URL;
@@ -19,11 +19,11 @@ import 'package:kalm/widget/snack_bar.dart';
 // String KARS;
 
 // API PROD V3
-String CMS = 'https://v3.kalm-app.com/';
-String BASE_URL = 'https://v3.kalm-app.com/api/v2/';
-String IMAGE_URL = "https://v3.kalm-app.com/files/";
-String COUNSELOR_IMAGE_URL = 'https://v3.kalm-app.com/files/counselor-files/';
-String KARS = 'https://v3.kalm-app.com/kars';
+// String CMS = 'https://v3.kalm-app.com/';
+// String BASE_URL = 'https://v3.kalm-app.com/api/v2/';
+// String IMAGE_URL = "https://v3.kalm-app.com/files/";
+// String COUNSELOR_IMAGE_URL = 'https://v3.kalm-app.com/files/counselor-files/';
+// String KARS = 'https://v3.kalm-app.com/kars';
 
 Map<String, String> OCRHeader = {
   "X-API-Key": "OpBIsDd5M62q8NzzR5Ptz7t24ligE9LGaciqQlT7",
@@ -38,9 +38,9 @@ class Api {
     String? customBaseUrl,
   }) =>
       BaseOptions(connectTimeout: 60000, baseUrl: customBaseUrl ?? BASE_URL);
-  String? _unknowError(dynamic error) {
+  String? _unknowError(dynamic error, {Uri? uri}) {
     try {
-      return error['message'];
+      return "${error['message']} ${uri ?? ""}";
     } catch (e) {
       return null;
     }
@@ -90,9 +90,12 @@ class Api {
           useClearData ? PRO.clearAllData() : null;
           return null;
         } else if (e.response!.statusCode! >= 400 && e.response!.statusCode! != 401) {
+          // print(e.requestOptions.uri.toString());
           useSnackbar
-              ? ERROR_SNACK_BAR("${e.response?.statusCode}",
-                  _unknowError(e.response?.data) ?? e.response?.statusMessage)
+              ? ERROR_SNACK_BAR(
+                  "${e.response?.statusCode}",
+                  _unknowError(e.response?.data, uri: e.requestOptions.uri) ??
+                      "${e.response?.statusMessage} ${e.requestOptions.uri}")
               : null;
           return WrapResponse(
               message: e.response?.statusMessage ?? e.message,
@@ -227,8 +230,10 @@ class Api {
           return null;
         } else if (e.response!.statusCode! >= 400 && e.response!.statusCode! != 401) {
           useSnackbar
-              ? ERROR_SNACK_BAR("${e.response?.statusCode}",
-                  _unknowError(e.response?.data) ?? e.response?.statusMessage)
+              ? ERROR_SNACK_BAR(
+                  "${e.response?.statusCode}",
+                  _unknowError(e.response?.data, uri: e.requestOptions.uri) ??
+                      "${e.response?.statusMessage} ${e.requestOptions.uri}")
               : null;
           return WrapResponse(
               message: e.response?.statusMessage ?? e.message,
@@ -268,6 +273,10 @@ String INSPIRATION_QOUTE = "inspirational-quote?lang=id&roles=10";
 String USER_ARTICLE = "article?lang=id&main=1&is_counselor=0";
 String ARTICLE_DATA = "article?lang=id";
 
+/// ORS
+const String STORE_ORS = "/user/ors/store";
+const String GET_ORS = "/user/ors/list";
+
 /// inspirational/
 const String INSPIRATIONAL_QUOTE = "inspirational/";
 
@@ -302,6 +311,8 @@ const String ASSIGN_VOUCHER = "user/voucher/assign";
 const String FORGOT_PASSWORD = 'auth/forgot-password';
 const String RESEND_CODE = "auth/resend-activation-code";
 const String AUTH = 'auth/login';
+const String EMAIL_NOTIFICATION_SETTING =
+    'counselor/setting/notification-setting/email-client-send-message';
 const String LOGOUT = "auth/logout";
 
 /// get-countries
@@ -345,9 +356,9 @@ String WONDER_PUSH_NOTIF = "push-notification";
 ///Payment Gateway
 const String PAYMENT_LIST_API = "payment/list";
 //STG
-// const String PAYMENT_GATEWAY = 'https://kalm-payment.cranium.id/api/v3/';
+const String PAYMENT_GATEWAY = 'https://kalm-payment.cranium.id/api/v3/';
 //LIVE
-const String PAYMENT_GATEWAY = 'https://api3.kalm-app.com/api/v3/';
+// const String PAYMENT_GATEWAY = 'https://api3.kalm-app.com/api/v3/';
 const String MIDTRANS_CC = "midtrans/credit-card";
 const String MIDTRANS_BANK_TF = "midtrans/bank-transfer";
 const String INDODANA_TRANSACTION = "indodana/purchase-transaction";

@@ -1,74 +1,41 @@
 {
   "project_info": {
-    "project_number": "134928977447",
-    "firebase_url": "https://kalm-6da40.firebaseio.com",
-    "project_id": "kalm-6da40",
-    "storage_bucket": "kalm-6da40.appspot.com"
+    "project_number": "626350561336",
+    "firebase_url": "https://kalm-counselor-202007.firebaseio.com",
+    "project_id": "kalm-counselor-202007",
+    "storage_bucket": "kalm-counselor-202007.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:134928977447:android:2af8e10ca3beccdc",
+        "mobilesdk_app_id": "1:626350561336:android:8d0cc5daf4ff06996f6ecd",
         "android_client_info": {
           "package_name": "id.cranium.counselor"
         }
       },
       "oauth_client": [
         {
-          "client_id": "134928977447-dcn2mdgia7r4jqsbg1k0riu07g44bor3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.counselor",
-            "certificate_hash": "c01eb3695514c8beefc13a8b75c2205990f5a244"
-          }
-        },
-        {
-          "client_id": "134928977447-i6sg7pgff8ncjmuteuhckihudfeqopn5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.counselor",
-            "certificate_hash": "cd569ec3474932ae5cce00a0965fb0ec15a541e1"
-          }
-        },
-        {
-          "client_id": "134928977447-r0tp9g3e27c4eito5t8g5ldqnifu82g8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.counselor",
-            "certificate_hash": "fc47f9a831456b0211ca324791a651d549be06b3"
-          }
-        },
-        {
-          "client_id": "134928977447-rkrvlhkinm5i5nsantsfh34161cvl3h7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.counselor",
-            "certificate_hash": "f69321e3519d9378744e7bb714f37c79ed61ca95"
-          }
-        },
-        {
-          "client_id": "134928977447-n0kfdko3171d7ola51curik1q8llganh.apps.googleusercontent.com",
+          "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAReGedQMVpwp9tZTpJv1wA2wNOsQytjzc"
+          "current_key": "AIzaSyA87pIL_xHC5J3hgotqwfdAiMoVMpnkk9A"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "134928977447-n0kfdko3171d7ola51curik1q8llganh.apps.googleusercontent.com",
+              "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "134928977447-6pmggmv05a04rn847ajpeqq6uhm0v35k.apps.googleusercontent.com",
+              "client_id": "626350561336-44sf4o7vkah7v4u5n6alk2s8ilou4t0l.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "id.kalm.ios",
-                "app_store_id": "1440273816"
+                "bundle_id": "id.cranium.kalm"
               }
             }
           ]
@@ -77,59 +44,34 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:134928977447:android:763f0f228fac7813",
+        "mobilesdk_app_id": "1:626350561336:android:8c124760e39aeb606f6ecd",
         "android_client_info": {
           "package_name": "id.cranium.kalm"
         }
       },
       "oauth_client": [
         {
-          "client_id": "134928977447-ajjujk56nvr3ovsqnjj45ee03m2lqsc8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.kalm",
-            "certificate_hash": "cd569ec3474932ae5cce00a0965fb0ec15a541e1"
-          }
-        },
-        {
-          "client_id": "134928977447-gbgnsuk9h0if3121m44mu7q76q91p36d.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.kalm",
-            "certificate_hash": "fc47f9a831456b0211ca324791a651d549be06b3"
-          }
-        },
-        {
-          "client_id": "134928977447-ndjk4tohicg1hsibc4t64onar569uf71.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "id.cranium.kalm",
-            "certificate_hash": "c01eb3695514c8beefc13a8b75c2205990f5a244"
-          }
-        },
-        {
-          "client_id": "134928977447-n0kfdko3171d7ola51curik1q8llganh.apps.googleusercontent.com",
+          "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAReGedQMVpwp9tZTpJv1wA2wNOsQytjzc"
+          "current_key": "AIzaSyA87pIL_xHC5J3hgotqwfdAiMoVMpnkk9A"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "134928977447-n0kfdko3171d7ola51curik1q8llganh.apps.googleusercontent.com",
+              "client_id": "626350561336-q0cjqdvomuvk0oemsouclian5fm6ussg.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "134928977447-6pmggmv05a04rn847ajpeqq6uhm0v35k.apps.googleusercontent.com",
+              "client_id": "626350561336-44sf4o7vkah7v4u5n6alk2s8ilou4t0l.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "id.kalm.ios",
-                "app_store_id": "1440273816"
+                "bundle_id": "id.cranium.kalm"
               }
             }
           ]

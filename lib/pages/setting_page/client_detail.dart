@@ -43,7 +43,8 @@ class ClientDetailPage extends StatelessWidget {
                 SPACE(),
                 TEXT(
                     "${PRO.counselorData?.counselor?.firstName} ${PRO.counselorData?.counselor?.lastName}",
-                    style: COSTUM_TEXT_STYLE(fonstSize: 20, fontWeight: FontWeight.w500)),
+                    style: COSTUM_TEXT_STYLE(
+                        fonstSize: 20, fontWeight: FontWeight.w500)),
                 SPACE(height: 20),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -65,7 +66,8 @@ class ClientDetailPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       child: BUTTON(_.buttonTitle[i],
                           suffixIcon: Transform.rotate(
-                              angle: math.pi, child: const Icon(Icons.arrow_back_ios_new)),
+                              angle: math.pi,
+                              child: const Icon(Icons.arrow_back_ios_new)),
                           circularRadius: 30,
                           verticalPad: 10,
                           onPressed: () async => await _.onPress(i, context)),
@@ -102,7 +104,9 @@ class ClientDetailPage extends StatelessWidget {
           return TEXT("Not found");
         }
       case 1:
-        return TEXT(PRO.counselorData?.counselor?.gender == 1 ? "Laki-Laki" : "Perempuan");
+        return TEXT(PRO.counselorData?.counselor?.gender == 1
+            ? "Laki-Laki"
+            : "Perempuan");
       case 2:
         return TEXT(_country(PRO.counselorData?.counselor?.countryId));
       default:
@@ -141,7 +145,11 @@ class ClientDetailController extends GetxController {
     "assets/tab/setting.png",
     "assets/image/latitude.png"
   ];
-  List<String> buttonTitle = ["Keahlian", "Kredensial Tambahan", "Persetujuan Kalmselor - klien"];
+  List<String> buttonTitle = [
+    "Keahlian",
+    "Kredensial Tambahan",
+    "Persetujuan Kalmselor - klien"
+  ];
 
   Future<void> onPress(int i, BuildContext context) async {
     switch (i) {
@@ -168,7 +176,12 @@ class ClientDetailController extends GetxController {
             ));
         break;
       case 1:
-        // print(PRO.counselorData?.counselor?.userCounselorFile?.toJson());
+        if (PRO.counselorData?.counselor?.userCounselorOptionalFiles == null) {
+          ERROR_SNACK_BAR(
+              "Perhatian", "Kalmselor tidak memiliki kredensial tambahan");
+        } else {
+          pushNewScreen(context, screen: _counselorOptionalFile());
+        }
         break;
       case 2:
         if (PRO.tncResModel != null) {
@@ -192,12 +205,14 @@ class ClientDetailController extends GetxController {
           Column(
             children: [
               TEXT("Persetujuan Kalmselor - Klien",
-                  style: COSTUM_TEXT_STYLE(fontWeight: FontWeight.w700, fonstSize: 20)),
+                  style: COSTUM_TEXT_STYLE(
+                      fontWeight: FontWeight.w700, fonstSize: 20)),
               SPACE(),
               TEXT("Persetujuan ini telah Anda setujui pada\n"),
               TEXT(
                   "${PRO.counselorData?.counselor?.firstName} ${PRO.counselorData?.counselor?.lastName}",
-                  style: COSTUM_TEXT_STYLE(fontWeight: FontWeight.w500, fonstSize: 18)),
+                  style: COSTUM_TEXT_STYLE(
+                      fontWeight: FontWeight.w500, fonstSize: 18)),
             ],
           ),
           Column(
@@ -207,7 +222,8 @@ class ClientDetailController extends GetxController {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TEXT(e.name,
-                      style: COSTUM_TEXT_STYLE(fontWeight: FontWeight.w700, fonstSize: 18)),
+                      style: COSTUM_TEXT_STYLE(
+                          fontWeight: FontWeight.w700, fonstSize: 18)),
                   TEXT(e.description),
                 ],
               );
@@ -215,6 +231,37 @@ class ClientDetailController extends GetxController {
           )
         ],
       ),
+    ));
+  }
+
+  SafeArea _counselorOptionalFile() {
+    return SAFE_AREA(
+        child: ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              TEXT("Kredesial Tambahan", style: Get.textTheme.headline2),
+              SPACE(),
+              Column(
+                  children: List.generate(
+                      PRO.counselorData?.counselor?.userCounselorOptionalFiles
+                              ?.length ??
+                          0, (i) {
+                var _data = PRO
+                    .counselorData!.counselor!.userCounselorOptionalFiles![i];
+                return Column(
+                  children: [
+                    IMAGE_CACHE(COUNSELOR_IMAGE_URL + _data!.file!),
+                    SPACE(),
+                  ],
+                );
+              }))
+            ],
+          ),
+        )
+      ],
     ));
   }
 }

@@ -41,28 +41,35 @@ class HomePage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Builder(builder: (context) {
                       if (STATE(context).quoteResModel == null) {
-                        return AspectRatio(aspectRatio: 16 / 9, child: SHIMMER());
+                        return AspectRatio(
+                            aspectRatio: 16 / 9, child: SHIMMER());
                       } else {
                         return BOX_BORDER(
                             AspectRatio(
                               aspectRatio: 16 / 9,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: TEXT(STATE(context).quoteResModel?.data?.description),
+                                child: TEXT(STATE(context)
+                                    .quoteResModel
+                                    ?.data
+                                    ?.description),
                               ),
                             ),
                             decorationImage: DecorationImage(
                                 image: NetworkImage(IMAGE_URL +
                                     INSPIRATIONAL_QUOTE +
-                                    (STATE(context).quoteResModel!.data!.image!)),
+                                    (STATE(context)
+                                        .quoteResModel!
+                                        .data!
+                                        .image!)),
                                 fit: BoxFit.fill));
                       }
                     })),
                 SPACE(),
                 if (PRO.userData != null)
                   InkWell(
-                      onTap: () async =>
-                          await pushNewScreen(context, screen: SAFE_AREA(child: OrsPage())),
+                      onTap: () async => await pushNewScreen(context,
+                          screen: SAFE_AREA(child: OrsPage())),
                       child: Image.asset("assets/image/ors_icon.png")),
                 SPACE(),
                 TEXT("Newest", style: Get.textTheme.headline1),

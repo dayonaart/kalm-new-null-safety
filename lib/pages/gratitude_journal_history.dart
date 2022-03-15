@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:kalm/color/colors.dart';
 import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/gratitude_journal_history_res_model/gratitude_journal_history.dart';
-import 'package:kalm/model/gratitude_res_model/gratitude_data.dart';
 import 'package:kalm/utilities/date_format.dart';
+import 'package:kalm/utilities/date_picker.dart';
 import 'package:kalm/widget/box_border.dart';
 import 'package:kalm/widget/expansion_tile.dart';
 import 'package:kalm/widget/safe_area.dart';
@@ -20,6 +20,7 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
     return GetBuilder<GratitudeJournalHistoryController>(builder: (_) {
       return SAFE_AREA(
           child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -37,9 +38,28 @@ class GratitudeJournalHistoryPage extends StatelessWidget {
                       ),
                       controller: _.searchController,
                       placeholder: "Search ...",
+                      suffix: IconButton(
+                          onPressed: () async {
+                            var _datetime =
+                                await DATE_PICKER(showUserAge: false);
+                            _.searchByDate(_datetime);
+                          },
+                          icon: const Icon(Icons.date_range_outlined,
+                              color: BLUEKALM)),
                       onChanged: (val) => _controller.searchOnChange(val),
                     )),
                 SPACE(),
+                if (_.queryData.entries.isEmpty)
+                  SizedBox(
+                    width: Get.width,
+                    child: Column(
+                      children: [
+                        TEXT("Pencarian tidak ditemukan"),
+                        const Icon(Icons.not_interested_outlined,
+                            color: ORANGEKALM, size: 100),
+                      ],
+                    ),
+                  ),
                 Column(
                     children: _.queryData.entries.map((y) {
                   return CostumExpansionTile(
@@ -201,11 +221,27 @@ class GratitudeJournalHistoryController extends GetxController {
     try {
       if (val.isNotEmpty) {
         searchData = data?.where((e) {
+          print(e.date);
           return e.answer!.join(";").toLowerCase().contains(val);
         }).toList();
       } else {
         searchData = data;
-        update();
+      }
+      update();
+    } catch (e) {
+      searchData = data;
+      update();
+    }
+  }
+
+  void searchByDate(DateTime? dateTime) {
+    try {
+      if (dateTime != null) {
+        searchData = data?.where((e) {
+          return DateTime.parse(e.date!).isAtSameMomentAs(dateTime);
+        }).toList();
+      } else {
+        searchData = data;
       }
       update();
     } catch (e) {

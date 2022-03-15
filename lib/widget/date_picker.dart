@@ -16,6 +16,7 @@ class DatePicker extends StatefulWidget {
     this.locale = DatePickerLocale.ko_kr,
     this.config,
     this.title,
+    this.showUserAge = true,
     this.onSubmit,
   }) : super(key: key);
 
@@ -37,6 +38,7 @@ class DatePicker extends StatefulWidget {
   /// Date Picker configuration
   final DatePickerConfig? config;
   final String? title;
+  final bool showUserAge;
   final void Function(DateTime)? onSubmit;
   @override
   _DatePickerState createState() => _DatePickerState();
@@ -127,7 +129,8 @@ class _DatePickerState extends State<DatePicker> {
                       children: [
                         TEXT(widget.title, style: Get.textTheme.headline1),
                         SPACE(),
-                        if (_selectedDate != null) TEXT(_userAge())
+                        if (_selectedDate != null && widget.showUserAge)
+                          TEXT(_userAge())
                       ],
                     ),
                   ),

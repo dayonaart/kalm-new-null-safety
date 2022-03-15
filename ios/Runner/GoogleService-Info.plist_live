@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>626350561336-gtce3jm5hk0vl63g43ju18rk3ci37oq2.apps.googleusercontent.com</string>
+	<string>134928977447-6pmggmv05a04rn847ajpeqq6uhm0v35k.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.626350561336-gtce3jm5hk0vl63g43ju18rk3ci37oq2</string>
+	<string>com.googleusercontent.apps.134928977447-6pmggmv05a04rn847ajpeqq6uhm0v35k</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>626350561336-geekqleh60ef01tbmjqh4qv4les4vn0s.apps.googleusercontent.com</string>
+	<string>134928977447-28t99p00vdbp2as1dhj3nl30dg7ojrtn.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCAFeH4qFUyy0x4DOYA52PzRJSrtWTzaow</string>
+	<string>AIzaSyAaPpgNbcfWnXMkUJGzwpl-lD_nlBCNPi4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>626350561336</string>
+	<string>134928977447</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>id.kalm.ios</string>
 	<key>PROJECT_ID</key>
-	<string>kalm-counselor-202007</string>
+	<string>kalm-6da40</string>
 	<key>STORAGE_BUCKET</key>
-	<string>kalm-counselor-202007.appspot.com</string>
+	<string>kalm-6da40.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:626350561336:ios:60e9375a49261a4f6f6ecd</string>
+	<string>1:134928977447:ios:827236cf421c2687</string>
 	<key>DATABASE_URL</key>
-	<string>https://kalm-counselor-202007.firebaseio.com</string>
+	<string>https://kalm-6da40.firebaseio.com</string>
 </dict>
 </plist>

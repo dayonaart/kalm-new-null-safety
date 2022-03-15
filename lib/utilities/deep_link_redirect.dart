@@ -41,7 +41,7 @@ Future<void> GO_TO_STORE({String? appId, bool writeReview = false}) async {
     } else {
       try {
         LaunchReview.launch(
-            writeReview: writeReview, iOSAppId: appId ?? "1440381889");
+            writeReview: writeReview, iOSAppId: appId ?? "1440273816");
       } catch (e) {
         ERROR_SNACK_BAR("Perhatian", "$e");
       }

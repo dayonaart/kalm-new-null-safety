@@ -18,6 +18,8 @@ import 'package:kalm/model/firebase_wording_model.dart';
 import 'package:kalm/model/gratitude_res_model/gratitude_res_model.dart';
 import 'package:kalm/model/how_to_res_model/how_to_res_model.dart';
 import 'package:kalm/model/indodana_res_model/indodana_res_model.dart';
+import 'package:kalm/model/ors_history_res_model/ors_data.dart';
+import 'package:kalm/model/ors_history_res_model/ors_history_res_model.dart';
 import 'package:kalm/model/ors_res_model/ors_res_model.dart';
 import 'package:kalm/model/ovo_res_model/ovo_res_model.dart';
 import 'package:kalm/model/payment_list_res_model/payment_list_res_model.dart';
@@ -27,6 +29,7 @@ import 'package:kalm/model/quote_res_model/quote_res_model.dart';
 import 'package:kalm/model/register_payload.dart';
 import 'package:kalm/model/state_res_model/address_res_item.dart';
 import 'package:kalm/model/subscription_list_res_model/subscription_list_res_model.dart';
+import 'package:kalm/model/survey_res_model.dart';
 import 'package:kalm/model/tnc_res_model/tnc_res_model.dart';
 import 'package:kalm/model/user_matchup_payload.dart';
 import 'package:kalm/model/user_matchup_res_model/matchup_datum.dart';
@@ -64,7 +67,8 @@ const String _email = "admin@kalm.com";
 const String _password = "a79d76e843a8248e207504c983a3a2ef";
 const String USER_STORAGE = "USER";
 const String PIN_CODE_STORAGE = "PIN_CODE_STORAGE";
-const String USER_ORS = "USER_ORS";
+const String USER_ORS_STORAGE = "USER_ORS";
+const String SURVEY_STORAGE = "SURVEY";
 
 class UserController extends ChangeNotifier {
   int initialIndex = 0;
@@ -123,27 +127,68 @@ class UserController extends ChangeNotifier {
   late FirebaseWordingModel firebaseWordingModel;
   late DatabaseReference wording;
   late DatabaseReference orsRef;
+  late DatabaseReference orsResultRef;
+
+  Future<void> firebaseSignin() async {
+    firebaseAuth = FirebaseAuth.instance;
+    UserCredential _user =
+        await firebaseAuth.signInWithEmailAndPassword(email: _email, password: _password);
+  }
 
   List<OrsResModel>? orsResModel;
-  Future<void> getOrs() async {
+  List<OrsResultModel>? orsResultModel;
+  Future<void> getOrsFirebase() async {
     orsRef = database.ref("ors_main/");
-    var _snap = await orsRef.once();
-    var _model = List<dynamic>.from(_snap.snapshot.value as dynamic);
+    orsResultRef = database.ref("ors_data/");
+    var _snapOrs = await orsRef.once();
+    var _modelOrs = List<dynamic>.from(_snapOrs.snapshot.value as dynamic);
+    var _snapOrsResult = await orsResultRef.once();
+    var _modelOrsResult = List<dynamic>.from(_snapOrsResult.snapshot.value as dynamic);
     orsResModel = List.generate(
-        _model.length, (i) => OrsResModel.fromJson(_model[i] as Map<Object?, Object?>));
+        _modelOrs.length, (i) => OrsResModel.fromJson(_modelOrs[i] as Map<Object?, Object?>));
+    orsResultModel = List.generate(_modelOrsResult.length,
+        (i) => OrsResultModel.fromJson(_modelOrsResult[i] as Map<Object?, Object?>));
     notifyListeners();
   }
 
-  List<dynamic>? get localOrs => _box.read(USER_ORS);
-  Future<void> saveOrs(List<double> data) async {
-    await _box.write(USER_ORS, data);
+  List<OrsHistoryData>? orsHistoryData;
+  Future<void> getOrs() async {
+    var _res = await Api().GET(GET_ORS, useToken: true);
+    if (_res?.statusCode == 200) {
+      orsHistoryData = OrsHistoryResModel.fromJson(_res?.data).orsData;
+      notifyListeners();
+      Loading.hide();
+    } else {
+      Loading.hide();
+      return;
+    }
+  }
+
+  SurveyResModel? surveyResModel;
+  Future<void> getSurvey() async {
+    var _surveyRef = database.ref("survey/");
+    var _snap = await _surveyRef.once();
+    var _model = Map<String, dynamic>.from(_snap.snapshot.value as dynamic);
+    surveyResModel = SurveyResModel.fromJson(_model);
+    notifyListeners();
+  }
+
+  List<dynamic>? get localOrs => _box.read(USER_ORS_STORAGE);
+  Future<void> saveOrs(List<double> data, {bool isDelete = false}) async {
+    if (isDelete) {
+      await _box.remove(USER_ORS_STORAGE);
+      return;
+    }
+    await _box.write(USER_ORS_STORAGE, data);
+  }
+
+  bool get isSurvey => _box.read(SURVEY_STORAGE) ?? false;
+  Future<void> saveSurvey(bool isSurvey) async {
+    await _box.write(SURVEY_STORAGE, isSurvey);
   }
 
   Future<void> updateWording() async {
     try {
-      firebaseAuth = FirebaseAuth.instance;
-      UserCredential _user =
-          await firebaseAuth.signInWithEmailAndPassword(email: _email, password: _password);
       if (firebaseAuth.currentUser == null) {
         ERROR_SNACK_BAR("Perhatian", 'Error 900');
         return;
@@ -186,7 +231,7 @@ class UserController extends ChangeNotifier {
           } else {
             var _iosVersion = int.parse((_data['ios'] as String).replaceAll(".", ""));
             var _iosLocalVersion = int.parse(APP_VERSION!.replaceAll(".", ""));
-            if (_iosLocalVersion > _iosVersion) {
+            if (_iosLocalVersion < _iosVersion) {
               await SHOW_DIALOG(_data['message'],
                   onAcc: () async => await GO_TO_STORE(), barrierDismissible: false);
             } else {
@@ -208,9 +253,19 @@ class UserController extends ChangeNotifier {
       FirebaseDatabase.instance.ref('user_matchup/${userData?.code}');
   late DatabaseReference chatRef;
   Future<void> getChat() async {
-    chatRef = database.ref('chats/${counselorData?.matchupId}');
-    await chatRef.keepSynced(true);
-    notifyListeners();
+    try {
+      if (counselorData?.matchupId == null) {
+        ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
+        return;
+      } else {
+        chatRef = database.ref('chats/${counselorData?.matchupId}');
+        await chatRef.keepSynced(true);
+        notifyListeners();
+      }
+    } catch (e) {
+      ERROR_SNACK_BAR("Perhatian", "Terjadi Kesalahan");
+      return;
+    }
   }
 
   bool get isHavePackages {
@@ -218,7 +273,8 @@ class UserController extends ChangeNotifier {
   }
 
   bool get isChatting {
-    return counselorData?.counselor != null &&
+    return (counselorData?.counselor != null) &&
+        counselorData?.matchupId != null &&
         userData?.userSubcription != null &&
         userData?.userHasActiveCounselor?.isReadTnc == 1;
   }
@@ -234,9 +290,8 @@ class UserController extends ChangeNotifier {
     print('GET COUNSELOR');
     var _res =
         await Api().GET(GET_COUNSELOR(userData!.code!), useToken: true, useLoading: useLoading);
-    PR(_res?.data['data']);
+    // PR(_res?.data['data']['user_counselor_optional_files']);
     if (_res?.statusCode == 200) {
-      await getChat();
       counselorData = CounselorData.fromJson(_res?.data);
       await getTncData(useLoading: useLoading);
       notifyListeners();
@@ -282,11 +337,11 @@ class UserController extends ChangeNotifier {
     try {
       var _res =
           await Api().GET(SESSION(PRO.userData!.code!), useToken: true, useLoading: useLoading);
+      // PR(_res?.data['data']['user_setting']);
       if (_res?.statusCode == 200) {
         await saveLocalUser(UserModel.fromJson(_res?.data).data);
         userData = UserModel.fromJson(_res?.data).data;
         notifyListeners();
-        // PR(_res?.data);
         if (userData?.userHasActiveCounselor == null) {
           await getPendingKalmselorCode();
         } else {
@@ -327,7 +382,6 @@ class UserController extends ChangeNotifier {
   Future<void> getPendingPayment({bool useLoading = false, bool useSnackbar = true}) async {
     var _res = await Api()
         .GET(PENDING_PAYMENT, useLoading: useLoading, useToken: true, useSnackbar: useSnackbar);
-    // debugPrint(jsonEncode(_res?.data), wrapWidth: 1024);
     if (_res?.statusCode == 200) {
       pendingPaymentResModel = PendingPaymentResModel.fromJson(_res?.data);
       notifyListeners();
@@ -380,6 +434,7 @@ class UserController extends ChangeNotifier {
           var _shop = _bankPayload.toJson();
           _shop.remove("bank");
           await _shopee(_shop);
+          Loading.hide();
           await pushNewScreen(context, screen: ShopeePage());
           break;
         default:
@@ -393,8 +448,10 @@ class UserController extends ChangeNotifier {
         .POST("", _gopayPayload, useToken: true, customBaseUrl: "$PAYMENT_GATEWAY$GOPAY");
     if (_res?.statusCode == 200) {
       await getPendingPayment(useLoading: true);
+      Loading.hide();
       await pushNewScreen(context, screen: GopayPage());
     } else {
+      Loading.hide();
       return;
     }
   }
@@ -607,6 +664,7 @@ class UserController extends ChangeNotifier {
   Future<void> getPaymentList() async {
     var _res =
         await Api().GET("", customBaseUrl: "$PAYMENT_GATEWAY$PAYMENT_LIST_API", useToken: true);
+    PR(_res?.data);
     if (_res?.statusCode == 200) {
       paymentListResModel = PaymentListResModel.fromJson(_res?.data);
       notifyListeners();
@@ -670,7 +728,7 @@ class UserController extends ChangeNotifier {
     notifyListeners();
     await _box.remove(USER_STORAGE);
     await _box.remove(PIN_CODE_STORAGE);
-    await Get.off(LoginPage());
+    await Get.offAll(LoginPage());
   }
 
   RegisterPayload? registerPayload;

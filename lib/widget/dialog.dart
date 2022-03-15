@@ -20,6 +20,7 @@ WillPopScope POP_SCREEN_DIALOG(
 Future SHOW_DIALOG(
   String? content, {
   Function()? onAcc,
+  Function()? reject,
   Widget? customButton,
   bool barrierDismissible = true,
 }) async {
@@ -62,7 +63,7 @@ Future SHOW_DIALOG(
                                       icon: Image.asset(
                                         'assets/icon/decline.png',
                                       ),
-                                      onPressed: () => Get.back(),
+                                      onPressed: reject ?? () => Get.back(),
                                     ),
                             ],
                           ),

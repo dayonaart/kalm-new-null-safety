@@ -23,27 +23,27 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ChatController>(builder: (_) {
       return NON_MAIN_SAFE_AREA(
-          top: true,
+          // top: true,
           child: Builder(builder: (context) {
-            return Builder(builder: (context) {
-              if (STATE(context).isHavePackages) {
-                if (STATE(context).isChatting) {
-                  return ChatRoomPage();
-                } else if (STATE(context).isPendingKalmselorCode) {
-                  return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      child: _pendingKalmselorCode(context));
-                } else if (STATE(context).isShowTnc) {
-                  return _showTnc(context, _);
-                } else {
-                  return _matchingSystem(context);
-                }
-              } else {
-                return _buyPackages(context);
-              }
-            });
-          }));
+        return Builder(builder: (context) {
+          if (STATE(context).isHavePackages) {
+            if (STATE(context).isChatting) {
+              return ChatRoomPage();
+            } else if (STATE(context).isPendingKalmselorCode) {
+              return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: _pendingKalmselorCode(context));
+            } else if (STATE(context).isShowTnc) {
+              return _showTnc(context, _);
+            } else {
+              return _matchingSystem(context);
+            }
+          } else {
+            return _buyPackages(context);
+          }
+        });
+      }));
     });
   }
 

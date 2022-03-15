@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:kalm/model/matchup_model/matchup_json.dart';
-import 'package:kalm/model/user_model/user_counselor_file.dart';
+import 'package:kalm/model/user_model/user_counselor_optional_files.dart';
 import 'package:kalm/model/user_model/user_has_active_counselor.dart';
+import 'package:kalm/model/user_model/user_notification_setting.dart';
 import 'package:kalm/model/user_model/user_subcription.dart';
 import 'package:kalm/model/user_model/user_subscription_list.dart';
 
@@ -50,7 +51,9 @@ class UserData {
   UserSubcription? userSubcription;
   List<UserSubscriptionList?>? userSubscriptionList;
   UserHasActiveCounselor? userHasActiveCounselor;
-  UserCounselorFile? userCounselorFile;
+  List<UserCounselorOptionalFiles?>? userCounselorOptionalFiles;
+  bool? hasBuyPackage;
+  UserNotificationSetting? userNotificationSetting;
   UserData({
     this.id,
     this.code,
@@ -95,7 +98,9 @@ class UserData {
     this.userSubcription,
     this.userSubscriptionList,
     this.userHasActiveCounselor,
-    this.userCounselorFile,
+    this.userCounselorOptionalFiles,
+    this.hasBuyPackage,
+    this.userNotificationSetting,
   });
 
   UserData.fromJson(Map<String, dynamic> json) {
@@ -108,9 +113,7 @@ class UserData {
       lastName = json['last_name'] as String?;
       email = json['email'] as String?;
       dob = json['dob'] == null ? null : DateTime.parse(json['dob']);
-      gender = json['gender'].runtimeType == int
-          ? json['gender']
-          : int.parse(json['gender']);
+      gender = json['gender'].runtimeType == int ? json['gender'] : int.parse(json['gender']);
       address = json['address'] as String?;
       cityId = json['city_id'] as int?;
       stateId = json['state_id'] as int?;
@@ -162,15 +165,21 @@ class UserData {
       userSubscriptionList = json['user_subscription_list'] == null
           ? null
           : List.generate(json['user_subscription_list'].length, (i) {
-              return UserSubscriptionList.fromJson(
-                  json['user_subscription_list'][i]);
+              return UserSubscriptionList.fromJson(json['user_subscription_list'][i]);
             });
       userHasActiveCounselor = json['user_has_active_counselor'] != null
           ? UserHasActiveCounselor.fromJson(json['user_has_active_counselor'])
           : null;
-      userCounselorFile = json['user_counselor_optional_files'] == null
+      userCounselorOptionalFiles = json['user_counselor_optional_files'] == null
           ? null
-          : UserCounselorFile.fromJson(json['user_counselor_optional_files']);
+          : List.generate((json['user_counselor_optional_files'] as List<dynamic>).length, (i) {
+              return UserCounselorOptionalFiles.fromJson(
+                  (json['user_counselor_optional_files'] as List<dynamic>)[i]);
+            });
+      hasBuyPackage = (json['ever_bought_package_subscription']) ?? false;
+      userNotificationSetting = json['user_setting'] != null
+          ? UserNotificationSetting.fromJson(json['user_setting'])
+          : null;
     } catch (e) {
       // print(e);
     }
@@ -218,9 +227,10 @@ class UserData {
         'activation_code': activationCode,
         'matchup_json': matchupJson?.map((e) => e?.toJson()).toList(),
         'user_subscription': userSubcription?.toJson(),
-        'user_subscription_list':
-            userSubscriptionList?.map((e) => e?.toJson()).toList(),
+        'user_subscription_list': userSubscriptionList?.map((e) => e?.toJson()).toList(),
         'user_has_active_counselor': userHasActiveCounselor?.toJson(),
-        'user_counselor_optional_files': userCounselorFile?.toJson()
+        'user_counselor_optional_files': userCounselorOptionalFiles?.map((e) => e?.toJson()),
+        'ever_bought_package_subscription': hasBuyPackage,
+        'user_setting': userNotificationSetting?.toJson(),
       };
 }

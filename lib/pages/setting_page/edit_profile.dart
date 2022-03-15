@@ -57,7 +57,8 @@ class EditProfilePage extends StatelessWidget {
                 Builder(builder: (context) {
                   return BOX_BORDER(
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 8),
                       child: Column(
                         children: List.generate(_.placeholder.length, (i) {
                           if (i == 4) {
@@ -225,9 +226,10 @@ class EditProfilePage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _controller.textController[i].text == _data.answer
-                            ? ORANGEKALM
-                            : Colors.white),
+                        color:
+                            _controller.textController[i].text == _data.answer
+                                ? ORANGEKALM
+                                : Colors.white),
                   ),
                 ))),
             SPACE(),
@@ -253,9 +255,10 @@ class EditProfilePage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _controller.textController[i].text == _data.answer
-                            ? ORANGEKALM
-                            : Colors.white),
+                        color:
+                            _controller.textController[i].text == _data.answer
+                                ? ORANGEKALM
+                                : Colors.white),
                   ),
                 ))),
             SPACE(),
@@ -266,64 +269,73 @@ class EditProfilePage extends StatelessWidget {
     });
   }
 
-  Column _fields(EditProfileController _, int i) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TEXT(_.placeholder[i]),
-        SPACE(height: 5),
-        CupertinoTextField(
-          // minLines: i == 12 ? 3 : 1,
-          // maxLines: i == 12 ? 5 : 2,
-          onTap: i == 7 ? () async => await _.updateDob(i) : null,
-          readOnly: _.readOnly[i],
-          placeholder: _.placeholder[i],
-          controller: _.textController[i],
-          onChanged: _.onChange()[i],
-          inputFormatters: _.inputFormatter()[i] == null ? null : [_.inputFormatter()[i]!],
-          focusNode: _.focusNodes[i],
-          onSubmitted: _.onSubmitted()[i],
-          keyboardType: _.textInputType[i],
-          textInputAction: i == 12 ? TextInputAction.newline : TextInputAction.next,
-        ),
-        if (i == 7)
-          Builder(builder: (context) {
-            try {
-              if (_.dob13 != null) {
-                return Column(
-                  children: [
-                    SPACE(),
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 0.5, color: BLUEKALM)),
-                      child: Row(
-                        children: [
-                          Checkbox(value: _.dob13, onChanged: (val) => _.updateDob13(val!)),
-                          Expanded(
-                              child: TEXT(
-                                  "Saya berusia 13 tahun keatas dan ingin menggunakan aplikasi ini"))
-                        ],
+  Widget _fields(EditProfileController _, int i) {
+    if (i == 6) {
+      return Container();
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TEXT(_.placeholder[i]),
+          SPACE(height: 5),
+          CupertinoTextField(
+            // minLines: i == 12 ? 3 : 1,
+            // maxLines: i == 12 ? 5 : 2,
+            onTap: i == 7 ? () async => await _.updateDob(i) : null,
+            readOnly: _.readOnly[i],
+            placeholder: _.placeholder[i],
+            controller: _.textController[i],
+            onChanged: _.onChange()[i],
+            inputFormatters:
+                _.inputFormatter()[i] == null ? null : [_.inputFormatter()[i]!],
+            focusNode: _.focusNodes[i],
+            onSubmitted: _.onSubmitted()[i],
+            keyboardType: _.textInputType[i],
+            textInputAction:
+                i == 12 ? TextInputAction.newline : TextInputAction.next,
+          ),
+          if (i == 7)
+            Builder(builder: (context) {
+              try {
+                if (_.dob13 != null) {
+                  return Column(
+                    children: [
+                      SPACE(),
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(width: 0.5, color: BLUEKALM)),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                                value: _.dob13,
+                                onChanged: (val) => _.updateDob13(val!)),
+                            Expanded(
+                                child: TEXT(
+                                    "Saya berusia 13 tahun keatas dan ingin menggunakan aplikasi ini"))
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              } else if (VALIDATE_DOB_MATURE(_.selectedDob)! <= 12.999) {
-                return Column(
-                  children: [
-                    SPACE(),
-                    ERROR_VALIDATION_FIELD(DOB_ALERT_MESSAGE(), useOverFlow: false),
-                  ],
-                );
-              } else {
+                    ],
+                  );
+                } else if (VALIDATE_DOB_MATURE(_.selectedDob)! <= 12.999) {
+                  return Column(
+                    children: [
+                      SPACE(),
+                      ERROR_VALIDATION_FIELD(DOB_ALERT_MESSAGE(),
+                          useOverFlow: false),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              } catch (e) {
                 return Container();
               }
-            } catch (e) {
-              return Container();
-            }
-          }),
-      ],
-    );
+            }),
+        ],
+      );
+    }
   }
 
   Container _addresField(EditProfileController _, int i) {
@@ -393,7 +405,8 @@ class EditProfilePage extends StatelessWidget {
           child: InkWell(
             onTap: _.isPickingProgress ? null : () async => await _.pickImage(),
             child: Container(
-                decoration: const BoxDecoration(shape: BoxShape.circle, color: BLUEKALM),
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: BLUEKALM),
                 child: const Icon(Icons.camera, color: ORANGEKALM, size: 40)),
           ),
         )
@@ -526,7 +539,8 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> uploadPhoto() async {
-    var _res = await Api().POST(UPDATE_PROFILE_IMAGE, {"photo_base64": _base64Image()},
+    var _res = await Api().POST(
+        UPDATE_PROFILE_IMAGE, {"photo_base64": _base64Image()},
         useToken: true, useLoading: false);
     // PR(_res?.data);
     if (_res?.statusCode == 200) {
@@ -560,7 +574,8 @@ class EditProfileController extends GetxController {
             return TextEditingController(text: GENDER(PRO.userData!.gender!));
           //RELIGION
           case 5:
-            return TextEditingController(text: RELIGION(PRO.userData!.religion!));
+            return TextEditingController(
+                text: RELIGION(PRO.userData!.religion!));
           //EMAIL
           case 6:
             return TextEditingController(text: PRO.userData?.email);
@@ -576,10 +591,12 @@ class EditProfileController extends GetxController {
             return TextEditingController(text: PRO.userData?.address);
           //MARITAL
           case 10:
-            return TextEditingController(text: MARITAL(PRO.userData!.maritalStatus!));
+            return TextEditingController(
+                text: MARITAL(PRO.userData!.maritalStatus!));
           //AMOUNT OF CHILD
           case 11:
-            return TextEditingController(text: AMOUNT_OF_CHILD(PRO.userData!.amountOfChildren!));
+            return TextEditingController(
+                text: AMOUNT_OF_CHILD(PRO.userData!.amountOfChildren!));
           //ABOUT
           case 12:
             return TextEditingController(text: PRO.userData?.aboutMe);
@@ -605,11 +622,15 @@ class EditProfileController extends GetxController {
         switch (i) {
           case 0:
             return TextEditingController(
-                text: ADDRESS_ROOT()!.firstWhere((e) => e.id == PRO.userData!.countryId!).name);
+                text: ADDRESS_ROOT()!
+                    .firstWhere((e) => e.id == PRO.userData!.countryId!)
+                    .name);
           case 1:
-            return TextEditingController(text: STATE_NAME(PRO.userData!.stateId!));
+            return TextEditingController(
+                text: STATE_NAME(PRO.userData!.stateId!));
           case 2:
-            return TextEditingController(text: CITY_NAME(PRO.userData!.cityId!));
+            return TextEditingController(
+                text: CITY_NAME(PRO.userData!.cityId!));
           default:
             return TextEditingController();
         }
@@ -667,7 +688,9 @@ class EditProfileController extends GetxController {
 
   int? get countryId {
     try {
-      return ADDRESS_ROOT()?.firstWhere((e) => e.name == addressController[0].text).id;
+      return ADDRESS_ROOT()
+          ?.firstWhere((e) => e.name == addressController[0].text)
+          .id;
     } catch (e) {
       return null;
     }
@@ -675,7 +698,9 @@ class EditProfileController extends GetxController {
 
   int? get stateId {
     try {
-      return STATES_DATA()?.firstWhere((e) => e.name == addressController[1].text).id;
+      return STATES_DATA()
+          ?.firstWhere((e) => e.name == addressController[1].text)
+          .id;
     } catch (e) {
       return null;
     }
@@ -683,7 +708,9 @@ class EditProfileController extends GetxController {
 
   int? get cityId {
     try {
-      return CITIES_DATA()?.firstWhere((e) => e.name == addressController[2].text).id;
+      return CITIES_DATA()
+          ?.firstWhere((e) => e.name == addressController[2].text)
+          .id;
     } catch (e) {
       return null;
     }
@@ -703,14 +730,18 @@ class EditProfileController extends GetxController {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TEXT(addressPlaceholderBottomSheet(index), style: Get.textTheme.headline1),
+                      TEXT(addressPlaceholderBottomSheet(index),
+                          style: Get.textTheme.headline1),
                       OUTLINE_BUTTON('Pilih', onPressed: () async {
                         switch (index) {
                           case 0:
                             try {
-                              var _selectedCountry = ADDRESS_ROOT()![_selectedIndex];
-                              addressController[0].text = _selectedCountry.name!;
-                              payload.update('country_id', (value) => _selectedCountry.id);
+                              var _selectedCountry =
+                                  ADDRESS_ROOT()![_selectedIndex];
+                              addressController[0].text =
+                                  _selectedCountry.name!;
+                              payload.update(
+                                  'country_id', (value) => _selectedCountry.id);
                               payload.update('state_id', (value) => null);
                               payload.update('state_id', (value) => null);
                               update();
@@ -722,33 +753,37 @@ class EditProfileController extends GetxController {
                               addressController[1].clear();
                               addressController[2].clear();
                             } catch (e) {
-                              ERROR_SNACK_BAR(
-                                  "Perrhatian", 'Terjadi Kesalahan saat memilih Negara');
+                              ERROR_SNACK_BAR("Perrhatian",
+                                  'Terjadi Kesalahan saat memilih Negara');
                               Get.back();
                             }
                             break;
                           case 1:
                             try {
-                              var _selectedState = STATES_DATA()![_selectedIndex];
+                              var _selectedState =
+                                  STATES_DATA()![_selectedIndex];
                               addressController[1].text = _selectedState.name!;
                               await PRO.getCity(_selectedState.id!);
                               addressController[2].clear();
-                              payload.update('state_id', (value) => _selectedState.id);
+                              payload.update(
+                                  'state_id', (value) => _selectedState.id);
                               payload.update('city_id', (value) => null);
                             } catch (e) {
-                              ERROR_SNACK_BAR(
-                                  "Perrhatian", 'Terjadi Kesalahan saat memilih Wilayah');
+                              ERROR_SNACK_BAR("Perrhatian",
+                                  'Terjadi Kesalahan saat memilih Wilayah');
                               Get.back();
                             }
                             break;
                           case 2:
                             try {
-                              var _selectedCity = CITIES_DATA()![_selectedIndex];
+                              var _selectedCity =
+                                  CITIES_DATA()![_selectedIndex];
                               addressController[2].text = _selectedCity.name!;
-                              payload.update('city_id', (value) => _selectedCity.id);
+                              payload.update(
+                                  'city_id', (value) => _selectedCity.id);
                             } catch (e) {
-                              ERROR_SNACK_BAR(
-                                  "Perrhatian", 'Terjadi Kesalahan saat memilih Wilayah');
+                              ERROR_SNACK_BAR("Perrhatian",
+                                  'Terjadi Kesalahan saat memilih Wilayah');
                               Get.back();
                             }
                             break;
@@ -769,13 +804,16 @@ class EditProfileController extends GetxController {
                           _selectedIndex = i;
                           switch (index) {
                             case 0:
-                              addressController[index].text = '${ADDRESS_ROOT()?[i].name}';
+                              addressController[index].text =
+                                  '${ADDRESS_ROOT()?[i].name}';
                               break;
                             case 1:
-                              addressController[index].text = '${STATES_DATA()?[i].name}';
+                              addressController[index].text =
+                                  '${STATES_DATA()?[i].name}';
                               break;
                             case 2:
-                              addressController[index].text = '${CITIES_DATA()?[i].name}';
+                              addressController[index].text =
+                                  '${CITIES_DATA()?[i].name}';
                               break;
                             default:
                               break;
@@ -818,10 +856,14 @@ class EditProfileController extends GetxController {
     if (_selectedIndex == i) {
       return BOX_BORDER(Center(
           child: TEXT(_data.name,
-              style:
-                  COSTUM_TEXT_STYLE(color: BLUEKALM, fonstSize: 20, fontWeight: FontWeight.bold))));
+              style: COSTUM_TEXT_STYLE(
+                  color: BLUEKALM,
+                  fonstSize: 20,
+                  fontWeight: FontWeight.bold))));
     } else {
-      return Center(child: TEXT(_data.name, style: COSTUM_TEXT_STYLE(color: Colors.grey)));
+      return Center(
+          child:
+              TEXT(_data.name, style: COSTUM_TEXT_STYLE(color: Colors.grey)));
     }
   }
 
@@ -830,10 +872,14 @@ class EditProfileController extends GetxController {
     if (_selectedIndex == i) {
       return BOX_BORDER(Center(
           child: TEXT(_data.name,
-              style:
-                  COSTUM_TEXT_STYLE(color: BLUEKALM, fonstSize: 20, fontWeight: FontWeight.bold))));
+              style: COSTUM_TEXT_STYLE(
+                  color: BLUEKALM,
+                  fonstSize: 20,
+                  fontWeight: FontWeight.bold))));
     } else {
-      return Center(child: TEXT(_data.name, style: COSTUM_TEXT_STYLE(color: Colors.grey)));
+      return Center(
+          child:
+              TEXT(_data.name, style: COSTUM_TEXT_STYLE(color: Colors.grey)));
     }
   }
 
@@ -842,10 +888,14 @@ class EditProfileController extends GetxController {
     if (_selectedIndex == i) {
       return BOX_BORDER(Center(
           child: TEXT(_data.name,
-              style:
-                  COSTUM_TEXT_STYLE(color: BLUEKALM, fonstSize: 20, fontWeight: FontWeight.bold))));
+              style: COSTUM_TEXT_STYLE(
+                  color: BLUEKALM,
+                  fonstSize: 20,
+                  fontWeight: FontWeight.bold))));
     } else {
-      return Center(child: TEXT(_data.name, style: COSTUM_TEXT_STYLE(color: Colors.grey)));
+      return Center(
+          child:
+              TEXT(_data.name, style: COSTUM_TEXT_STYLE(color: Colors.grey)));
     }
   }
 
@@ -874,7 +924,8 @@ class EditProfileController extends GetxController {
 
   Future<void> updateDob(int i) async {
     try {
-      selectedDob = await DATE_PICKER(initialDateTime: selectedDob ?? PRO.userData?.dob);
+      selectedDob =
+          await DATE_PICKER(initialDateTime: selectedDob ?? PRO.userData?.dob);
       textController[i].text = DATE_FORMAT(selectedDob!)!;
       payload.update('dob', (value) => selectedDob!.toIso8601String());
       if (VALIDATE_DOB_MATURE(selectedDob)! <= 12.999) {
@@ -967,10 +1018,13 @@ class EditProfileController extends GetxController {
   }
 
   bool get requiredFieldValidation {
-    return textController[0].text.isNotEmpty && textController[8].text.isNotEmpty;
+    return textController[0].text.isNotEmpty &&
+        textController[8].text.isNotEmpty;
   }
 
   Future<void> submit(BuildContext context) async {
+    // print(payload);
+    // return;
     if (!addressValiation) {
       ERROR_SNACK_BAR("Perhatian", "Alamat wajib diisi semua");
       return;
@@ -978,7 +1032,8 @@ class EditProfileController extends GetxController {
       ERROR_SNACK_BAR("Perhatian", "Usia Anda belum memenuhi syarat");
       return;
     } else if (!requiredFieldValidation) {
-      ERROR_SNACK_BAR("Perhatian", "Pastikan Nama Depan Atau Nomer HP sudah diisi");
+      ERROR_SNACK_BAR(
+          "Perhatian", "Pastikan Nama Depan Atau Nomer HP sudah diisi");
       return;
     }
     var _res = await Api().POST(USER_UPDATE, payload, useToken: true);
@@ -989,6 +1044,7 @@ class EditProfileController extends GetxController {
       Loading.hide();
       Navigator.pop(context);
     } else {
+      Loading.hide();
       Navigator.pop(context);
       return;
     }

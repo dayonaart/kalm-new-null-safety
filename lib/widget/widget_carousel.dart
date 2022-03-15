@@ -150,7 +150,6 @@ YoutubePlayerController _controller(int i) {
       initialVideoId: PRO.videoList![i]!,
       flags: const YoutubePlayerFlags(
         autoPlay: true,
-        mute: true,
       ),
     );
   } catch (e) {
@@ -158,7 +157,6 @@ YoutubePlayerController _controller(int i) {
       initialVideoId: 'test',
       flags: const YoutubePlayerFlags(
         autoPlay: true,
-        mute: true,
       ),
     );
   }

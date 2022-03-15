@@ -38,14 +38,16 @@ class PincodePage extends StatelessWidget {
             child: ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Column(
                     children: [
                       isLock
                           ? Column(
                               children: [
                                 const SizedBox(height: 20),
-                                TEXT('Enter Your Pin', style: Get.textTheme.headline1)
+                                TEXT('Enter Your Pin',
+                                    style: Get.textTheme.headline1)
                               ],
                             )
                           : TEXT(
@@ -58,7 +60,8 @@ class PincodePage extends StatelessWidget {
                       SPACE(height: 20),
                       SizedBox(
                           width: Get.width / 1.8,
-                          child: BUTTON(createCode != null ? "Konfirmasi" : "Lanjutkan",
+                          child: BUTTON(
+                              createCode != null ? "Konfirmasi" : "Lanjutkan",
                               onPressed: _.validationCode
                                   ? () async => await _.checkingCode(context,
                                       confirmCode: createCode, isLock: isLock)
@@ -67,7 +70,8 @@ class PincodePage extends StatelessWidget {
                               circularRadius: 30)),
                       SPACE(height: 20),
                       VirtualNumpad(
-                          seletedNum: (n) => _.onChangeCreateCode(n), textColor: ORANGEKALM)
+                          seletedNum: (n) => _.onChangeCreateCode(n),
+                          textColor: ORANGEKALM)
                     ],
                   ),
                 )
@@ -80,16 +84,20 @@ class PincodePage extends StatelessWidget {
   Row _createCodeBox() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(createCode?.length ?? _controller.createCodeList.length, (i) {
+      children: List.generate(
+          createCode?.length ?? _controller.createCodeList.length, (i) {
         return Container(
           height: Get.height / 10,
           width: Get.width / 5,
           decoration: BoxDecoration(
-              border: Border.all(width: 1, color: BLUEKALM), shape: BoxShape.rectangle),
+              border: Border.all(width: 1, color: BLUEKALM),
+              shape: BoxShape.rectangle),
           child: Center(
               child: TEXT(_controller.createCodeList[i] ?? "",
                   style: COSTUM_TEXT_STYLE(
-                      fonstSize: 40, fontWeight: FontWeight.bold, color: ORANGEKALM))),
+                      fonstSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: ORANGEKALM))),
         );
       }),
     );
@@ -121,13 +129,14 @@ class PincodeController extends GetxController {
           await PRO.clearAllData();
           Get.offAll(LoginPage());
         } else {
-          ERROR_SNACK_BAR(
-              "Perhatian", 'Pin Salah\nAnda masih memiliki ${(4 - tryPassword.length)} kesempatan');
+          ERROR_SNACK_BAR("Perhatian",
+              'Pin Salah\nAnda masih memiliki ${(4 - tryPassword.length)} kesempatan');
         }
         return;
       }
     } else {
-      pushReplacementNewScreen(context, screen: PincodePage(createCode: createCode));
+      pushReplacementNewScreen(context,
+          screen: PincodePage(createCode: createCode));
       createCode = null;
     }
   }

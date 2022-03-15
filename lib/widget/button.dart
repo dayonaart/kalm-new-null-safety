@@ -14,6 +14,7 @@ Widget BUTTON(
   double? verticalPad,
   double? expandedHorizontalPad,
   MainAxisAlignment? titleMainAxisAlignment,
+  TextStyle? titleStyle,
 }) {
   if (isExpanded) {
     return Expanded(
@@ -72,7 +73,7 @@ Widget BUTTON(
               mainAxisAlignment:
                   titleMainAxisAlignment ?? MainAxisAlignment.center,
               children: [
-                TEXT(title, style: Get.textTheme.button),
+                TEXT(title, style: titleStyle ?? Get.textTheme.button),
               ],
             );
           } else {
@@ -80,7 +81,7 @@ Widget BUTTON(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // SPACE(),
-                TEXT(title, style: Get.textTheme.button),
+                TEXT(title, style: titleStyle ?? Get.textTheme.button),
                 suffixIcon,
               ],
             );

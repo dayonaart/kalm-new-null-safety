@@ -4,7 +4,10 @@ import 'package:kalm/color/colors.dart';
 import 'package:kalm/widget/date_picker.dart';
 import 'package:kalm/widget/text.dart';
 
-Future<DateTime?> DATE_PICKER({DateTime? initialDateTime}) async {
+Future<DateTime?> DATE_PICKER({
+  DateTime? initialDateTime,
+  bool showUserAge = true,
+}) async {
   DatePickerController _now = DatePickerController(
       initialDateTime: initialDateTime ?? DateTime.now(),
       minYear: 1900,
@@ -12,6 +15,7 @@ Future<DateTime?> DATE_PICKER({DateTime? initialDateTime}) async {
   DateTime? _dateTime;
   await Get.bottomSheet<bool>(
     DatePicker(
+      showUserAge: showUserAge,
       onSubmit: (d) {
         _dateTime = d;
         Get.back();

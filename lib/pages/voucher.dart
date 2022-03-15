@@ -48,7 +48,8 @@ class VoucherPage extends StatelessWidget {
                       textAlign: TextAlign.center,
                       textCapitalization: TextCapitalization.characters,
                       inputFormatters: [
-                        CustomInputFormatter(mask: "xxxxx-xx-xx-xx-xx", separator: "-")
+                        CustomInputFormatter(
+                            mask: "xxxxx-xx-xx-xx-xx", separator: "-")
                       ],
                       textAlignVertical: TextAlignVertical.center,
                       decoration: BoxDecoration(
@@ -108,8 +109,8 @@ class VoucherController extends GetxController {
   FocusNode focusNode = FocusNode();
   get activeVoucher {
     try {
-      return (DateTime.parse(voucherResModel!.voucherData!.endAt!)
-              .difference(DateTime.parse(voucherResModel!.voucherData!.startAt!)))
+      return (DateTime.parse(voucherResModel!.voucherData!.endAt!).difference(
+              DateTime.parse(voucherResModel!.voucherData!.startAt!)))
           .inDays;
     } catch (e) {
       return null;
@@ -118,7 +119,8 @@ class VoucherController extends GetxController {
 
   Future<void> checkVoucher() async {
     focusNode.unfocus();
-    var _res = await Api().GET(CHECK_VOUCHER(voucherController.text), useToken: true);
+    var _res =
+        await Api().GET(CHECK_VOUCHER(voucherController.text), useToken: true);
     if (_res?.statusCode == 200) {
       voucherResModel = VoucherResModel.fromJson(_res?.data);
       update();
@@ -139,9 +141,11 @@ class VoucherController extends GetxController {
   }
 
   Future<void> assignVoucher() async {
-    var _res = await Api().POST(ASSIGN_VOUCHER, {"code": voucherController.text}, useToken: true);
+    var _res = await Api()
+        .POST(ASSIGN_VOUCHER, {"code": voucherController.text}, useToken: true);
     if (_res?.statusCode == 200) {
-      assignVoucherData = AssignVoucherResModel.fromJson(_res?.data).assignVoucherData;
+      assignVoucherData =
+          AssignVoucherResModel.fromJson(_res?.data).assignVoucherData;
       update();
       await PRO.updateSession();
       Loading.hide();

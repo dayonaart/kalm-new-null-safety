@@ -16,6 +16,7 @@ import 'package:kalm/pages/setting_page/pin_code.dart';
 import 'package:kalm/sdk/firebase.dart';
 import 'package:kalm/splash_screen.dart';
 import 'package:kalm/widget/safe_area.dart';
+import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/space.dart';
 import 'package:kalm/widget/text.dart';
 import 'package:provider/provider.dart';
@@ -30,10 +31,12 @@ Future<void> main() async {
 }
 
 void _enableRotation() {
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  if (!kIsWeb) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
 }
 
 Future<void> _runApp() async {
@@ -44,28 +47,44 @@ Future<void> _runApp() async {
     }));
     return;
   }
-  var _fireApp = await Firebase.initializeApp(
-      options: Platform.isIOS ? iosFirebaseOption : androidFirebaseOption);
-  // print(_fireApp.name);
-  await WonderPush.subscribeToNotifications();
+  try {
+    var _fireApp = await Firebase.initializeApp(
+        name: "kalm",
+        options: Platform.isIOS
+            ? iosFirebaseOption
+            : kIsWeb
+                ? webFirebaseOption
+                : androidFirebaseOption);
+  } catch (e) {
+    ERROR_SNACK_BAR('Perhatian', "$e");
+    return;
+  }
+  if (!kIsWeb) await WonderPush.subscribeToNotifications();
   if (await GetStorage.init()) {
-    if (await WonderPush.isSubscribedToNotifications()) {
-      if (kDebugMode) {
-        WonderPush.setLogging(true);
-      }
+    if (kIsWeb) {
       runApp(MultiProvider(
         providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
         child: KalmApp(),
       ));
     } else {
-      await WonderPush.subscribeToNotifications();
-      if (kDebugMode) {
-        WonderPush.setLogging(true);
+      if (await WonderPush.isSubscribedToNotifications()) {
+        if (kDebugMode) {
+          WonderPush.setLogging(false);
+        }
+        runApp(MultiProvider(
+          providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
+          child: KalmApp(),
+        ));
+      } else {
+        await WonderPush.subscribeToNotifications();
+        if (kDebugMode) {
+          WonderPush.setLogging(false);
+        }
+        runApp(MultiProvider(
+          providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
+          child: KalmApp(),
+        ));
       }
-      runApp(MultiProvider(
-        providers: [ChangeNotifierProvider<UserController>(create: (_) => UserController())],
-        child: KalmApp(),
-      ));
     }
   } else {
     runApp(
@@ -112,16 +131,18 @@ class KalmApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       onReady: () async {
-        await PRO.updateWording();
+        // await PRO.updateWording();
         PRO.readLocalUser();
-        await PRO.getOrs();
+        await PRO.firebaseSignin();
+        await PRO.getOrsFirebase();
+        await PRO.getSurvey();
         await PRO.updateSession(useLoading: false);
         await Future.microtask(() async {
           await STARTING();
         });
       },
       onInit: () async {
-        if (Platform.isAndroid) {
+        if (!kIsWeb && Platform.isAndroid) {
           WebView.platform = SurfaceAndroidWebView();
         }
       },
@@ -175,7 +196,7 @@ Future<void> STARTING({bool isLock = true}) async {
   if (PIN_LOCK != null && isLock) {
     return;
   } else {
-    if (PRO.localOrs == null) {
+    if (PRO.localOrs == null && PRO.userData == null) {
       await Get.offAll(SAFE_AREA(canBack: false, child: OrsPage(), bottomPadding: 0));
     } else {
       if (PRO.userData != null) {

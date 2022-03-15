@@ -480,7 +480,7 @@ class UserQustionerMatchupController extends GetxController {
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
       Loading.hide();
-      Navigator.pop(context);
+      pushReplacementNewScreen(context, screen: ChatPage(), withNavBar: true);
     } else {
       Loading.hide();
       return;

@@ -1,22 +1,17 @@
-[
-	{
-		"content": "(i) Physically, Mentally and Emotionally",
-		"fontSize": 14,
-		"title": "Personal Wellbeing"
-	},
-	{
-		"content": "(i) Family and other close relationship",
-		"fontSize": 14,
-		"title": "Relationship"
-	},
-	{
-		"content": "(i) How well are you doing at work / your studies? How are your relationships with colleagues / fellow students / teacher?",
-		"fontSize": 14,
-		"title": "Work / Study"
-	},
-	{
-		"content": "(i) How satisfied are you with life right now?",
-		"fontSize": 14,
-		"title": "Overall"
-	}
-]
+{
+
+	"counselor_featured": 0,
+	"counselor_featured_order": 0,
+	"subscription_start_at": "2022-01-13 17:35:14",
+	"subscription_expired_at": "2022-01-20 17:35:14",
+	"language": "id",
+	"email_client_send_message": 1,
+	"email_remind_my_scheduled": 1,
+	"email_client_write_review": 1,
+	"notification_client_send_message": 1,
+	"notification_remind_my_scheduled": 1,
+	"notification_client_write_review": 1,
+	"created_at": "2021-10-07 16:31:36",
+	"updated_at": "2022-01-13 17:35:14",
+	"subscription_percentage": 0
+}

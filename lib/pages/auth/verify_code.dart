@@ -21,9 +21,12 @@ class VerifyCodePage extends StatelessWidget {
   final _controller = Get.put(VerifyCodeController());
   @override
   Widget build(BuildContext context) {
+    print(PRO.userData?.activationCode);
     return GetBuilder<VerifyCodeController>(initState: (st) async {
       if (resendCode) {
         await _controller.resendCode(PRO.userData!.email!);
+      } else {
+        _controller.restartCoundownResend();
       }
     }, builder: (_) {
       return NON_MAIN_SAFE_AREA(
@@ -196,9 +199,11 @@ class VerifyCodeController extends GetxController {
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
       restartCoundownResend();
+      Loading.hide();
       SUCCESS_SNACK_BAR(_res?.message,
           "Kode verifikasi berhasil dikirimkan ke email $email}");
     } else {
+      Loading.hide();
       return;
     }
   }

@@ -10,7 +10,7 @@ class PromoData {
   String? note;
   int? type;
   int? valueType;
-  String? value;
+  dynamic value;
   int? quota;
   String? startAt;
   String? endAt;
@@ -47,7 +47,7 @@ class PromoData {
         note: json['note'] as String?,
         type: json['type'] as int?,
         valueType: json['value_type'] as int?,
-        value: json['value'] as String?,
+        value: json['value'],
         quota: json['quota'] as int?,
         startAt: json['start_at'] as String?,
         endAt: json['end_at'] as String?,

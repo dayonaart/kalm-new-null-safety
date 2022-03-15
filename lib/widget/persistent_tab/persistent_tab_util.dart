@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 Future<Object?> pushNewScreen<T extends Object>(BuildContext context,
     {@required Widget? screen,
@@ -14,7 +15,7 @@ Future<Object?> pushNewScreenName<T extends Object>(BuildContext context,
     Object? arguments,
     bool? withNavBar,
     bool platformSpecific = false}) {
-  if (platformSpecific && withNavBar == null) {
+  if (platformSpecific && withNavBar == null && !kIsWeb) {
     withNavBar = Platform.isAndroid ? false : true;
   } else {
     withNavBar ??= true;
@@ -28,7 +29,7 @@ Future pushReplacementNewScreen<T extends Object>(BuildContext context,
     {@required Widget? screen,
     bool? withNavBar,
     bool platformSpecific = false}) {
-  if (platformSpecific && withNavBar == null) {
+  if (platformSpecific && withNavBar == null && !kIsWeb) {
     withNavBar = Platform.isAndroid ? false : true;
   } else {
     withNavBar ??= true;
@@ -41,7 +42,7 @@ Future pushRemoveUntilScreen<T extends Object>(BuildContext context,
     {@required Widget? screen,
     bool? withNavBar,
     bool platformSpecific = false}) {
-  if (platformSpecific && withNavBar == null) {
+  if (platformSpecific && withNavBar == null && !kIsWeb) {
     withNavBar = Platform.isAndroid ? false : true;
   } else {
     withNavBar ??= true;

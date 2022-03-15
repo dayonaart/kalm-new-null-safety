@@ -40,12 +40,18 @@ class UserQustionerPage extends StatelessWidget {
         for (var i = 0; i < existingAnswer!.length; i++) {
           if (i == 0) {
             try {
-              _controller.selectingTempCountry =
-                  ADDRESS_ROOT()?.where((e) => e.id == PRO.userData?.countryId).first.name;
-              _controller.selectingTempState =
-                  STATES_DATA()?.where((e) => e.id == PRO.userData?.stateId).first.name;
-              _controller.selectingTempCity =
-                  CITIES_DATA()?.where((e) => e.id == PRO.userData?.cityId).first.name;
+              _controller.selectingTempCountry = ADDRESS_ROOT()
+                  ?.where((e) => e.id == PRO.userData?.countryId)
+                  .first
+                  .name;
+              _controller.selectingTempState = STATES_DATA()
+                  ?.where((e) => e.id == PRO.userData?.stateId)
+                  .first
+                  .name;
+              _controller.selectingTempCity = CITIES_DATA()
+                  ?.where((e) => e.id == PRO.userData?.cityId)
+                  .first
+                  .name;
             } catch (e) {}
           } else if (i == 1) {
             _controller.selectedDate = PRO.userData!.dob;
@@ -59,7 +65,8 @@ class UserQustionerPage extends StatelessWidget {
           canBack: existingAnswer != null,
           child: Builder(builder: (context) {
             if ((_.userQuestionerResModel(context: context) == null) &&
-                _.userQuestionerResModel(context: context)?.questionerData == null) {
+                _.userQuestionerResModel(context: context)?.questionerData ==
+                    null) {
               return LOADING;
             } else {
               return ListView(
@@ -69,16 +76,20 @@ class UserQustionerPage extends StatelessWidget {
                     child: Column(
                       children: [
                         TEXT("Bantu Kami mengenal Anda lebih baik",
-                            style: Get.textTheme.headline1, textAlign: TextAlign.center),
+                            style: Get.textTheme.headline1,
+                            textAlign: TextAlign.center),
                         SPACE(height: 20),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children:
-                              _.userQuestionerResModel(context: context)!.questionerData!.map((e) {
+                          children: _
+                              .userQuestionerResModel(context: context)!
+                              .questionerData!
+                              .map((e) {
                             var _index = _
                                 .userQuestionerResModel(context: context)
                                 ?.questionerData
-                                ?.indexWhere((element) => element.question == e.question);
+                                ?.indexWhere((element) =>
+                                    element.question == e.question);
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -95,7 +106,8 @@ class UserQustionerPage extends StatelessWidget {
                           SizedBox(
                               width: Get.width / 1.5,
                               child: BUTTON("Selanjutnya",
-                                  onPressed: () async => await _.submit(context),
+                                  onPressed: () async =>
+                                      await _.submit(context),
                                   verticalPad: 15,
                                   circularRadius: 30))
                       ],
@@ -115,7 +127,8 @@ class UserQustionerPage extends StatelessWidget {
         CircleAvatar(
           backgroundColor: BLUEKALM,
           radius: 15,
-          child: Text('${_index! + 1}'),
+          child: TEXT('${_index! + 1}',
+              style: COSTUM_TEXT_STYLE(color: Colors.white)),
         ),
         SPACE(),
         Expanded(child: TEXT(e.question)),
@@ -134,7 +147,8 @@ class UserQustionerPage extends StatelessWidget {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 mainAxisSpacing: 5,
                 mainAxisExtent: 40,
-                crossAxisCount: (e.answer?.length ?? 2) < 4 ? (e.answer?.length ?? 2) : 2),
+                crossAxisCount:
+                    (e.answer?.length ?? 2) < 4 ? (e.answer?.length ?? 2) : 2),
             children: e.answer!.map((ans) {
               return OUTLINE_BUTTON(ans.answer ?? "",
                   onPressed: existingAnswer != null
@@ -151,7 +165,9 @@ class UserQustionerPage extends StatelessWidget {
                           ? Colors.grey
                           : BLUEKALM
                       : Colors.white,
-                  textColor: (_.payloaditem()?[i]?.answer == ans.id) ? Colors.white : BLUEKALM);
+                  textColor: (_.payloaditem()?[i]?.answer == ans.id)
+                      ? Colors.white
+                      : BLUEKALM);
             }).toList(),
           ),
         );
@@ -243,15 +259,16 @@ class UserQustionerPage extends StatelessWidget {
     @required String? condition,
     @required String? title,
     @required List<dynamic>? data,
-    required void Function(int i, void Function(void Function()) st) onSelecting,
+    required void Function(int i, void Function(void Function()) st)
+        onSelecting,
     void Function()? onSelected,
   }) async {
     await Get.bottomSheet(StatefulBuilder(builder: (context, st) {
       return Container(
         decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius:
-                BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
         height: Get.height / 4,
         child: Column(
           children: [
@@ -262,7 +279,8 @@ class UserQustionerPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TEXT(title),
-                  OUTLINE_BUTTON("Pilih", useExpanded: false, onPressed: onSelected),
+                  OUTLINE_BUTTON("Pilih",
+                      useExpanded: false, onPressed: onSelected),
                 ],
               ),
             ),
@@ -338,7 +356,8 @@ class UserQustionerPage extends StatelessWidget {
               return Column(
                 children: [
                   SPACE(),
-                  ERROR_VALIDATION_FIELD(_.dobAlertMessage(e.description), useOverFlow: false),
+                  ERROR_VALIDATION_FIELD(_.dobAlertMessage(e.description),
+                      useOverFlow: false),
                 ],
               );
             } else {
@@ -361,7 +380,9 @@ class UserQustionerPage extends StatelessWidget {
                         border: Border.all(width: 0.5, color: BLUEKALM)),
                     child: Row(
                       children: [
-                        Checkbox(value: _.validateDob13, onChanged: (val) => _.updateDob13(val!)),
+                        Checkbox(
+                            value: _.validateDob13,
+                            onChanged: (val) => _.updateDob13(val!)),
                         Expanded(
                             child: TEXT(
                                 "Saya berusia 13 tahun keatas dan ingin menggunakan aplikasi ini"))
@@ -390,8 +411,9 @@ class UserQustionerPage extends StatelessWidget {
               UserQuestionerPayload(
                   questionnaireId: e.id,
                   answer: 0,
-                  answerDescription:
-                      (VALIDATE_DOB_MATURE(date)! <= 12.999) ? null : date.toIso8601String(),
+                  answerDescription: (VALIDATE_DOB_MATURE(date)! <= 12.999)
+                      ? null
+                      : date.toIso8601String(),
                   question: e.question),
               i);
           if ((VALIDATE_DOB_MATURE(date)! <= 12.999)) {
@@ -405,7 +427,8 @@ class UserQustionerPage extends StatelessWidget {
         pickerDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: BLUEKALM, width: 2.0)),
-        config: DatePickerConfig(isLoop: false, selectedTextStyle: COSTUM_TEXT_STYLE()),
+        config: DatePickerConfig(
+            isLoop: false, selectedTextStyle: COSTUM_TEXT_STYLE()),
         onChanged: (date) {},
       ),
     );
@@ -447,7 +470,8 @@ class UserQustionerController extends GetxController {
     if (i == 4 && payloaditem()![4]?.answer == 1) {
       // ERROR_SNACK_BAR("Perhatian!", userQuetionerResModel?.questionerData![i].description);
       payloaditem()![i] = null;
-      SHOW_DIALOG("${userQuestionerResModel()?.questionerData![i].description}\n\nHubungi 199",
+      SHOW_DIALOG(
+          "${userQuestionerResModel()?.questionerData![i].description}\n\nHubungi 199",
           onAcc: () async {
         final Uri launchUri = Uri(
           scheme: 'tel',
@@ -464,7 +488,9 @@ class UserQustionerController extends GetxController {
     selectedDate = initialDate;
     update();
     dateController = DatePickerController(
-        initialDateTime: initialDate, minYear: 1900, maxYear: DateTime.now().year);
+        initialDateTime: initialDate,
+        minYear: 1900,
+        maxYear: DateTime.now().year);
   }
 
   String? selectingTempCountry;
@@ -496,17 +522,23 @@ class UserQustionerController extends GetxController {
     if (condition == 'country') {
       selectingTempState = null;
       selectingTempCity = null;
-      var _seleted = PRO.countryResModel?.data!.where((e) => e.name == selectingTempCountry).first;
+      var _seleted = PRO.countryResModel?.data!
+          .where((e) => e.name == selectingTempCountry)
+          .first;
       addressPayload.update('country', (value) => _seleted!.id!);
       addressPayload.update('state', (value) => null);
       addressPayload.update('city', (value) => null);
     } else if (condition == 'state') {
       selectingTempCity = null;
-      var _seleted = PRO.stateResItem?.data!.where((e) => e.name == selectingTempState).first;
+      var _seleted = PRO.stateResItem?.data!
+          .where((e) => e.name == selectingTempState)
+          .first;
       addressPayload.update('state', (value) => _seleted!.id!);
       addressPayload.update('city', (value) => null);
     } else {
-      var _seleted = PRO.cityResItem?.data!.where((e) => e.name == selectingTempCity).first;
+      var _seleted = PRO.cityResItem?.data!
+          .where((e) => e.name == selectingTempCity)
+          .first;
       addressPayload.update('city', (value) => _seleted!.id!);
     }
     updatePayload(
@@ -527,23 +559,28 @@ class UserQustionerController extends GetxController {
     } else if (payloaditem()!.contains(null)) {
       var _nullAnswer = payloaditem()?.indexOf(null);
       if (_nullAnswer == 0 && payloaditem()![0] == null) {
-        ERROR_SNACK_BAR(
-            "Wajib diisi semua!", userQuestionerResModel()?.questionerData![_nullAnswer!].question);
+        ERROR_SNACK_BAR("Wajib diisi semua!",
+            userQuestionerResModel()?.questionerData![_nullAnswer!].question);
       } else if (AddressPayload.fromJson(payloaditem()![0]?.answerDescription)
               .toJson()
               .containsValue(null) &&
-          AddressPayload.fromJson(payloaditem()![0]?.answerDescription).country != 3) {
-        ERROR_SNACK_BAR(
-            "Wajib diisi semua!", userQuestionerResModel()?.questionerData![0].question);
+          AddressPayload.fromJson(payloaditem()![0]?.answerDescription)
+                  .country !=
+              3) {
+        ERROR_SNACK_BAR("Wajib diisi semua!",
+            userQuestionerResModel()?.questionerData![0].question);
         return;
       } else {
-        ERROR_SNACK_BAR(
-            "Wajib diisi!", userQuestionerResModel()?.questionerData![_nullAnswer!].question);
+        ERROR_SNACK_BAR("Wajib diisi!",
+            userQuestionerResModel()?.questionerData![_nullAnswer!].question);
       }
       return;
-    } else if (selectedDate != null && VALIDATE_DOB_MATURE(selectedDate)! <= 12.999) {
+    } else if (selectedDate != null &&
+        VALIDATE_DOB_MATURE(selectedDate)! <= 12.999) {
       ERROR_SNACK_BAR(
-          "Perhatian!", dobAlertMessage(userQuestionerResModel()!.questionerData![1].description));
+          "Perhatian!",
+          dobAlertMessage(
+              userQuestionerResModel()!.questionerData![1].description));
       return;
     } else if (selectedDate != null &&
         (VALIDATE_DOB_MATURE(selectedDate)! >= 12.999 &&
@@ -552,8 +589,9 @@ class UserQustionerController extends GetxController {
       ERROR_SNACK_BAR("Perhatian!", "Anda Belum menyetujui syarat usia Anda");
       return;
     }
-    var _res = await Api().POST(
-        POST_QUESTIONER, {"role": "10", "data": payloaditem()?.map((e) => e?.toJson()).toList()},
+
+    var _res = await Api().POST(POST_QUESTIONER,
+        {"role": "10", "data": payloaditem()?.map((e) => e?.toJson()).toList()},
         useToken: true);
     if (_res?.statusCode == 200) {
       await PRO.saveLocalUser(UserModel.fromJson(_res?.data).data);
@@ -570,6 +608,8 @@ class UserQustionerController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     dateController = DatePickerController(
-        initialDateTime: DateTime.now(), minYear: 1900, maxYear: DateTime.now().year);
+        initialDateTime: DateTime.now(),
+        minYear: 1900,
+        maxYear: DateTime.now().year);
   }
 }

@@ -7,6 +7,7 @@ import 'package:kalm/controller/user_controller.dart';
 import 'package:kalm/model/directory_res_model/item.dart';
 import 'package:kalm/pages/detail_article.dart';
 import 'package:kalm/widget/loading.dart';
+import 'package:kalm/widget/snack_bar.dart';
 import 'package:kalm/widget/widget_carousel.dart';
 import 'package:kalm/widget/button.dart';
 import 'package:kalm/widget/image_cache.dart';
@@ -59,7 +60,12 @@ class DiscoveryPage extends StatelessWidget {
                         ),
                         SPACE(height: 20),
                         if (_.selectedTab == 0) _discovery(_, context),
-                        if (_.selectedTab == 1) _directory(context)
+                        if (_.selectedTab == 1)
+                          if (STATE(context).directoryResModel?.directoryData !=
+                              null)
+                            _directory(context)
+                          else
+                            Container()
                       ],
                     ),
                   ),
@@ -207,10 +213,14 @@ class DiscoveryPage extends StatelessWidget {
                                             SPACE(),
                                           ],
                                         ),
-                                      if (f.phone != "") _launchPhone1(f),
-                                      if (f.phone2 != "") _launchPhone2(f),
-                                      if (f.email != "") _launchEmail(f),
-                                      if (f.url != "") _launchUrl(f),
+                                      if (f.phone != "" && f.phone != null)
+                                        _launchPhone1(f),
+                                      if (f.phone2 != "" && f.phone2 != null)
+                                        _launchPhone2(f),
+                                      if (f.email != "" && f.email != null)
+                                        _launchEmail(f),
+                                      if (f.url != "" && f.url != null)
+                                        _launchUrl(f),
                                     ],
                                   ),
                                 ),
@@ -232,7 +242,26 @@ class DiscoveryPage extends StatelessWidget {
 
   InkWell _launchUrl(Item f) {
     return InkWell(
-        onTap: () {},
+        onTap: () async {
+          try {
+            if (f.url!.contains("https://")) {
+              if (await canLaunch(f.url!)) {
+                await launch(f.url!);
+              } else {
+                return;
+              }
+            } else {
+              if (await canLaunch('https://${f.url!}')) {
+                await launch("https://${f.url}");
+              } else {
+                return;
+              }
+            }
+          } catch (e) {
+            ERROR_SNACK_BAR("Perhatian", "Tidak dapat membuka link");
+            return;
+          }
+        },
         child: Column(
           children: [
             Row(
