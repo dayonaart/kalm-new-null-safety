@@ -279,6 +279,7 @@ class UserController extends ChangeNotifier {
         userData?.userHasActiveCounselor?.isReadTnc == 1;
   }
 
+
   bool get isShowTnc {
     return counselorData?.counselor != null &&
         userData?.userSubcription != null &&
